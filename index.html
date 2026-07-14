@@ -354,6 +354,10 @@ td{ border-bottom:0.5px solid var(--border); }
   flex:1;
   min-width:0;
 }
+.material-chip-search{
+  flex:0 0 132px;
+  min-width:96px;
+}
 .material-zone-select{
   flex:0 0 96px;
   min-width:82px;
@@ -457,6 +461,15 @@ td{ border-bottom:0.5px solid var(--border); }
   font-size:12px;
   min-height:24px;
   padding:1px 5px;
+}
+#tabLayersAdmin .material-chip-search{
+  font-size:12px;
+  min-height:24px;
+  padding:1px 5px;
+  background:color-mix(in srgb, currentColor 6%, var(--surface-2));
+  color:currentColor;
+  -webkit-text-fill-color:currentColor;
+  border-color:color-mix(in srgb, currentColor 28%, transparent);
 }
 #tabLayersAdmin .material-zone-select{
   flex:0 0 82px;
@@ -1216,6 +1229,11 @@ td{ border-bottom:0.5px solid var(--border); }
   #tabLayersAdmin .material-chip-no{ display:none; }
   #tabLayersAdmin .material-chip-select{
     min-width:0;
+    font-size:11px;
+  }
+  #tabLayersAdmin .material-chip-search{
+    flex:1 1 88px;
+    min-width:80px;
     font-size:11px;
   }
   #tabLayersAdmin .material-zone-select{
@@ -3038,6 +3056,11 @@ function ensureBundledMaterialAvailability(next, key){
   });
 }
 
+function ensureMaterialListIncludes(next, field, key){
+  if(!Array.isArray(next[field])) next[field] = [];
+  if(next.MAT[key] && !next[field].includes(key)) next[field].unshift(key);
+}
+
 function migrateLegacyTotalThickness(item, key){
   if(!item || item.kind!=='board') return;
   const legacyTotal = LEGACY_TOTAL_THICKNESS_BY_KEY[key];
@@ -3372,6 +3395,9 @@ function normalizeMaterialConfig(config){
   next.wallItems = sanitizeMaterialList(next.wallItems || BASE_WALL_ITEMS, next.MAT);
   next.ceilItems = sanitizeMaterialList(next.ceilItems || BASE_CEIL_ITEMS, next.MAT);
   next.floorItems = sanitizeMaterialList(next.floorItems || BASE_FLOOR_ITEMS, next.MAT);
+  ensureMaterialListIncludes(next, 'wallItems', 'CONC200');
+  ensureMaterialListIncludes(next, 'ceilItems', 'CONC200');
+  ensureMaterialListIncludes(next, 'floorItems', 'CONC200');
 
   next.defaults.wall = sanitizeDefaultSeq(next.defaults.wall, next.MAT, BASE_WALL_DEFAULT);
   next.defaults.ceil = sanitizeDefaultSeq(next.defaults.ceil, next.MAT, BASE_CEIL_DEFAULT);
@@ -5590,11 +5616,30 @@ function currentPresetDraftGroup(){
   return presetDraftGroups.find((group)=>group.key === presetAdminGroupKey) || presetDraftGroups[0] || null;
 }
 
-function presetDraftMaterialOptionsHTML(selectedKey){
-  return listEditableMaterialKeys(materialDraft.MAT).map((key)=>{
+function layerAdminMaterialOptionsHTML(keys, selectedKey, query=''){
+  const q = normalizedSearchText(query);
+  const uniqueKeys = [];
+  if(selectedKey && materialDraft.MAT[selectedKey]) uniqueKeys.push(selectedKey);
+  (keys || []).forEach((key)=>{
+    if(materialDraft.MAT[key] && !uniqueKeys.includes(key)) uniqueKeys.push(key);
+  });
+  const filtered = uniqueKeys.filter((key)=>{
     const item = materialDraft.MAT[key];
-    return `<option value="${key}" ${key===selectedKey ? 'selected' : ''}>${item.label}</option>`;
-  }).join('');
+    return item && optionMatchesQuery(key, item.label, q);
+  });
+  const rows = q ? ['<option value="">검색 결과 선택</option>'] : [];
+  if(!filtered.length && q){
+    rows.push('<option value="" disabled>검색 결과 없음</option>');
+  }
+  filtered.forEach((key)=>{
+    const item = materialDraft.MAT[key];
+    rows.push(`<option value="${key}" ${!q && key===selectedKey ? 'selected' : ''}>${item.label}</option>`);
+  });
+  return rows.join('');
+}
+
+function presetDraftMaterialOptionsHTML(selectedKey, query=''){
+  return layerAdminMaterialOptionsHTML(listEditableMaterialKeys(materialDraft.MAT), selectedKey, query);
 }
 
 function wallZoneOptionsHTML(selectedZone, key){
@@ -5675,6 +5720,7 @@ function renderPresetAdmin(){
             <div class="material-chip-row ${wallZoneClass(zone)}">
               <div class="material-chip-main">
                 <div class="material-chip-no">${seqIndex+1}</div>
+                <input class="material-chip-search" type="text" data-preset-search="${index}" data-preset-seq-index="${seqIndex}" placeholder="자재 검색">
                 <select class="material-chip-select" data-preset-seq="${index}" data-preset-seq-index="${seqIndex}">
                   ${presetDraftMaterialOptionsHTML(key)}
                 </select>
@@ -5842,13 +5888,10 @@ function planLayerFallbackKey(mode){
   return list[0] || listEditableMaterialKeys(materialDraft.MAT)[0] || '';
 }
 
-function planLayerMaterialOptionsHTML(mode, selectedKey){
+function planLayerMaterialOptionsHTML(mode, selectedKey, query=''){
   const list = planLayerListForMode(mode) || [];
   const keys = list.includes(selectedKey) ? list : [selectedKey, ...list].filter(Boolean);
-  return keys.filter((key)=>materialDraft.MAT[key]).map((key)=>{
-    const item = materialDraft.MAT[key];
-    return `<option value="${key}" ${key===selectedKey ? 'selected' : ''}>${item.label}</option>`;
-  }).join('');
+  return layerAdminMaterialOptionsHTML(keys, selectedKey, query);
 }
 
 let planLayerGroupKey = {ceil:'', floor:''};
@@ -5961,6 +6004,7 @@ function renderPlanLayerAdmin(){
             <div class="material-chip-row">
               <div class="material-chip-main">
                 <div class="material-chip-no">${seqIndex+1}</div>
+                <input class="material-chip-search" type="text" data-plan-layer-search="${index}" data-plan-layer-seq-index="${seqIndex}" placeholder="자재 검색">
                 <select class="material-chip-select" data-plan-layer-seq="${index}" data-plan-layer-seq-index="${seqIndex}">
                   ${planLayerMaterialOptionsHTML(planLayerAdminMode, key)}
                 </select>
@@ -6979,6 +7023,18 @@ document.getElementById('planLayerGroupMeta').addEventListener('click', (e)=>{
   if(e.target.closest('#planLayerGroupDeleteBtn')) deletePlanLayerGroup();
 });
 document.getElementById('planLayerAdminList').addEventListener('input', (e)=>{
+  const searchInput = e.target.closest('input[data-plan-layer-search]');
+  if(searchInput){
+    const preset = currentPlanLayerGroup()?.presets[parseInt(searchInput.dataset.planLayerSearch)];
+    if(!preset) return;
+    const seqIndex = parseInt(searchInput.dataset.planLayerSeqIndex);
+    const select = searchInput.parentElement?.querySelector(`select[data-plan-layer-seq-index="${seqIndex}"]`);
+    if(select){
+      select.innerHTML = planLayerMaterialOptionsHTML(planLayerAdminMode, preset.seq[seqIndex], searchInput.value);
+      select.value = '';
+    }
+    return;
+  }
   const nameInput = e.target.closest('input[data-plan-layer-name]');
   if(!nameInput) return;
   const preset = currentPlanLayerGroup()?.presets[parseInt(nameInput.dataset.planLayerName)];
@@ -6989,6 +7045,7 @@ document.getElementById('planLayerAdminList').addEventListener('input', (e)=>{
 document.getElementById('planLayerAdminList').addEventListener('change', (e)=>{
   const seqSelect = e.target.closest('select[data-plan-layer-seq]');
   if(!seqSelect) return;
+  if(!seqSelect.value) return;
   const preset = currentPlanLayerGroup()?.presets[parseInt(seqSelect.dataset.planLayerSeq)];
   if(!preset) return;
   preset.seq[parseInt(seqSelect.dataset.planLayerSeqIndex)] = seqSelect.value;
@@ -7039,6 +7096,19 @@ document.getElementById('presetAdminGroupMeta').addEventListener('click', (e)=>{
   if(e.target.closest('#presetGroupDeleteBtn')) deletePresetGroup();
 });
 document.getElementById('presetAdminList').addEventListener('input', (e)=>{
+  const searchInput = e.target.closest('input[data-preset-search]');
+  if(searchInput){
+    const group = currentPresetDraftGroup();
+    const preset = group?.presets[parseInt(searchInput.dataset.presetSearch)];
+    if(!preset) return;
+    const seqIndex = parseInt(searchInput.dataset.presetSeqIndex);
+    const select = searchInput.parentElement?.querySelector(`select[data-preset-seq-index="${seqIndex}"]`);
+    if(select){
+      select.innerHTML = presetDraftMaterialOptionsHTML(preset.seq[seqIndex], searchInput.value);
+      select.value = '';
+    }
+    return;
+  }
   const nameInput = e.target.closest('input[data-preset-name]');
   if(nameInput){
     const group = currentPresetDraftGroup();
@@ -7052,6 +7122,7 @@ document.getElementById('presetAdminList').addEventListener('input', (e)=>{
 document.getElementById('presetAdminList').addEventListener('change', (e)=>{
   const seqSelect = e.target.closest('select[data-preset-seq]');
   if(seqSelect){
+    if(!seqSelect.value) return;
     const group = currentPresetDraftGroup();
     const preset = group?.presets[parseInt(seqSelect.dataset.presetSeq)];
     if(preset){
