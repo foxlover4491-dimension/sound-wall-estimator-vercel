@@ -1222,10 +1222,46 @@ td{ border-bottom:0.5px solid var(--border); }
   .material-chip-actions{ justify-content:flex-end; }
   #tabLayersAdmin .admin-stage-card{ padding:5px; }
   #tabLayersAdmin .admin-stage-detail{ margin-left:0; }
-  #tabLayersAdmin .admin-stage-summary{ grid-template-columns:1fr; gap:5px; }
+  #tabLayersAdmin .admin-stage-summary{
+    grid-template-columns:72px minmax(0, 1fr) auto;
+    align-items:center;
+    gap:4px;
+  }
   #tabLayersAdmin .admin-stage-toggle{
+    width:auto;
+    min-width:72px;
+    min-height:32px;
+    height:32px;
+    padding:4px 6px;
+    font-size:11px;
+    justify-content:center;
+    white-space:nowrap;
+    line-height:1.1;
+  }
+  #tabLayersAdmin .admin-stage-summary .planner-field{
+    min-width:0;
+  }
+  #tabLayersAdmin .admin-stage-summary .planner-field label{
+    display:none;
+  }
+  #tabLayersAdmin .admin-stage-summary input[type="text"]{
     width:100%;
-    min-height:30px;
+    min-height:32px;
+    height:32px;
+    font-size:12px;
+    padding:3px 7px;
+  }
+  #tabLayersAdmin .admin-stage-summary > .materials-actions{
+    flex-wrap:nowrap;
+    justify-content:flex-end;
+    gap:3px;
+  }
+  #tabLayersAdmin .admin-stage-summary > .materials-actions button{
+    width:26px;
+    min-width:26px;
+    height:26px;
+    min-height:26px;
+    padding:0;
   }
   #tabLayersAdmin .material-chip-row{
     grid-template-columns:minmax(0, 1fr) auto;
