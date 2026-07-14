@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "preview": "python3 -m http.server 8787",
+    "apply-factory": "node scripts/apply-factory-settings.mjs",
     "deploy": "vercel --prod --yes"
   }
 }

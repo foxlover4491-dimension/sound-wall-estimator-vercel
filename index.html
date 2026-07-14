@@ -1448,15 +1448,15 @@ td{ border-bottom:0.5px solid var(--border); }
 <div id="tabSettings" style="display:none;">
   <div class="materials-panel">
     <div style="font-size:14px; font-weight:700; margin-bottom:8px;">설정</div>
-    <div class="materials-note" style="margin-bottom:10px;">자재·레이어 설정은 브라우저별로 저장됩니다. 다른 PC나 아이폰에서 같은 설정을 쓰려면 내보낸 설정을 가져오세요.</div>
+    <div class="materials-note" style="margin-bottom:10px;">자재·레이어 설정은 브라우저별로 저장됩니다. 다른 PC나 아이폰에서 임시로 같은 설정을 쓰려면 복사해서 불러오고, 모두에게 같은 기본값으로 쓰려면 공장값 설정하기 내용을 코덱스에게 보내주세요.</div>
     <div class="materials-actions" style="margin-top:10px;">
-      <button id="settingsExportBtn" type="button"><i class="ti ti-download" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 설정 내보내기</button>
-      <button id="settingsDownloadBtn" type="button"><i class="ti ti-file-download" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 파일 저장</button>
-      <button id="settingsFactoryCandidateBtn" type="button"><i class="ti ti-clipboard-copy" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 공장값 후보 복사</button>
+      <button id="settingsExportBtn" type="button"><i class="ti ti-download" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 다른 기기로 복사</button>
+      <button id="settingsDownloadBtn" type="button"><i class="ti ti-file-download" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 설정 파일 저장</button>
+      <button id="settingsFactoryCandidateBtn" type="button"><i class="ti ti-clipboard-copy" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 공장값 설정하기</button>
     </div>
-    <textarea id="settingsTransferText" placeholder="내보낸 설정 JSON을 여기에 붙여넣고 가져오기를 누르세요." style="width:100%; min-height:120px; margin-top:10px; resize:vertical; border-radius:var(--radius-sm); border:0.5px solid var(--border-strong); background:var(--surface-0); color:var(--text-primary); padding:10px; font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12px; box-sizing:border-box;"></textarea>
+    <textarea id="settingsTransferText" placeholder="다른 기기에서 복사한 설정 JSON을 여기에 붙여넣고 불러오기를 누르세요." style="width:100%; min-height:120px; margin-top:10px; resize:vertical; border-radius:var(--radius-sm); border:0.5px solid var(--border-strong); background:var(--surface-0); color:var(--text-primary); padding:10px; font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12px; box-sizing:border-box;"></textarea>
     <div class="materials-actions" style="margin-top:10px;">
-      <button id="settingsImportBtn" type="button"><i class="ti ti-upload" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 붙여넣은 설정 가져오기</button>
+      <button id="settingsImportBtn" type="button"><i class="ti ti-upload" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 복사한 설정 불러오기</button>
       <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer;">
         <input id="settingsImportFile" type="file" accept="application/json,.json" style="display:none;">
         <span style="display:inline-flex; align-items:center; gap:6px; padding:8px 12px; border:0.5px solid var(--border-strong); border-radius:var(--radius-sm); background:var(--surface-1); color:var(--text-primary); font-size:13px;"><i class="ti ti-file-upload" style="font-size:16px;" aria-hidden="true"></i> 파일 가져오기</span>
@@ -5057,6 +5057,15 @@ function settingsPayloadText(options={}){
   return JSON.stringify(currentSettingsPayload(options), null, 2);
 }
 
+function factoryCandidateRequestText(jsonText){
+  return [
+    '코덱스, 아래 sound-wall-estimator 공장값 설정 JSON을 앱의 기본값으로 반영하고 Vercel에 배포해줘.',
+    '가능하면 scripts/apply-factory-settings.mjs를 사용해서 자동 반영해줘.',
+    '',
+    jsonText
+  ].join('\n');
+}
+
 function setTransferText(text){
   const box = document.getElementById('settingsTransferText');
   if(box) box.value = text;
@@ -5071,7 +5080,7 @@ function exportSettingsToClipboard(){
 function copyFactoryCandidate(){
   const text = settingsPayloadText({type:'factory-candidate', includeState:false, includeCaptures:false, includePassword:false});
   setTransferText(text);
-  copyTextToClipboard(text, ()=>settingsStatus('공장값 후보 JSON을 복사했습니다. 이 내용을 Codex에게 보내면 코드 기본값으로 반영할 수 있습니다.'));
+  copyTextToClipboard(factoryCandidateRequestText(text), ()=>settingsStatus('공장값 설정 요청을 복사했습니다. 이 내용을 Codex 채팅에 보내면 아이폰과 다른 PC에도 보이는 기본값으로 반영할 수 있습니다.'));
 }
 
 function downloadSettingsFile(){
