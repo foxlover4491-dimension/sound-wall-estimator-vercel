@@ -377,6 +377,74 @@ td{ border-bottom:0.5px solid var(--border); }
   border-top:0.5px solid var(--border);
 }
 .admin-stage-card.open .admin-stage-detail{ display:block; }
+#tabLayersAdmin .admin-stage-card{
+  padding:6px;
+  border-radius:6px;
+}
+#tabLayersAdmin .admin-stage-summary{
+  grid-template-columns:96px minmax(150px, 1fr) auto;
+  gap:6px;
+  align-items:end;
+}
+#tabLayersAdmin .admin-stage-toggle{
+  min-width:88px;
+  min-height:28px;
+  gap:4px;
+  font-size:12px;
+  padding:4px 8px;
+}
+#tabLayersAdmin .admin-stage-toggle i{ font-size:12px; }
+#tabLayersAdmin .planner-field{ gap:2px; }
+#tabLayersAdmin .planner-field label{ font-size:10px; line-height:1.15; }
+#tabLayersAdmin input[type="text"],
+#tabLayersAdmin select{
+  font-size:12px;
+  min-height:26px;
+  padding:2px 6px;
+}
+#tabLayersAdmin .materials-actions{ gap:4px; }
+#tabLayersAdmin .materials-actions button{
+  min-height:28px;
+  padding:4px 8px;
+  font-size:12px;
+}
+#tabLayersAdmin .admin-stage-detail{
+  margin-top:6px;
+  padding-top:6px;
+}
+#tabLayersAdmin .material-chip-list{ gap:3px; }
+#tabLayersAdmin .material-chip-row{
+  gap:5px;
+  padding:2px 5px;
+  border-radius:6px;
+  min-height:28px;
+}
+#tabLayersAdmin .material-chip-main{ gap:5px; }
+#tabLayersAdmin .material-chip-no{
+  width:18px;
+  font-size:10px;
+}
+#tabLayersAdmin .material-chip-select{
+  font-size:12px;
+  min-height:24px;
+  padding:1px 5px;
+}
+#tabLayersAdmin .material-zone-select{
+  flex:0 0 82px;
+  min-width:72px;
+  font-size:12px;
+  min-height:24px;
+  padding:1px 5px;
+}
+#tabLayersAdmin .material-chip-actions{ gap:3px; }
+#tabLayersAdmin .material-chip-actions button{
+  width:24px;
+  min-width:24px;
+  min-height:24px;
+  padding:2px 0;
+  border-radius:6px;
+}
+#tabLayersAdmin .material-chip-actions i{ font-size:13px; }
 .materials-empty{
   padding:10px;
   border:0.5px dashed var(--border-strong);
@@ -1059,6 +1127,41 @@ td{ border-bottom:0.5px solid var(--border); }
   .material-zone-select{ flex:1 1 96px; }
   .material-chip-row{ grid-template-columns:1fr; }
   .material-chip-actions{ justify-content:flex-end; }
+  #tabLayersAdmin .admin-stage-card{ padding:5px; }
+  #tabLayersAdmin .admin-stage-summary{ grid-template-columns:1fr; gap:5px; }
+  #tabLayersAdmin .admin-stage-toggle{
+    width:100%;
+    min-height:30px;
+  }
+  #tabLayersAdmin .material-chip-row{
+    grid-template-columns:minmax(0, 1fr) auto;
+    gap:4px;
+    padding:2px 5px;
+    min-height:28px;
+  }
+  #tabLayersAdmin .material-chip-main{
+    flex-wrap:nowrap;
+    gap:4px;
+  }
+  #tabLayersAdmin .material-chip-no{ display:none; }
+  #tabLayersAdmin .material-chip-select{
+    min-width:0;
+    font-size:11px;
+  }
+  #tabLayersAdmin .material-zone-select{
+    flex:0 0 64px;
+    min-width:64px;
+    font-size:11px;
+  }
+  #tabLayersAdmin .material-chip-actions{
+    justify-content:flex-end;
+    gap:2px;
+  }
+  #tabLayersAdmin .material-chip-actions button{
+    width:24px;
+    min-width:24px;
+    min-height:24px;
+  }
   .planner-grid,
   .planner-fields,
   .planner-assign-grid{ grid-template-columns:1fr; }
