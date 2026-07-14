@@ -1134,9 +1134,10 @@ td{ border-bottom:0.5px solid var(--border); }
     flex:1 1 0 !important;
     min-width:0 !important;
     width:auto !important;
-    height:28px !important;
-    min-height:28px !important;
-    font-size:14px !important;
+    height:26px !important;
+    min-height:26px !important;
+    font-size:12px !important;
+    line-height:1.2 !important;
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
@@ -1152,23 +1153,23 @@ td{ border-bottom:0.5px solid var(--border); }
   }
   .layer-thickness,
   .layer-area{
-    width:54px !important;
+    width:50px !important;
     font-size:11px !important;
   }
   #layerList button,
   #ceilLayerList button,
   #floorLayerList button{
-    flex:0 0 28px !important;
-    width:28px !important;
-    min-width:28px !important;
-    height:28px !important;
-    min-height:28px !important;
+    flex:0 0 24px !important;
+    width:24px !important;
+    min-width:24px !important;
+    height:24px !important;
+    min-height:24px !important;
     padding:0 !important;
-    border-radius:7px;
+    border-radius:6px;
   }
   #layerList button i,
   #ceilLayerList button i,
-  #floorLayerList button i{ font-size:12px !important; }
+  #floorLayerList button i{ font-size:11px !important; }
   #addSearch,
   #ceilAddSearch,
   #floorAddSearch,
@@ -5940,6 +5941,7 @@ function renderPresetAdmin(){
               <div class="material-chip-actions">
                 <button type="button" data-preset-layer-move="up" data-preset-index="${index}" data-layer-index="${seqIndex}" ${seqIndex===0 ? 'disabled' : ''}><i class="ti ti-chevron-up" aria-hidden="true"></i></button>
                 <button type="button" data-preset-layer-move="down" data-preset-index="${index}" data-layer-index="${seqIndex}" ${seqIndex===preset.seq.length-1 ? 'disabled' : ''}><i class="ti ti-chevron-down" aria-hidden="true"></i></button>
+                <button type="button" data-preset-layer-copy="${index}" data-layer-index="${seqIndex}" aria-label="아래에 복사"><i class="ti ti-copy" aria-hidden="true"></i></button>
                 <button type="button" data-preset-layer-delete="${index}" data-layer-index="${seqIndex}"><i class="ti ti-x" aria-hidden="true"></i></button>
               </div>
             </div>
@@ -6067,6 +6069,17 @@ function movePresetLayer(presetIndex, layerIndex, direction){
   [preset.seq[layerIndex], preset.seq[target]] = [preset.seq[target], preset.seq[layerIndex]];
   [preset.zones[layerIndex], preset.zones[target]] = [normalizeWallZone(preset.zones[target]), normalizeWallZone(preset.zones[layerIndex])];
   commitPresetDrafts({message:'레이어 순서를 변경했습니다.'});
+}
+
+function copyPresetLayer(presetIndex, layerIndex){
+  const group = currentPresetDraftGroup();
+  const preset = group?.presets[presetIndex];
+  if(!preset || !preset.seq[layerIndex]) return;
+  preset.zones = inferredWallZonesFromSeq(preset.seq, preset.zones || []);
+  preset.seq.splice(layerIndex + 1, 0, preset.seq[layerIndex]);
+  preset.zones.splice(layerIndex + 1, 0, normalizeWallZone(preset.zones[layerIndex]));
+  openPresetAdminIndex = presetIndex;
+  commitPresetDrafts({message:'선택한 레이어를 바로 아래에 복사했습니다.'});
 }
 
 function moveArrayIndex(items, fromIndex, toIndex, after){
@@ -6243,6 +6256,7 @@ function renderPlanLayerAdmin(){
               <div class="material-chip-actions">
                 <button type="button" data-plan-layer-row-move="up" data-plan-layer-index="${index}" data-layer-index="${seqIndex}" ${seqIndex===0 ? 'disabled' : ''}><i class="ti ti-chevron-up" aria-hidden="true"></i></button>
                 <button type="button" data-plan-layer-row-move="down" data-plan-layer-index="${index}" data-layer-index="${seqIndex}" ${seqIndex===preset.seq.length-1 ? 'disabled' : ''}><i class="ti ti-chevron-down" aria-hidden="true"></i></button>
+                <button type="button" data-plan-layer-row-copy="${index}" data-layer-index="${seqIndex}" aria-label="아래에 복사"><i class="ti ti-copy" aria-hidden="true"></i></button>
                 <button type="button" data-plan-layer-row-delete="${index}" data-layer-index="${seqIndex}"><i class="ti ti-x" aria-hidden="true"></i></button>
               </div>
             </div>
@@ -6379,6 +6393,14 @@ function movePlanLayerRow(presetIndex, layerIndex, direction){
   if(target < 0 || target >= preset.seq.length) return;
   [preset.seq[layerIndex], preset.seq[target]] = [preset.seq[target], preset.seq[layerIndex]];
   commitPlanLayerDrafts({message:'자재 순서를 변경했습니다.'});
+}
+
+function copyPlanLayerRow(presetIndex, layerIndex){
+  const preset = currentPlanLayerGroup()?.presets[presetIndex];
+  if(!preset || !preset.seq[layerIndex]) return;
+  preset.seq.splice(layerIndex + 1, 0, preset.seq[layerIndex]);
+  openPlanLayerAdminIndex[planLayerAdminMode] = presetIndex;
+  commitPlanLayerDrafts({message:'선택한 자재를 바로 아래에 복사했습니다.'});
 }
 
 function reorderPlanLayerRow(presetIndex, fromIndex, toIndex, after){
@@ -7396,6 +7418,11 @@ document.getElementById('planLayerAdminList').addEventListener('click', (e)=>{
     movePlanLayerRow(parseInt(moveRowBtn.dataset.planLayerIndex), parseInt(moveRowBtn.dataset.layerIndex), moveRowBtn.dataset.planLayerRowMove);
     return;
   }
+  const copyRowBtn = e.target.closest('[data-plan-layer-row-copy]');
+  if(copyRowBtn){
+    copyPlanLayerRow(parseInt(copyRowBtn.dataset.planLayerRowCopy), parseInt(copyRowBtn.dataset.layerIndex));
+    return;
+  }
   const delRowBtn = e.target.closest('[data-plan-layer-row-delete]');
   if(delRowBtn){
     deletePlanLayerRow(parseInt(delRowBtn.dataset.planLayerRowDelete), parseInt(delRowBtn.dataset.layerIndex));
@@ -7489,6 +7516,11 @@ document.getElementById('presetAdminList').addEventListener('click', (e)=>{
   const moveLayerBtn = e.target.closest('[data-preset-layer-move]');
   if(moveLayerBtn){
     movePresetLayer(parseInt(moveLayerBtn.dataset.presetIndex), parseInt(moveLayerBtn.dataset.layerIndex), moveLayerBtn.dataset.presetLayerMove);
+    return;
+  }
+  const copyLayerBtn = e.target.closest('[data-preset-layer-copy]');
+  if(copyLayerBtn){
+    copyPresetLayer(parseInt(copyLayerBtn.dataset.presetLayerCopy), parseInt(copyLayerBtn.dataset.layerIndex));
     return;
   }
   const delLayerBtn = e.target.closest('[data-preset-layer-delete]');
