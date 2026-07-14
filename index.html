@@ -1882,8 +1882,12 @@ let MAT = {
     "kind": "fabricFrame",
     "frameKey": "FRAME3030",
     "fabricKey": "FABRIC",
+    "panelWidth": 1200,
+    "railSpacing": 450,
+    "fabricUsableWidth": 1200,
+    "fabricExtraLength": 200,
     "category": "finish",
-    "displaySpec": "",
+    "displaySpec": "1200폭 / 가로 450간격",
     "sw": 30,
     "sd": 30,
     "sh": 3600,
@@ -1894,13 +1898,15 @@ let MAT = {
     "t": 0,
     "kind": "board",
     "ply": 1,
-    "sw": 1000,
+    "sw": 1500,
     "sh": 1000,
+    "usableWidth": 1200,
+    "extraLength": 200,
     "areaMass": 0.25,
     "category": "finish",
     "areaOnly": true,
-    "unitLabel": "면적",
-    "displaySpec": ""
+    "unitLabel": "원단",
+    "displaySpec": "원단폭 1500 / 유효폭 1200"
   },
   "ART9": {
     "label": "마감 아트보드 9T",
@@ -1936,7 +1942,8 @@ let MAT = {
     "category": "finish",
     "hidden": true,
     "mergeKey": "FRAME3030",
-    "displaySpec": ""
+    "battenMode": "horizontal",
+    "displaySpec": "가로재 @450"
   },
   "POLY25": {
     "label": "폴리에스터 40K 25T(충진)",
@@ -3452,7 +3459,7 @@ function normalizeMaterialConfig(config){
     if(item.kind !== 'gap'){
       item.category = MATERIAL_CATEGORY_OPTIONS.includes(item.category) ? item.category : 'frame';
     }
-    ['t','sw','sh','sd','csw','csh','stick','spacing','ply','density','areaMass','acousticThickness','loadKg','dropMm'].forEach((field)=>{
+    ['t','sw','sh','sd','csw','csh','stick','spacing','ply','density','areaMass','acousticThickness','loadKg','dropMm','panelWidth','railSpacing','fabricUsableWidth','fabricExtraLength','usableWidth','extraLength'].forEach((field)=>{
       if(item[field] == null || item[field] === '') return;
       const num = parseFloat(item[field]);
       item[field] = Number.isFinite(num) ? num : 0;
@@ -3921,7 +3928,7 @@ function heightForItem(item, htOuterM, htInnerM){
 }
 
 function emptyAgg(){
-  return {count:0, boardArea:0, woolArea:0, studPieces:0, studLength:0, gridCount:0, gridLength:0, gridPieces:0, hangerCount:0};
+  return {count:0, boardArea:0, woolArea:0, studPieces:0, studLength:0, gridCount:0, gridLength:0, gridPieces:0, hangerCount:0, fabricDrops:0, fabricLength:0, fabricYards:0};
 }
 
 function isFinishItem(item){
@@ -4064,6 +4071,22 @@ function addWallStudPieces(a, m, lenM, h, gapM){
   a.studPieces += (vertSticks+horizSticks);
   a.studLength += (posCount * h) + (2 * lenM);
 }
+function piecesFromRepeatedCuts(pieceCount, cutLengthM, stockLengthM){
+  if(pieceCount<=0 || cutLengthM<=0 || stockLengthM<=0) return 0;
+  if(cutLengthM <= stockLengthM){
+    const piecesPerStock = Math.max(Math.floor(stockLengthM / cutLengthM), 1);
+    return Math.ceil(pieceCount / piecesPerStock);
+  }
+  return pieceCount * Math.ceil(cutLengthM / stockLengthM);
+}
+function addWallHorizontalBattenPieces(a, m, lenM, h, gapM){
+  const spacingM = materialSpacingM(m, gapM);
+  const rowCount = spacingM>0 ? Math.ceil(h/spacingM)+1 : 0;
+  const totalLength = rowCount * lenM;
+  const stockM = (m.sh || 3600) / 1000;
+  a.studLength += totalLength;
+  a.studPieces += stockM>0 ? Math.ceil(totalLength / stockM) : rowCount;
+}
 function addPlanStudPieces(a, m, widthM, depthM, gapM){
   const lineGap = materialSpacingM(m, gapM);
   const runLength = Math.max(widthM, depthM);
@@ -4103,11 +4126,30 @@ function addFabricFrameWall(agg, m, lenM, h, gapM, baseArea){
   const frame = MAT[m.frameKey];
   const frameAgg = ensureAgg(agg, bomKeyFor(m.frameKey));
   frameAgg.count += 1;
-  addWallStudPieces(frameAgg, frame, lenM, h, gapM);
+  const panelWidthM = (parseFloat(m.panelWidth) || 1200) / 1000;
+  const railSpacingM = (parseFloat(m.railSpacing) || 450) / 1000;
+  const panelCount = panelWidthM>0 ? Math.ceil(lenM / panelWidthM) : 0;
+  const railRowCount = railSpacingM>0 ? Math.ceil(h / railSpacingM)+1 : 0;
+  const verticalPieceCount = panelCount * 2;
+  const horizontalPieceCount = panelCount * railRowCount;
+  const verticalLength = verticalPieceCount * h;
+  const horizontalLength = horizontalPieceCount * panelWidthM;
+  const stockM = ((frame?.sh || m.sh || 3600) / 1000) || 3.6;
+  frameAgg.studLength += verticalLength + horizontalLength;
+  frameAgg.studPieces += piecesFromRepeatedCuts(verticalPieceCount, h, stockM) + piecesFromRepeatedCuts(horizontalPieceCount, panelWidthM, stockM);
 
   const fabricAgg = ensureAgg(agg, bomKeyFor(m.fabricKey));
+  const fabric = MAT[m.fabricKey] || {};
+  const usableWidthM = (parseFloat(fabric.usableWidth || m.fabricUsableWidth) || 1200) / 1000;
+  const extraLengthM = (parseFloat(fabric.extraLength || m.fabricExtraLength) || 200) / 1000;
+  const fabricDrops = usableWidthM>0 ? Math.ceil(lenM / usableWidthM) : panelCount;
+  const dropLengthM = h + extraLengthM;
+  const fabricLengthM = fabricDrops * dropLengthM;
   fabricAgg.count += 1;
   fabricAgg.boardArea += baseArea;
+  fabricAgg.fabricDrops += fabricDrops;
+  fabricAgg.fabricLength += fabricLengthM;
+  fabricAgg.fabricYards += fabricLengthM / 0.9144;
 }
 function addFabricFramePlan(agg, m, widthM, depthM, gapM, area){
   const frame = MAT[m.frameKey];
@@ -4169,7 +4211,11 @@ function computeAggGeneric(items, lenM, htFn, gapM, areaDeductFn=()=>0){
     } else if(m.kind==='wool'){
       a.woolArea += baseArea;
     } else if(m.kind==='stud'){
-      addWallStudPieces(a, m, lenM, h, gapM);
+      if(m.battenMode === 'horizontal'){
+        addWallHorizontalBattenPieces(a, m, lenM, h, gapM);
+      } else {
+        addWallStudPieces(a, m, lenM, h, gapM);
+      }
     } else if(m.kind==='line'){
       addWallLinePieces(a, m, lenM, h, gapM);
     } else if(m.kind==='gridpad'){
@@ -5003,7 +5049,13 @@ function bomRowsSimpleHTML(agg, options={}){
       sizeCell = specForMaterial(m);
       const adjustedArea = withLoss(a.boardArea, lossRate);
       measureCell = `${round2(adjustedArea)}m²`;
-      if(m.areaOnly){
+      if((a.fabricLength || 0)>0){
+        const adjustedDrops = ceilValue(withLoss(a.fabricDrops || 0, lossRate));
+        const adjustedLength = withLoss(a.fabricLength || 0, lossRate);
+        const adjustedYards = withLoss(a.fabricYards || 0, lossRate);
+        measureCell = `${adjustedDrops}폭 · ${round2(adjustedLength)}m`;
+        qty = `약 ${ceilValue(adjustedYards)}yd${suffix}`;
+      } else if(m.areaOnly){
         qty = `${round2(adjustedArea)}m²${suffix}`;
       } else {
         const sheetArea=(m.sw/1000)*(m.sh/1000);
@@ -5136,6 +5188,9 @@ function mergeAggInto(target, source){
     t.gridLength += (a.gridLength||0);
     t.gridPieces += (a.gridPieces||0);
     t.hangerCount += (a.hangerCount||0);
+    t.fabricDrops += (a.fabricDrops||0);
+    t.fabricLength += (a.fabricLength||0);
+    t.fabricYards += (a.fabricYards||0);
   });
 }
 
@@ -5154,6 +5209,9 @@ function consolidateForFinal(agg){
     t.gridLength += (a.gridLength||0);
     t.gridPieces += (a.gridPieces||0);
     t.hangerCount += (a.hangerCount||0);
+    t.fabricDrops += (a.fabricDrops||0);
+    t.fabricLength += (a.fabricLength||0);
+    t.fabricYards += (a.fabricYards||0);
   });
   return out;
 }
