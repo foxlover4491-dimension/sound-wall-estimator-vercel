@@ -432,6 +432,7 @@ td{ border-bottom:0.5px solid var(--border); }
 #tabLayersAdmin .admin-stage-detail{
   margin-top:6px;
   padding-top:6px;
+  margin-left:102px;
 }
 #tabLayersAdmin .material-chip-list{ gap:3px; }
 #tabLayersAdmin .material-chip-row{
@@ -456,6 +457,21 @@ td{ border-bottom:0.5px solid var(--border); }
   font-size:12px;
   min-height:24px;
   padding:1px 5px;
+}
+#tabLayersAdmin .material-chip-thickness{
+  flex:0 0 54px;
+  text-align:right;
+  font-size:11px;
+  line-height:1.15;
+  color:currentColor;
+  opacity:0.82;
+  white-space:nowrap;
+}
+#tabLayersAdmin .admin-stage-total{
+  margin-left:6px;
+  font-size:10px;
+  color:var(--text-muted);
+  font-weight:500;
 }
 #tabLayersAdmin .material-chip-actions{ gap:3px; }
 #tabLayersAdmin .material-chip-actions button{
@@ -1149,6 +1165,7 @@ td{ border-bottom:0.5px solid var(--border); }
   .material-chip-row{ grid-template-columns:1fr; }
   .material-chip-actions{ justify-content:flex-end; }
   #tabLayersAdmin .admin-stage-card{ padding:5px; }
+  #tabLayersAdmin .admin-stage-detail{ margin-left:0; }
   #tabLayersAdmin .admin-stage-summary{ grid-template-columns:1fr; gap:5px; }
   #tabLayersAdmin .admin-stage-toggle{
     width:100%;
@@ -1173,6 +1190,10 @@ td{ border-bottom:0.5px solid var(--border); }
     flex:0 0 64px;
     min-width:64px;
     font-size:11px;
+  }
+  #tabLayersAdmin .material-chip-thickness{
+    flex:0 0 42px;
+    font-size:10px;
   }
   #tabLayersAdmin .material-chip-actions{
     justify-content:flex-end;
@@ -3443,7 +3464,7 @@ function swapSelectHTML(currentKey, itemList, prefix, i){
     const m = MAT[k];
     return `<option value="${k}" ${(!extraKeys.length && k===currentKey)?'selected':''}>${m.label}</option>`;
   }).join('');
-  return `<select data-swap-i="${i}" data-t="${prefix}" style="flex:1; font-size:13px; background:transparent; border:none; color:inherit; padding:2px 0;">${extraOpts}${opts}</select>`;
+  return `<select data-swap-i="${i}" data-t="${prefix}" style="flex:1; font-size:12px; background:transparent; border:none; color:inherit; padding:1px 0;">${extraOpts}${opts}</select>`;
 }
 
 function groupedRowsHTML(items, valFn, controlsFn, swapList){
@@ -3454,23 +3475,23 @@ function groupedRowsHTML(items, valFn, controlsFn, swapList){
     const isGap = m.kind==='gap';
     if(isGap){
       lastGroupId = 'none';
-      parts.push(`<div style="display:flex; align-items:center; gap:6px; border-radius:var(--radius); padding:6px 8px; background:var(--surface-1); border:1px dashed var(--border-strong); color:var(--text-secondary);">
-        <span style="flex:1; font-size:13px;">공기층 ${it.val}T</span>
+      parts.push(`<div style="display:flex; align-items:center; gap:4px; border-radius:6px; padding:4px 6px; background:var(--surface-1); border:1px dashed var(--border-strong); color:var(--text-secondary);">
+        <span style="flex:1; font-size:12px;">공기층 ${it.val}T</span>
         ${valFn(it,i,true)}
         ${controlsFn ? controlsFn(i) : ''}
       </div>`);
     } else {
       if(it.groupId!==lastGroupId){
-        parts.push(`<div style="font-size:11px; font-weight:600; color:var(--text-secondary); margin:${parts.length?'8px':'0'} 2px 2px;">${it.label}</div>`);
+        parts.push(`<div style="font-size:10px; font-weight:600; color:var(--text-secondary); margin:${parts.length?'5px':'0'} 2px 1px;">${it.label}</div>`);
         lastGroupId = it.groupId;
       }
-      const nameHTML = swapList ? swapSelectHTML(it.key, swapList, 'wall', i) : `<span style="flex:1; font-size:13px;">${m.label}</span>`;
+      const nameHTML = swapList ? swapSelectHTML(it.key, swapList, 'wall', i) : `<span style="flex:1; font-size:12px;">${m.label}</span>`;
       const isFinish = m.category === 'finish';
       const role = DEPTH_ROLES.includes(it.role) ? it.role : 'accent';
       const rowStyle = isFinish
         ? `background:var(--bg-danger); color:var(--text-danger);`
         : `background:var(--bg-${role}); color:var(--text-${role});`;
-      parts.push(`<div style="display:flex; align-items:center; gap:6px; border-radius:var(--radius); padding:6px 8px; ${rowStyle}">
+      parts.push(`<div style="display:flex; align-items:center; gap:4px; border-radius:6px; padding:4px 6px; ${rowStyle}">
         ${nameHTML}
         ${valFn(it,i,false)}
         ${controlsFn ? controlsFn(i) : ''}
@@ -3540,7 +3561,7 @@ function renderRef(){
   const zones = inferredWallZonesFromSeq(preset.seq, preset.zones || []);
   const infos = classifySeq(preset.seq, zones);
   const items = preset.seq.filter((k)=>MAT[k]).map((k,i)=>({key:k, val:materialThicknessMm(MAT[k]), zone:zones[i], role:infos[i].role, label:infos[i].label, groupId:infos[i].groupId}));
-  document.getElementById('refLayerList').innerHTML = groupedRowsHTML(items, (it)=>`<span style="font-size:13px; min-width:44px; text-align:right;">${it.val}mm</span>`);
+  document.getElementById('refLayerList').innerHTML = groupedRowsHTML(items, (it)=>`<span style="font-size:12px; min-width:40px; text-align:right;">${it.val}mm</span>`);
   document.getElementById('refTotalThick').textContent = presetThickness(preset) + 'mm';
   document.getElementById('refName').textContent = `${preset.groupLabel || ''} · ${preset.n}단계 · ${preset.name}`;
   document.getElementById('refMetricsTable').innerHTML = metricsForPreset(preset, mode).map((v,i)=>`<tr><td style="padding:3px 0; color:var(--text-secondary);">${METRIC_LABELS[i]}</td><td style="padding:3px 0; text-align:right;">${v}</td></tr>`).join('');
@@ -5289,6 +5310,14 @@ function defaultWallZoneForKey(key){
   return inferredWallZonesFromSeq([key], [])[0] || 'outer';
 }
 
+function draftMaterialThicknessForKey(key){
+  return materialThicknessMm(materialDraft.MAT?.[key] || MAT[key]);
+}
+
+function presetDraftThickness(preset){
+  return round2((preset?.seq || []).reduce((sum, key)=>sum + draftMaterialThicknessForKey(key), 0));
+}
+
 function renderPresetAdmin(){
   const groupSelect = document.getElementById('presetAdminGroupSelect');
   const metaEl = document.getElementById('presetAdminGroupMeta');
@@ -5311,6 +5340,7 @@ function renderPresetAdmin(){
   `;
   listEl.innerHTML = group.presets.map((preset, index)=>{
     const isOpen = openPresetAdminIndex === index;
+    const totalThickness = presetDraftThickness(preset);
     return `
     <div class="admin-stage-card ${isOpen ? 'open' : ''}">
       <div class="admin-stage-summary">
@@ -5318,7 +5348,7 @@ function renderPresetAdmin(){
           <i class="ti ti-chevron-right" aria-hidden="true"></i>${index+1}단계
         </button>
         <div class="planner-field">
-          <label>단계 이름</label>
+          <label>단계 이름 <span class="admin-stage-total">총 ${totalThickness}mm</span></label>
           <input type="text" data-preset-name="${index}" value="${preset.name}">
         </div>
         <div class="materials-actions">
@@ -5331,6 +5361,7 @@ function renderPresetAdmin(){
         <div class="material-chip-list">
           ${preset.seq.map((key, seqIndex)=>{
             const zone = inferredWallZonesFromSeq(preset.seq, preset.zones || [])[seqIndex];
+            const thickness = round2(draftMaterialThicknessForKey(key));
             return `
             <div class="material-chip-row ${wallZoneClass(zone)}">
               <div class="material-chip-main">
@@ -5341,6 +5372,7 @@ function renderPresetAdmin(){
                 <select class="material-zone-select" data-preset-zone="${index}" data-preset-zone-index="${seqIndex}" title="벽체 구간">
                   ${wallZoneOptionsHTML(zone, key)}
                 </select>
+                <span class="material-chip-thickness">${thickness}mm</span>
               </div>
               <div class="material-chip-actions">
                 <button type="button" data-preset-layer-move="up" data-preset-index="${index}" data-layer-index="${seqIndex}" ${seqIndex===0 ? 'disabled' : ''}><i class="ti ti-chevron-up" aria-hidden="true"></i></button>
@@ -5597,6 +5629,7 @@ function renderPlanLayerAdmin(){
   `;
   listEl.innerHTML = group.presets.map((preset, index)=>{
     const isOpen = openPlanLayerAdminIndex[planLayerAdminMode] === index;
+    const totalThickness = presetDraftThickness(preset);
     return `
     <div class="admin-stage-card ${isOpen ? 'open' : ''}">
       <div class="admin-stage-summary">
@@ -5604,7 +5637,7 @@ function renderPlanLayerAdmin(){
           <i class="ti ti-chevron-right" aria-hidden="true"></i>${index+1}단계
         </button>
         <div class="planner-field">
-          <label>단계 이름</label>
+          <label>단계 이름 <span class="admin-stage-total">총 ${totalThickness}mm</span></label>
           <input type="text" data-plan-layer-name="${index}" value="${preset.name}">
         </div>
         <div class="materials-actions">
@@ -5622,6 +5655,7 @@ function renderPlanLayerAdmin(){
                 <select class="material-chip-select" data-plan-layer-seq="${index}" data-plan-layer-seq-index="${seqIndex}">
                   ${planLayerMaterialOptionsHTML(planLayerAdminMode, key)}
                 </select>
+                <span class="material-chip-thickness">${round2(draftMaterialThicknessForKey(key))}mm</span>
               </div>
               <div class="material-chip-actions">
                 <button type="button" data-plan-layer-row-move="up" data-plan-layer-index="${index}" data-layer-index="${seqIndex}" ${seqIndex===0 ? 'disabled' : ''}><i class="ti ti-chevron-up" aria-hidden="true"></i></button>
