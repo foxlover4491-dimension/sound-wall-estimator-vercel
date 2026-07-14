@@ -2339,6 +2339,43 @@ let FLOOR_DEFAULT = [
   "S1",
   "PB15"
 ];
+let MATERIAL_ORDER = [
+  "CONC200",
+  "A50",
+  "A100",
+  "RUBBER",
+  "SHANGER50",
+  "SHANGER150",
+  "SHANGER100",
+  "SHANGER200",
+  "SH",
+  "G1",
+  "G",
+  "S1",
+  "S2",
+  "USRMRG2NX7L",
+  "PLY15_2P",
+  "PLY15",
+  "PB15",
+  "FRAME3030",
+  "ST",
+  "SQPIPE",
+  "GW50",
+  "W0",
+  "W50",
+  "POLY25",
+  "POLY50",
+  "POLY25_ADD",
+  "POLY50_ADD",
+  "BATT",
+  "FAB30",
+  "FABRIC",
+  "DECO3",
+  "CARPET7",
+  "HWD75",
+  "PERF9",
+  "ART9"
+];
 const BASE_MAT = JSON.parse(JSON.stringify(MAT));
 const LEGACY_TOTAL_THICKNESS_BY_KEY = {
   G: 19,
@@ -2352,6 +2389,7 @@ const BASE_FLOOR_ITEMS = [...FLOOR_ITEMS];
 const BASE_WALL_DEFAULT = [...WALL_DEFAULT];
 const BASE_CEIL_DEFAULT = [...CEIL_DEFAULT];
 const BASE_FLOOR_DEFAULT = [...FLOOR_DEFAULT];
+const BASE_MATERIAL_ORDER = [...MATERIAL_ORDER];
 
 const DEPTH_ROLES = ['accent','success','pro','warning'];
 const FINISH_ROLE = 'danger';
@@ -3112,6 +3150,7 @@ function materialConfigSnapshot(){
     wallItems: [...WALL_ITEMS],
     ceilItems: [...CEIL_ITEMS],
     floorItems: [...FLOOR_ITEMS],
+    order: [...MATERIAL_ORDER],
     defaults: {
       wall: [...WALL_DEFAULT],
       ceil: [...CEIL_DEFAULT],
@@ -3252,6 +3291,7 @@ function factoryMaterialConfig(){
     wallItems: [...BASE_WALL_ITEMS],
     ceilItems: [...BASE_CEIL_ITEMS],
     floorItems: [...BASE_FLOOR_ITEMS],
+    order: [...BASE_MATERIAL_ORDER],
     defaults: {
       wall: [...BASE_WALL_DEFAULT],
       ceil: [...BASE_CEIL_DEFAULT],
@@ -3349,6 +3389,16 @@ function managerDisplayOrder(){
   return saved.concat(missing);
 }
 
+function managerOrderedKeysFromList(keyList){
+  const allowed = [];
+  (keyList || []).forEach((key)=>{
+    if(key && !allowed.includes(key)) allowed.push(key);
+  });
+  const ordered = managerDisplayOrder().filter((key)=>allowed.includes(key));
+  const extras = allowed.filter((key)=>!ordered.includes(key));
+  return ordered.concat(extras);
+}
+
 let draggingMaterialKey = null;
 
 // fromKey 자재를 toKey 자재의 앞(after=false) 또는 뒤(after=true)로 이동
@@ -3437,7 +3487,7 @@ function normalizeMaterialConfig(config){
   next.defaults.floor = sanitizeDefaultSeq(next.defaults.floor, next.MAT, BASE_FLOOR_DEFAULT);
 
   // 자재관리 표시 순서: 저장된 순서를 우선하고, 빠진 자재는 자동 정렬 위치로 뒤에 붙인다.
-  const savedOrder = sanitizeMaterialList(next.order || [], next.MAT);
+  const savedOrder = sanitizeMaterialList(next.order || BASE_MATERIAL_ORDER, next.MAT);
   const missingOrder = sortedManagerKeys(next.MAT).filter((k)=>!savedOrder.includes(k));
   next.order = savedOrder.concat(missingOrder);
 
@@ -3499,6 +3549,7 @@ function applyMaterialConfig(config, options={}){
   WALL_ITEMS = [...next.wallItems];
   CEIL_ITEMS = [...next.ceilItems];
   FLOOR_ITEMS = [...next.floorItems];
+  MATERIAL_ORDER = [...next.order];
   WALL_DEFAULT = [...next.defaults.wall];
   CEIL_DEFAULT = [...next.defaults.ceil];
   FLOOR_DEFAULT = [...next.defaults.floor];
@@ -4234,7 +4285,7 @@ function populateSelectList(selectEl, keyList){
   ph.value = ''; ph.textContent = query ? '검색 결과 선택' : '자재 추가';
   selectEl.appendChild(ph);
   let count = 0;
-  keyList.forEach(k=>{
+  managerOrderedKeysFromList(keyList).forEach(k=>{
     if(COMPOSITES[k]){
       const c = COMPOSITES[k];
       if(!optionMatchesQuery(k, c.label, query)) return;
@@ -5639,7 +5690,7 @@ function materialsStatus(text){
 }
 
 function materialOptionsHTML(selectedKey){
-  return listEditableMaterialKeys(materialDraft.MAT).map((key)=>{
+  return managerOrderedKeysFromList(Object.keys(materialDraft.MAT)).map((key)=>{
     const item = materialDraft.MAT[key];
     return `<option value="${key}" ${key===selectedKey ? 'selected' : ''}>${item.label}</option>`;
   }).join('');
@@ -5651,11 +5702,7 @@ function currentPresetDraftGroup(){
 
 function layerAdminMaterialOptionsHTML(keys, selectedKey, query=''){
   const q = normalizedSearchText(query);
-  const uniqueKeys = [];
-  if(selectedKey && materialDraft.MAT[selectedKey]) uniqueKeys.push(selectedKey);
-  (keys || []).forEach((key)=>{
-    if(materialDraft.MAT[key] && !uniqueKeys.includes(key)) uniqueKeys.push(key);
-  });
+  const uniqueKeys = managerOrderedKeysFromList([selectedKey, ...(keys || [])].filter((key)=>materialDraft.MAT[key]));
   const filtered = uniqueKeys.filter((key)=>{
     const item = materialDraft.MAT[key];
     return item && optionMatchesQuery(key, item.label, q);
@@ -5672,7 +5719,7 @@ function layerAdminMaterialOptionsHTML(keys, selectedKey, query=''){
 }
 
 function presetDraftMaterialOptionsHTML(selectedKey, query=''){
-  return layerAdminMaterialOptionsHTML(listEditableMaterialKeys(materialDraft.MAT), selectedKey, query);
+  return layerAdminMaterialOptionsHTML(managerDisplayOrder(), selectedKey, query);
 }
 
 function wallZoneOptionsHTML(selectedZone, key){
@@ -5875,7 +5922,7 @@ function addPresetLayer(presetIndex){
   const group = currentPresetDraftGroup();
   if(!group) return;
   const preset = group.presets[presetIndex];
-  preset.seq.push(materialDraft.defaults.wall?.[0] || listEditableMaterialKeys(materialDraft.MAT)[0]);
+  preset.seq.push(materialDraft.defaults.wall?.[0] || managerDisplayOrder()[0]);
   preset.zones = Array.isArray(preset.zones) ? preset.zones : [];
   preset.zones.push(defaultWallZoneForKey(preset.seq[preset.seq.length - 1]));
   openPresetAdminIndex = presetIndex;
@@ -5918,7 +5965,7 @@ function planLayerListForMode(mode){
 
 function planLayerFallbackKey(mode){
   const list = planLayerListForMode(mode) || [];
-  return list[0] || listEditableMaterialKeys(materialDraft.MAT)[0] || '';
+  return managerOrderedKeysFromList(list)[0] || managerDisplayOrder()[0] || '';
 }
 
 function planLayerMaterialOptionsHTML(mode, selectedKey, query=''){

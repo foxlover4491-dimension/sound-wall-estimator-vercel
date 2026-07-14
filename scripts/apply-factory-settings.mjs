@@ -136,6 +136,7 @@ function buildPatch(source, payload){
   requireArray(materialConfig.wallItems, 'materialConfig.wallItems');
   requireArray(materialConfig.ceilItems, 'materialConfig.ceilItems');
   requireArray(materialConfig.floorItems, 'materialConfig.floorItems');
+  const materialOrder = Array.isArray(materialConfig.order) ? materialConfig.order : Object.keys(materialConfig.MAT);
   requireObject(materialConfig.defaults, 'materialConfig.defaults');
   requireArray(materialConfig.defaults.wall, 'materialConfig.defaults.wall');
   requireArray(materialConfig.defaults.ceil, 'materialConfig.defaults.ceil');
@@ -151,7 +152,8 @@ function buildPatch(source, payload){
   next = replaceAssigned(next, 'let FLOOR_ITEMS = ', ';\nlet WALL_DEFAULT', materialConfig.floorItems, 'FLOOR_ITEMS');
   next = replaceAssigned(next, 'let WALL_DEFAULT = ', ';\nlet CEIL_DEFAULT', materialConfig.defaults.wall, 'WALL_DEFAULT');
   next = replaceAssigned(next, 'let CEIL_DEFAULT = ', ';\nlet FLOOR_DEFAULT', materialConfig.defaults.ceil, 'CEIL_DEFAULT');
-  next = replaceAssigned(next, 'let FLOOR_DEFAULT = ', ';\nconst BASE_MAT', materialConfig.defaults.floor, 'FLOOR_DEFAULT');
+  next = replaceAssigned(next, 'let FLOOR_DEFAULT = ', ';\nlet MATERIAL_ORDER', materialConfig.defaults.floor, 'FLOOR_DEFAULT');
+  next = replaceAssigned(next, 'let MATERIAL_ORDER = ', ';\nconst BASE_MAT', materialOrder, 'MATERIAL_ORDER');
   next = replaceAssigned(next, 'let PRESET_GROUPS = ', ';\nconst METRIC_LABELS', presetGroups, 'PRESET_GROUPS');
   next = replaceAssigned(next, 'const BASE_PLAN_LAYER_PRESETS = ', ';\nfunction allPresets', planLayerConfig, 'BASE_PLAN_LAYER_PRESETS');
   return next;
