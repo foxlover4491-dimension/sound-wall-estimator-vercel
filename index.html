@@ -703,6 +703,12 @@ td{ border-bottom:0.5px solid var(--border); }
   border-radius:var(--radius);
   background:var(--surface-2);
 }
+.final-room-viz-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(180px,0.36fr);
+  gap:10px;
+  align-items:stretch;
+}
 .final-room-svg svg{
   display:block;
   width:100%;
@@ -714,12 +720,64 @@ td{ border-bottom:0.5px solid var(--border); }
 .final-room-svg .face-right{ fill:var(--bg-success); stroke:var(--text-primary); stroke-width:2; }
 .final-room-svg .face-floor{ fill:var(--bg-pro); stroke:var(--text-primary); stroke-width:1.5; stroke-dasharray:5 5; opacity:0.9; }
 .final-room-svg .room-edge{ fill:none; stroke:var(--text-primary); stroke-width:2.5; stroke-linejoin:round; stroke-linecap:round; }
+.final-room-svg .room-wall-1{ stroke:var(--fill-pro); stroke-width:5; stroke-linecap:round; }
+.final-room-svg .room-wall-3{ stroke:var(--fill-danger); stroke-width:5; stroke-linecap:round; }
 .final-room-svg .room-axis{ stroke:var(--fill-success); stroke-width:1.2; opacity:0.5; }
 .final-room-svg .room-dim,
 .final-room-svg .room-dim-guide{ fill:none; stroke:var(--text-muted); stroke-width:1.35; }
 .final-room-svg .room-dim-guide{ opacity:0.75; }
 .final-room-svg text{ fill:var(--text-primary); font-weight:400; }
 .final-room-svg .room-muted{ fill:var(--text-muted); }
+.final-wall-minimap{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  border:0.5px solid var(--border);
+  border-radius:var(--radius);
+  background:var(--surface-2);
+  padding:8px;
+  overflow:hidden;
+}
+.final-wall-minimap-title{
+  font-size:11px;
+  font-weight:700;
+  color:var(--text-secondary);
+}
+.final-wall-minimap .plan-outline{
+  fill:var(--surface-1);
+  stroke:var(--text-primary);
+  stroke-width:2;
+}
+.final-wall-minimap .plan-wall{
+  fill:none;
+  stroke-width:12;
+  stroke-linecap:round;
+}
+.final-wall-minimap .plan-wall.w1{ stroke:var(--fill-pro); }
+.final-wall-minimap .plan-wall.w2{ stroke:var(--fill-success); }
+.final-wall-minimap .plan-wall.w3{ stroke:var(--fill-danger); }
+.final-wall-minimap .plan-wall.w4{ stroke:var(--fill-accent); }
+.final-wall-minimap .plan-muted{ fill:var(--text-muted); }
+.final-wall-minimap .plan-key{
+  display:grid;
+  gap:3px;
+  font-size:10px;
+  color:var(--text-muted);
+}
+.final-wall-minimap .plan-key-row{
+  display:grid;
+  grid-template-columns:38px minmax(0,1fr);
+  gap:4px;
+  min-width:0;
+}
+.final-wall-minimap .plan-key-row strong{
+  color:var(--text-secondary);
+}
+.final-wall-minimap .plan-key-row span{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
 .final-room-metrics{
   margin-top:8px;
   margin-bottom:0;
@@ -1554,6 +1612,9 @@ td{ border-bottom:0.5px solid var(--border); }
   .final-room-grid,
   .final-section-grid{ grid-template-columns:1fr; }
   .final-panel-head{ align-items:flex-start; }
+  .final-room-viz-grid{ grid-template-columns:1fr; }
+  .final-wall-minimap{ padding:7px; }
+  .final-wall-minimap .plan-key{ grid-template-columns:repeat(2, minmax(0, 1fr)); }
   .final-room-svg svg{ min-width:0; }
   .final-room-metrics.metric-grid.cols-2{ grid-template-columns:repeat(2, minmax(0, 1fr)); }
   .final-room-metrics .metric-card{ padding:8px; }
@@ -1776,7 +1837,10 @@ td{ border-bottom:0.5px solid var(--border); }
         <div class="planner-section-title" style="margin-bottom:0;">공간 검산</div>
         <div id="finalRoomDimensionBadge" class="final-badge">치수 대기</div>
       </div>
-      <div id="finalRoomIso" class="final-room-svg"></div>
+      <div class="final-room-viz-grid">
+        <div id="finalRoomIso" class="final-room-svg"></div>
+        <div id="finalWallMiniMap" class="final-wall-minimap"></div>
+      </div>
       <div class="metric-grid cols-2 final-room-metrics">
         <div class="metric-card">
           <div class="metric-label">가로 기준</div>
@@ -5958,15 +6022,18 @@ function shortLabel(text, limit=18){
 }
 function renderFinalRoomIso(summary){
   const wrap = document.getElementById('finalRoomIso');
+  const mini = document.getElementById('finalWallMiniMap');
   const badge = document.getElementById('finalRoomDimensionBadge');
   if(!wrap) return;
   const w = round2(summary.widthMm || 0);
   const d = round2(summary.depthMm || 0);
   const h = round2(summary.innerHeightMm || summary.outerHeightMm || 0);
   const rowsByKey = Object.fromEntries(summary.rows.filter((row)=>row.type==='wall').map((row)=>[row.sideKey, row]));
+  const wall1 = rowsByKey.wall1;
   const ceilRow = summary.rows.find((row)=>row.type==='ceil');
   const floorRow = summary.rows.find((row)=>row.type==='floor');
   const wall2 = rowsByKey.wall2;
+  const wall3 = rowsByKey.wall3;
   const wall4 = rowsByKey.wall4;
   const dimText = w && d && h ? `${w} × ${d} × ${h}mm` : '선택 대기';
   if(badge) badge.textContent = dimText;
@@ -5984,6 +6051,8 @@ function renderFinalRoomIso(summary){
     <polygon class="face-floor" points="192,328 332,424 654,332 514,236"></polygon>
     <polyline class="room-edge" points="192,150 514,58 654,154 654,332 332,424 192,328 192,150 332,246 654,154"></polyline>
     <line class="room-edge" x1="332" y1="246" x2="332" y2="424"></line>
+    <line class="room-wall-3" x1="194" y1="151" x2="652" y2="155"></line>
+    <line class="room-wall-1" x1="194" y1="327" x2="652" y2="331"></line>
     <line class="room-dim-guide" x1="192" y1="150" x2="146" y2="124"></line>
     <line class="room-dim-guide" x1="514" y1="58" x2="468" y2="32"></line>
     <line class="room-dim" x1="146" y1="124" x2="468" y2="32" marker-start="url(#final-room-arrow)" marker-end="url(#final-room-arrow)"></line>
@@ -6002,8 +6071,33 @@ function renderFinalRoomIso(summary){
     <text x="500" y="298" text-anchor="middle">${label(wall2?.label || '벽체 2')}</text>
     <text class="room-muted" x="500" y="319" text-anchor="middle">${label(wall2?.capture?.name, 14)}</text>
     <text class="room-muted" x="432" y="418" text-anchor="middle">바닥 · ${label(floorRow?.capture?.name, 14)}</text>
-    <text class="room-muted" x="310" y="462" text-anchor="middle">벽체 1·3은 앞/뒤 면으로 조합</text>
+    <text x="612" y="372" text-anchor="start">벽체 1</text>
+    <text x="210" y="130" text-anchor="middle">벽체 3</text>
+    <text class="room-muted" x="390" y="462" text-anchor="middle">벽체 1·3은 선으로, 전체 방향은 평면 미니맵에서 확인</text>
   </svg>`;
+  if(mini){
+    const wallName = (row)=>label(row?.capture?.name, 13);
+    mini.innerHTML = `<div class="final-wall-minimap-title">벽체 번호 미니맵</div>
+      <svg viewBox="0 0 360 330" role="img" aria-label="벽체 1부터 벽체 4까지 번호를 확인하는 평면 미니맵">
+        <rect class="plan-outline" x="72" y="66" width="216" height="196" rx="8"></rect>
+        <line class="plan-wall w3" x1="82" y1="66" x2="278" y2="66"></line>
+        <line class="plan-wall w2" x1="288" y1="76" x2="288" y2="252"></line>
+        <line class="plan-wall w1" x1="82" y1="262" x2="278" y2="262"></line>
+        <line class="plan-wall w4" x1="72" y1="76" x2="72" y2="252"></line>
+        <text x="180" y="42" text-anchor="middle">벽체 3</text>
+        <text x="320" y="168" text-anchor="middle" transform="rotate(90 320 168)">벽체 2</text>
+        <text x="180" y="306" text-anchor="middle">벽체 1</text>
+        <text x="40" y="168" text-anchor="middle" transform="rotate(-90 40 168)">벽체 4</text>
+        <text class="plan-muted" x="180" y="156" text-anchor="middle">평면</text>
+        <text class="plan-muted" x="180" y="179" text-anchor="middle">번호 확인</text>
+      </svg>
+      <div class="plan-key">
+        <div class="plan-key-row"><strong>벽체1</strong><span>${wallName(wall1)}</span></div>
+        <div class="plan-key-row"><strong>벽체2</strong><span>${wallName(wall2)}</span></div>
+        <div class="plan-key-row"><strong>벽체3</strong><span>${wallName(wall3)}</span></div>
+        <div class="plan-key-row"><strong>벽체4</strong><span>${wallName(wall4)}</span></div>
+      </div>`;
+  }
 }
 function renderFinalSelectedDetails(summary){
   const el = document.getElementById('finalSelectedDetails');
