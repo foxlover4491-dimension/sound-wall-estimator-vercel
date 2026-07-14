@@ -1883,7 +1883,11 @@ let MAT = {
     "frameKey": "FRAME3030",
     "fabricKey": "FABRIC",
     "category": "finish",
-    "displaySpec": ""
+    "displaySpec": "",
+    "sw": 30,
+    "sd": 30,
+    "sh": 3600,
+    "density": 450
   },
   "FABRIC": {
     "label": "마감 패브릭",
@@ -1948,37 +1952,9 @@ let MAT = {
     "hidden": true,
     "displaySpec": ""
   },
-  "POLY25_ADD": {
-    "label": "폴리에스터 40K 25T(덧붙이기)",
-    "t": 25,
-    "kind": "wool",
-    "sw": 450,
-    "sh": 1000,
-    "density": 40,
-    "acousticThickness": 25,
-    "acousticFamily": "polyester",
-    "category": "finish",
-    "bomCategory": "frame",
-    "hidden": true,
-    "displaySpec": ""
-  },
   "POLY50": {
     "label": "폴리에스터 40K 50T(충진)",
     "t": 0,
-    "kind": "wool",
-    "sw": 450,
-    "sh": 1000,
-    "density": 40,
-    "acousticThickness": 50,
-    "acousticFamily": "polyester",
-    "category": "finish",
-    "bomCategory": "frame",
-    "hidden": true,
-    "displaySpec": ""
-  },
-  "POLY50_ADD": {
-    "label": "폴리에스터 40K 50T(덧붙이기)",
-    "t": 50,
     "kind": "wool",
     "sw": 450,
     "sh": 1000,
@@ -2060,6 +2036,50 @@ let MAT = {
     "category": "frame",
     "displaySpec": ""
   },
+  "RUBBER": {
+    "label": "원형방진고무",
+    "t": 30,
+    "kind": "gridpad",
+    "sw": 455,
+    "sh": 455,
+    "density": 1100,
+    "category": "frame",
+    "displaySpec": ""
+  },
+  "CARPET7": {
+    "label": "마감 카펫타일 7T",
+    "t": 7,
+    "kind": "board",
+    "ply": 1,
+    "sw": 500,
+    "sh": 500,
+    "density": 429,
+    "category": "finish",
+    "areaOnly": true,
+    "displaySpec": ""
+  },
+  "DECO3": {
+    "label": "마감 데코타일 3T",
+    "t": 3,
+    "kind": "board",
+    "ply": 1,
+    "sw": 300,
+    "sh": 600,
+    "density": 1667,
+    "category": "finish",
+    "areaOnly": true,
+    "displaySpec": ""
+  },
+  "USRMRG2NX7L": {
+    "label": "차음석고 15T 1P",
+    "t": 15,
+    "kind": "board",
+    "ply": 1,
+    "sw": 900,
+    "sh": 1800,
+    "density": 1000,
+    "category": "frame"
+  },
   "CONC200": {
     "label": "콘크리트 슬라브 200T",
     "t": 200,
@@ -2117,49 +2137,33 @@ let MAT = {
     "category": "frame",
     "displaySpec": "200kg / A=180 / 900x900"
   },
-  "RUBBER": {
-    "label": "원형방진고무",
-    "t": 30,
-    "kind": "gridpad",
-    "sw": 455,
-    "sh": 455,
-    "density": 1100,
-    "category": "frame",
-    "displaySpec": ""
-  },
-  "CARPET7": {
-    "label": "마감 카펫타일 7T",
-    "t": 7,
-    "kind": "board",
-    "ply": 1,
-    "sw": 500,
-    "sh": 500,
-    "density": 429,
+  "POLY25_ADD": {
+    "label": "폴리에스터 40K 25T(덧붙이기)",
+    "t": 25,
+    "kind": "wool",
+    "sw": 450,
+    "sh": 1000,
+    "density": 40,
+    "acousticThickness": 25,
+    "acousticFamily": "polyester",
     "category": "finish",
-    "areaOnly": true,
+    "bomCategory": "frame",
+    "hidden": true,
     "displaySpec": ""
   },
-  "DECO3": {
-    "label": "마감 데코타일 3T",
-    "t": 3,
-    "kind": "board",
-    "ply": 1,
-    "sw": 300,
-    "sh": 600,
-    "density": 1667,
+  "POLY50_ADD": {
+    "label": "폴리에스터 40K 50T(덧붙이기)",
+    "t": 50,
+    "kind": "wool",
+    "sw": 450,
+    "sh": 1000,
+    "density": 40,
+    "acousticThickness": 50,
+    "acousticFamily": "polyester",
     "category": "finish",
-    "areaOnly": true,
+    "bomCategory": "frame",
+    "hidden": true,
     "displaySpec": ""
-  },
-  "USRMRG2NX7L": {
-    "label": "차음석고 15T 1P",
-    "t": 15,
-    "kind": "board",
-    "ply": 1,
-    "sw": 900,
-    "sh": 1800,
-    "density": 1000,
-    "category": "frame"
   }
 };
 const MERGE_GROUPS = {
@@ -2213,18 +2217,11 @@ let SUPPLIERS = {
   "PLY15": "오케이우드",
   "PLY15_2P": "오케이우드",
   "PB15": "오케이우드",
-  "CONC200": "-",
-  "SHANGER50": "효성방진",
-  "SHANGER100": "효성방진",
-  "SHANGER150": "효성방진",
-  "SHANGER200": "효성방진",
   "SQPIPE": "성원철강",
   "RUBBER": "효성방진",
   "SH": "블랙홀",
   "POLY25": "블랙홀",
-  "POLY25_ADD": "블랙홀",
   "POLY50": "블랙홀",
-  "POLY50_ADD": "블랙홀",
   "PERF9": "레고리스",
   "HWD75": "오케이우드",
   "FABRIC": "위즈텍스",
@@ -2232,7 +2229,14 @@ let SUPPLIERS = {
   "CARPET7": "우성데코",
   "DECO3": "우성데코",
   "FAB30": "오케이우드",
-  "USRMRG2NX7L": "오케이우드"
+  "USRMRG2NX7L": "오케이우드",
+  "CONC200": "-",
+  "SHANGER50": "효성방진",
+  "SHANGER100": "효성방진",
+  "SHANGER150": "효성방진",
+  "SHANGER200": "효성방진",
+  "POLY25_ADD": "블랙홀",
+  "POLY50_ADD": "블랙홀"
 };
 const COMPOSITES = {
   C_SANDWICH: {label:'차음석고 1P+차음시트+차음석고 1P', parts:['S1','SH','S1']},
@@ -2254,23 +2258,18 @@ let WALL_ITEMS = [
   "PLY15",
   "PLY15_2P",
   "PB15",
-  "CONC200",
   "FAB30",
   "ART9",
   "PERF9",
   "USRMRG2NX7L",
   "POLY25",
-  "POLY25_ADD",
   "POLY50",
-  "POLY50_ADD",
-  "BATT"
+  "BATT",
+  "CONC200",
+  "POLY25_ADD",
+  "POLY50_ADD"
 ];
 let CEIL_ITEMS = [
-  "CONC200",
-  "SHANGER50",
-  "SHANGER100",
-  "SHANGER150",
-  "SHANGER200",
   "SQPIPE",
   "FRAME3030",
   "GW50",
@@ -2286,13 +2285,17 @@ let CEIL_ITEMS = [
   "PERF9",
   "USRMRG2NX7L",
   "POLY25",
-  "POLY25_ADD",
   "POLY50",
-  "POLY50_ADD",
-  "BATT"
+  "BATT",
+  "CONC200",
+  "SHANGER50",
+  "SHANGER100",
+  "SHANGER150",
+  "SHANGER200",
+  "POLY25_ADD",
+  "POLY50_ADD"
 ];
 let FLOOR_ITEMS = [
-  "CONC200",
   "RUBBER",
   "SQPIPE",
   "W0",
@@ -2307,10 +2310,11 @@ let FLOOR_ITEMS = [
   "DECO3",
   "USRMRG2NX7L",
   "POLY50",
-  "POLY50_ADD",
   "POLY25",
+  "BATT",
+  "CONC200",
   "POLY25_ADD",
-  "BATT"
+  "POLY50_ADD"
 ];
 let WALL_DEFAULT = [
   "G",
@@ -2318,8 +2322,6 @@ let WALL_DEFAULT = [
   "G"
 ];
 let CEIL_DEFAULT = [
-  "CONC200",
-  "SHANGER100",
   "SQPIPE",
   "FRAME3030",
   "GW50",
@@ -2328,7 +2330,6 @@ let CEIL_DEFAULT = [
   "S1"
 ];
 let FLOOR_DEFAULT = [
-  "CONC200",
   "RUBBER",
   "SQPIPE",
   "W0",
@@ -2372,7 +2373,7 @@ const WALL_ZONE_META = {
 let PRESET_GROUPS = [
   {
     "key": "ROOM_ROOM",
-    "label": "룸과 룸 사이",
+    "label": "룸과 룸사이 레이어",
     "presets": [
       {
         "n": 1,
@@ -2796,7 +2797,11 @@ let PRESET_GROUPS = [
           "W0",
           "S1",
           "SH",
-          "S1"
+          "S1",
+          "G",
+          "BATT",
+          "BATT",
+          "FAB30"
         ],
         "zones": [
           "outer",
@@ -2823,7 +2828,11 @@ let PRESET_GROUPS = [
           "outer",
           "outer",
           "outer",
-          "inner"
+          "outer",
+          "outer",
+          "finish",
+          "finish",
+          "finish"
         ],
         "m": [
           "76~82",
@@ -2839,7 +2848,7 @@ let PRESET_GROUPS = [
   },
   {
     "key": "ROOM_CORRIDOR",
-    "label": "복도와 인접한 벽체",
+    "label": "복도 인접 레이어",
     "presets": [
       {
         "n": 1,
@@ -2856,6 +2865,7 @@ let PRESET_GROUPS = [
           "S1",
           "BATT",
           "BATT",
+          "POLY50",
           "FAB30"
         ],
         "zones": [
@@ -2868,6 +2878,7 @@ let PRESET_GROUPS = [
           "outer",
           "outer",
           "outer",
+          "finish",
           "finish",
           "finish",
           "finish"
@@ -2886,12 +2897,13 @@ let PRESET_GROUPS = [
   },
   {
     "key": "ROOM_SLAB",
-    "label": "슬라브와 인접한 벽체",
+    "label": "슬라브 옆 레이어",
     "presets": [
       {
         "n": 1,
         "name": "슬라브 인접 기본",
         "seq": [
+          "CONC200",
           "A50",
           "ST",
           "W0",
@@ -2901,9 +2913,15 @@ let PRESET_GROUPS = [
           "ST",
           "S1",
           "SH",
-          "S1"
+          "S1",
+          "POLY50",
+          "BATT",
+          "BATT",
+          "FAB30",
+          "FABRIC"
         ],
         "zones": [
+          "structural",
           "gap",
           "inner",
           "inner",
@@ -2913,7 +2931,12 @@ let PRESET_GROUPS = [
           "inner",
           "inner",
           "inner",
-          "inner"
+          "inner",
+          "inner",
+          "finish",
+          "finish",
+          "finish",
+          "finish"
         ],
         "m": [
           "54~59",
@@ -2951,88 +2974,20 @@ const BASE_PLAN_LAYER_PRESETS = {
   "ceil": [
     {
       "key": "CEIL_SAVED",
-      "label": "천장 저장 레이어",
+      "label": "슬라브 아래 레이어",
       "presets": [
         {
           "n": 1,
           "name": "천장 기본형",
           "seq": [
-            "CONC200",
-            "SHANGER100",
             "SQPIPE",
             "FRAME3030",
             "GW50",
             "S1",
             "SH",
-            "S1"
-          ],
-          "m": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
-          ]
-        }
-      ]
-    },
-    {
-      "key": "CEILGROUPMRG4ABST",
-      "label": "새 천장 구조 유형 2",
-      "presets": [
-        {
-          "n": 1,
-          "name": "새 단계 1",
-          "seq": [
+            "S1",
             "SQPIPE",
-            "SQPIPE",
-            "PERF9",
-            "SQPIPE"
-          ],
-          "m": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
-          ]
-        }
-      ]
-    },
-    {
-      "key": "CEILGROUPMRG7GBHL",
-      "label": "새 천장 구조 유형 3",
-      "presets": [
-        {
-          "n": 1,
-          "name": "새 단계 1",
-          "seq": [
-            "SQPIPE"
-          ],
-          "m": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
-          ]
-        }
-      ]
-    },
-    {
-      "key": "CEILGROUPMRG7GDSU",
-      "label": "새 천장 구조 유형 4",
-      "presets": [
-        {
-          "n": 1,
-          "name": "새 단계 1",
-          "seq": [
+            "CONC200",
             "SQPIPE"
           ],
           "m": [
@@ -3051,13 +3006,12 @@ const BASE_PLAN_LAYER_PRESETS = {
   "floor": [
     {
       "key": "FLOOR_SAVED",
-      "label": "바닥 저장 레이어",
+      "label": "슬라브 위 레이어",
       "presets": [
         {
           "n": 1,
           "name": "바닥 기본형",
           "seq": [
-            "CONC200",
             "RUBBER",
             "SQPIPE",
             "W0",
