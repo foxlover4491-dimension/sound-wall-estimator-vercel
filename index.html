@@ -1007,17 +1007,28 @@ td{ border-bottom:0.5px solid var(--border); }
   button{ min-height:40px; }
   input[type="number"], select{ font-size:16px; min-height:40px; }
   .tab-bar{
-    display:grid;
-    grid-template-columns:repeat(8, minmax(0, 1fr));
+    display:flex;
+    flex-wrap:nowrap;
+    gap:6px;
     position:sticky;
     top:0;
     z-index:20;
     margin:0 -10px 12px;
     padding:8px 10px;
     background:var(--surface-2);
-    overflow:visible;
+    overflow-x:auto;
+    overflow-y:hidden;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
   }
-  .tab-bar button{ min-width:0; padding:8px 3px; font-size:12px; white-space:nowrap; }
+  .tab-bar::-webkit-scrollbar{ display:none; }
+  .tab-bar button{
+    flex:0 0 auto;
+    min-width:72px;
+    padding:8px 10px;
+    font-size:12px;
+    white-space:nowrap;
+  }
   .responsive-grid{ grid-template-columns:1fr !important; }
   .responsive-grid > *{ min-width:0; }
   .metric-grid{ grid-template-columns:1fr !important; }
@@ -1218,41 +1229,73 @@ td{ border-bottom:0.5px solid var(--border); }
   }
   #tabLayersAdmin .material-chip-row{
     grid-template-columns:minmax(0, 1fr) auto;
-    gap:4px;
-    padding:2px 5px;
-    min-height:28px;
+    align-items:start;
+    gap:5px;
+    padding:4px 5px;
+    min-height:0;
   }
   #tabLayersAdmin .material-chip-main{
-    flex-wrap:nowrap;
-    gap:4px;
+    display:grid;
+    grid-template-columns:minmax(0, 1fr) 54px;
+    grid-template-areas:
+      "select thick"
+      "search search";
+    gap:4px 5px;
+    width:100%;
+    min-width:0;
+  }
+  #tabLayersAdmin .material-chip-main.has-zone{
+    grid-template-columns:minmax(0, 1fr) 62px 54px;
+    grid-template-areas:
+      "select select thick"
+      "search zone zone";
   }
   #tabLayersAdmin .material-chip-no{ display:none; }
   #tabLayersAdmin .material-chip-select{
+    grid-area:select;
+    width:100%;
     min-width:0;
-    font-size:11px;
+    min-height:28px;
+    font-size:12px;
+    line-height:1.2;
   }
   #tabLayersAdmin .material-chip-search{
-    flex:1 1 88px;
-    min-width:80px;
-    font-size:11px;
+    grid-area:search;
+    flex:unset;
+    width:100%;
+    min-width:0;
+    min-height:26px;
+    font-size:12px;
+    line-height:1.2;
   }
   #tabLayersAdmin .material-zone-select{
-    flex:0 0 64px;
-    min-width:64px;
+    grid-area:zone;
+    flex:unset;
+    width:100%;
+    min-width:0;
+    min-height:26px;
     font-size:11px;
   }
   #tabLayersAdmin .material-chip-thickness{
-    flex:0 0 42px;
-    font-size:10px;
+    grid-area:thick;
+    flex:unset;
+    justify-self:end;
+    align-self:center;
+    min-width:48px;
+    font-size:11px;
+    text-align:right;
+    white-space:nowrap;
   }
   #tabLayersAdmin .material-chip-actions{
     justify-content:flex-end;
     gap:2px;
   }
   #tabLayersAdmin .material-chip-actions button{
-    width:24px;
-    min-width:24px;
-    min-height:24px;
+    width:26px;
+    min-width:26px;
+    min-height:26px;
+    height:26px;
+    padding:0;
   }
   .planner-grid,
   .planner-fields,
@@ -5718,7 +5761,7 @@ function renderPresetAdmin(){
             const layerMeasure = layerValueText({key, val:draftMaterialThicknessForKey(key)});
             return `
             <div class="material-chip-row ${wallZoneClass(zone)}">
-              <div class="material-chip-main">
+              <div class="material-chip-main has-zone">
                 <div class="material-chip-no">${seqIndex+1}</div>
                 <input class="material-chip-search" type="text" data-preset-search="${index}" data-preset-seq-index="${seqIndex}" placeholder="자재 검색">
                 <select class="material-chip-select" data-preset-seq="${index}" data-preset-seq-index="${seqIndex}">
