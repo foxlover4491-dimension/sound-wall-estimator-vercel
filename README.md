@@ -11,7 +11,7 @@
 ## Files
 
 - `index.html`: 앱 전체 소스입니다.
-- `.vercel/project.json`: 현재 Vercel 프로젝트 연결 정보입니다.
+- `.vercel/project.json`: 현재 이 Mac의 Vercel CLI 연결 정보입니다. 보통 GitHub에는 올리지 않습니다.
 
 ## Local Preview
 
@@ -29,6 +29,12 @@ http://127.0.0.1:8787
 
 ```bash
 pnpm dlx vercel --prod --yes
+```
+
+다른 PC에서 처음 배포할 때 Vercel 연결을 다시 묻는다면 아래 프로젝트에 연결합니다.
+
+```text
+sound-wall-estimator-vercel
 ```
 
 ## Notes For Codex
