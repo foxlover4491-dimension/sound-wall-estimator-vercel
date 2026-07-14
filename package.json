@@ -1,0 +1,9 @@
+{
+  "name": "sound-wall-estimator-vercel",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "preview": "python3 -m http.server 8787",
+    "deploy": "vercel --prod --yes"
+  }
+}
