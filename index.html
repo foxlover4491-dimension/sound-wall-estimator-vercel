@@ -1537,8 +1537,8 @@ td{ border-bottom:0.5px solid var(--border); }
             <th>간격/격자X</th>
             <th>격자Y</th>
             <th>겹수</th>
-            <th>밀도</th>
-            <th>면밀도</th>
+            <th>밀도/하중</th>
+            <th>면밀도/하중</th>
             <th>거래처</th>
             <th>벽</th>
             <th>천장</th>
@@ -1914,6 +1914,63 @@ let MAT = {
     "category": "frame",
     "displaySpec": ""
   },
+  "CONC200": {
+    "label": "콘크리트 슬라브 200T",
+    "t": 200,
+    "kind": "board",
+    "ply": 1,
+    "sw": 1000,
+    "sh": 1000,
+    "density": 2400,
+    "category": "frame",
+    "structuralBase": true,
+    "excludeFromBom": true,
+    "displaySpec": "기존 구조체"
+  },
+  "SHANGER50": {
+    "label": "방진스프링 행거 50kg",
+    "t": 0,
+    "kind": "hanger",
+    "sw": 900,
+    "sh": 900,
+    "loadKg": 50,
+    "dropMm": 100,
+    "category": "frame",
+    "displaySpec": "50kg / 900x900"
+  },
+  "SHANGER100": {
+    "label": "방진스프링 행거 100kg",
+    "t": 0,
+    "kind": "hanger",
+    "sw": 900,
+    "sh": 900,
+    "loadKg": 100,
+    "dropMm": 100,
+    "category": "frame",
+    "displaySpec": "100kg / 900x900"
+  },
+  "SHANGER150": {
+    "label": "방진스프링 행거 150kg",
+    "t": 0,
+    "kind": "hanger",
+    "sw": 900,
+    "sh": 900,
+    "loadKg": 150,
+    "dropMm": 100,
+    "category": "frame",
+    "displaySpec": "150kg / 900x900"
+  },
+  "SHANGER200": {
+    "label": "방진스프링 행거 200kg",
+    "t": 0,
+    "kind": "hanger",
+    "sw": 900,
+    "sh": 900,
+    "loadKg": 200,
+    "dropMm": 100,
+    "category": "frame",
+    "displaySpec": "200kg / 900x900"
+  },
   "RUBBER": {
     "label": "원형방진고무",
     "t": 30,
@@ -1974,6 +2031,11 @@ const BOM_ORDER = [
   'PLY15',
   'PLY15_2P',
   'PB15',
+  'CONC200',
+  'SHANGER50',
+  'SHANGER100',
+  'SHANGER150',
+  'SHANGER200',
   'SQPIPE',
   'RUBBER',
   'SH',
@@ -2003,6 +2065,11 @@ let SUPPLIERS = {
   "PLY15": "오케이우드",
   "PLY15_2P": "오케이우드",
   "PB15": "오케이우드",
+  "CONC200": "-",
+  "SHANGER50": "효성방진",
+  "SHANGER100": "효성방진",
+  "SHANGER150": "효성방진",
+  "SHANGER200": "효성방진",
   "SQPIPE": "성원철강",
   "RUBBER": "효성방진",
   "SH": "블랙홀",
@@ -2037,6 +2104,7 @@ let WALL_ITEMS = [
   "PLY15",
   "PLY15_2P",
   "PB15",
+  "CONC200",
   "FAB30",
   "ART9",
   "PERF9",
@@ -2046,6 +2114,11 @@ let WALL_ITEMS = [
   "BATT"
 ];
 let CEIL_ITEMS = [
+  "CONC200",
+  "SHANGER50",
+  "SHANGER100",
+  "SHANGER150",
+  "SHANGER200",
   "SQPIPE",
   "FRAME3030",
   "GW50",
@@ -2065,6 +2138,7 @@ let CEIL_ITEMS = [
   "BATT"
 ];
 let FLOOR_ITEMS = [
+  "CONC200",
   "RUBBER",
   "SQPIPE",
   "W0",
@@ -2088,6 +2162,8 @@ let WALL_DEFAULT = [
   "G"
 ];
 let CEIL_DEFAULT = [
+  "CONC200",
+  "SHANGER100",
   "SQPIPE",
   "FRAME3030",
   "GW50",
@@ -2096,6 +2172,7 @@ let CEIL_DEFAULT = [
   "S1"
 ];
 let FLOOR_DEFAULT = [
+  "CONC200",
   "RUBBER",
   "SQPIPE",
   "W0",
@@ -2704,7 +2781,7 @@ const SETTINGS_EXPORT_APP = 'sound-wall-estimator';
 const SETTINGS_EXPORT_VERSION = 1;
 const FACTORY_RESET_PASSWORD_KEY = 'soundIsolationEstimatorFactoryResetPasswordV1';
 const DEFAULT_FACTORY_RESET_PASSWORD = 'reset';
-const MATERIAL_KIND_OPTIONS = ['board','stud','line','wool','grid','gridpad','gap','fabricFrame'];
+const MATERIAL_KIND_OPTIONS = ['board','stud','line','wool','grid','gridpad','hanger','gap','fabricFrame'];
 const MATERIAL_CATEGORY_OPTIONS = ['frame','finish'];
 
 function deepCopy(value){
@@ -2722,6 +2799,8 @@ const BASE_PLAN_LAYER_PRESETS = {
           "n": 1,
           "name": "천장 기본형",
           "seq": [
+            "CONC200",
+            "SHANGER100",
             "SQPIPE",
             "FRAME3030",
             "GW50",
@@ -2820,6 +2899,7 @@ const BASE_PLAN_LAYER_PRESETS = {
           "n": 1,
           "name": "바닥 기본형",
           "seq": [
+            "CONC200",
             "RUBBER",
             "SQPIPE",
             "W0",
@@ -2870,7 +2950,7 @@ function normalizeKey(text){
   return raw || `USR${Date.now().toString(36).toUpperCase()}`;
 }
 
-const REQUIRED_BUNDLED_MATERIALS = ['PLY15_2P'];
+const REQUIRED_BUNDLED_MATERIALS = ['PLY15_2P', 'CONC200', 'SHANGER50', 'SHANGER100', 'SHANGER150', 'SHANGER200'];
 function ensureBundledMaterialAvailability(next, key){
   if(!next.MAT[key] && BASE_MAT[key]){
     next.MAT[key] = deepCopy(BASE_MAT[key]);
@@ -3087,7 +3167,7 @@ function listEditableMaterialKeys(sourceMat){
 //   종류(kind) → 구분(category) → 같은 제품 묶음 → 두께 순.
 //   "같은 제품"은 병합키(mergeKey)나 제품 기본명(라벨에서 숫자 앞부분)으로 묶어
 //   일반석고 1P·2P, 차음석고 1P·2P처럼 인접하게 정렬한다.
-const MATERIAL_KIND_RANK = {board:0, stud:1, line:2, wool:3, grid:4, gridpad:5, gap:6, fabricFrame:7};
+const MATERIAL_KIND_RANK = {board:0, stud:1, line:2, wool:3, grid:4, gridpad:5, hanger:6, gap:7, fabricFrame:8};
 const MATERIAL_CATEGORY_RANK = {frame:0, finish:1};
 function productBaseName(label){
   const s = String(label || '');
@@ -3192,7 +3272,7 @@ function normalizeMaterialConfig(config){
     if(item.kind !== 'gap'){
       item.category = MATERIAL_CATEGORY_OPTIONS.includes(item.category) ? item.category : 'frame';
     }
-    ['t','sw','sh','sd','csw','csh','stick','spacing','ply','density','areaMass','acousticThickness'].forEach((field)=>{
+    ['t','sw','sh','sd','csw','csh','stick','spacing','ply','density','areaMass','acousticThickness','loadKg','dropMm'].forEach((field)=>{
       if(item[field] == null || item[field] === '') return;
       const num = parseFloat(item[field]);
       item[field] = Number.isFinite(num) ? num : 0;
@@ -3204,6 +3284,12 @@ function normalizeMaterialConfig(config){
       if(!item.csh) item.csh = item.t || item.csw || 50;
       if(!item.sw) item.sw = 450;
       if(!item.stick) item.stick = 6000;
+    }
+    if(item.kind === 'hanger'){
+      if(!item.sw) item.sw = 900;
+      if(!item.sh) item.sh = 900;
+      if(!item.loadKg) item.loadKg = 100;
+      if(!item.dropMm) item.dropMm = 100;
     }
     migrateLegacyTotalThickness(item, key);
   });
@@ -3578,7 +3664,7 @@ function renderRef(){
   const zones = inferredWallZonesFromSeq(preset.seq, preset.zones || []);
   const infos = classifySeq(preset.seq, zones);
   const items = preset.seq.filter((k)=>MAT[k]).map((k,i)=>({key:k, val:materialThicknessMm(MAT[k]), zone:zones[i], role:infos[i].role, label:infos[i].label, groupId:infos[i].groupId}));
-  document.getElementById('refLayerList').innerHTML = groupedRowsHTML(items, (it)=>`<span style="font-size:12px; min-width:40px; text-align:right;">${it.val}mm</span>`);
+  document.getElementById('refLayerList').innerHTML = groupedRowsHTML(items, (it)=>`<span style="font-size:12px; min-width:40px; text-align:right;">${layerValueText(it)}</span>`);
   document.getElementById('refTotalThick').textContent = presetThickness(preset) + 'mm';
   document.getElementById('refName').textContent = `${preset.groupLabel || ''} · ${preset.n}단계 · ${preset.name}`;
   document.getElementById('refMetricsTable').innerHTML = metricsForPreset(preset, mode).map((v,i)=>`<tr><td style="padding:3px 0; color:var(--text-secondary);">${METRIC_LABELS[i]}</td><td style="padding:3px 0; text-align:right;">${v}</td></tr>`).join('');
@@ -3637,7 +3723,7 @@ function heightForItem(item, htOuterM, htInnerM){
 }
 
 function emptyAgg(){
-  return {count:0, boardArea:0, woolArea:0, studPieces:0, studLength:0, gridCount:0, gridLength:0, gridPieces:0};
+  return {count:0, boardArea:0, woolArea:0, studPieces:0, studLength:0, gridCount:0, gridLength:0, gridPieces:0, hangerCount:0};
 }
 
 function isFinishItem(item){
@@ -3688,6 +3774,16 @@ function materialThicknessMm(m){
   const thickness = singleLayerThicknessMm(m);
   return m?.kind==='board' ? thickness * plyCountFor(m) : thickness;
 }
+function layerValueText(itemOrKey){
+  const key = typeof itemOrKey === 'string' ? itemOrKey : itemOrKey?.key;
+  const m = MAT[key];
+  if(!m) return '-';
+  if(m.kind === 'hanger') return m.loadKg ? `${round2(m.loadKg)}kg` : '방진행거';
+  const value = typeof itemOrKey === 'string'
+    ? materialThicknessMm(m)
+    : (parseFloat(itemOrKey?.val) || materialThicknessMm(m));
+  return `${round2(value)}mm`;
+}
 function supplierFor(bk){ return SUPPLIERS[bk] || '-'; }
 function surfaceMassForMaterial(m, key){
   if(!m) return 0;
@@ -3703,12 +3799,15 @@ function surfaceMassForMaterial(m, key){
   return 0;
 }
 function surfaceMassText(m, key){
+  if(m?.kind === 'hanger') return m.loadKg ? `${round2(m.loadKg)}kg` : '-';
   if(!m || (m.kind !== 'board' && m.kind !== 'wool')) return '-';
   const mass = surfaceMassForMaterial(m, key);
   return mass>0 ? `${round2(mass)}` : '-';
 }
 function specForMaterial(m){
   if(!m) return '-';
+  if(m.structuralBase) return m.displaySpec || '기존 구조체';
+  if(m.kind==='hanger') return `${m.loadKg || 0}kg / ${m.sw || 0}x${m.sh || 0}`;
   if(m.kind==='board') return m.areaOnly ? (m.unitLabel || '면적') : `${m.sw || 0}x${m.sh || 0}`;
   if(m.kind==='stud') return `${m.sw || 0}x${m.sd || 0}x${m.sh || 0} @${m.spacing || 450}`;
   if(m.kind==='fabricFrame') return `${m.sw || 0}x${m.sd || 0}x${m.sh || 0}`;
@@ -3717,6 +3816,12 @@ function specForMaterial(m){
   if(m.kind==='grid') return `${m.csw || 0}x${m.csh || 0} / ${m.sw || 0}x${m.sh || 0}격자 / ${m.stick || 0}`;
   if(m.kind==='gridpad') return `${m.sw || 0}x${m.sh || 0} 격자`;
   return '-';
+}
+function layerOptionMeta(m){
+  if(!m) return '-';
+  if(m.kind === 'hanger') return m.loadKg ? `${round2(m.loadKg)}kg` : '방진행거';
+  if(m.structuralBase) return `${round2(singleLayerThicknessMm(m))}mm 기존`;
+  return `${round2(materialThicknessMm(m))}mm`;
 }
 function materialSpacingM(m, fallbackGapM){
   const direct = parseFloat(m?.spacing);
@@ -3767,6 +3872,13 @@ function addPlanLinePieces(a, m, widthM, depthM, gapM){
   a.gridLength += totalLength;
   a.gridPieces += stickM>0 ? Math.ceil(totalLength/stickM) : 0;
 }
+function addGridPointCount(a, m, widthM, depthM, field='gridCount'){
+  const spW = (parseFloat(m.sw) || 0) / 1000;
+  const spD = (parseFloat(m.sh) || 0) / 1000;
+  const countW = spW>0 ? Math.ceil(widthM/spW)+1 : 0;
+  const countD = spD>0 ? Math.ceil(depthM/spD)+1 : 0;
+  a[field] += countW*countD;
+}
 function addWallLinePieces(a, m, lenM, h, gapM){
   const lineGap = (m.sw/1000) || gapM || 0.45;
   const posCount = lineGap>0 ? Math.ceil(lenM/lineGap)+1 : 0;
@@ -3801,7 +3913,7 @@ function isFinishBomKey(bk){
 }
 function bomKindRank(m){
   if((m.bomCategory || m.category)==='finish') return 99;
-  if(m.kind==='stud' || m.kind==='line' || m.kind==='grid' || m.kind==='gridpad') return 10;
+  if(m.kind==='stud' || m.kind==='line' || m.kind==='grid' || m.kind==='gridpad' || m.kind==='hanger') return 10;
   if(m.kind==='board') return 20;
   if(m.kind==='wool') return 30;
   return 40;
@@ -3830,7 +3942,7 @@ function computeAggGeneric(items, lenM, htFn, gapM, areaDeductFn=()=>0){
   const agg = {};
   items.forEach(item=>{
     const m = MAT[item.key];
-    if(m.kind==='gap') return;
+    if(m.kind==='gap' || m.excludeFromBom) return;
     const h = htFn(item);
     const baseArea = Math.max((lenM*h) - (areaDeductFn(item)||0), 0);
     if(m.kind==='fabricFrame'){
@@ -3849,10 +3961,9 @@ function computeAggGeneric(items, lenM, htFn, gapM, areaDeductFn=()=>0){
     } else if(m.kind==='line'){
       addWallLinePieces(a, m, lenM, h, gapM);
     } else if(m.kind==='gridpad'){
-      const spW = m.sw/1000, spD = m.sh/1000;
-      const countW = spW>0 ? Math.ceil(lenM/spW)+1 : 0;
-      const countD = spD>0 ? Math.ceil(h/spD)+1 : 0;
-      a.gridCount += countW*countD;
+      addGridPointCount(a, m, lenM, h, 'gridCount');
+    } else if(m.kind==='hanger'){
+      addGridPointCount(a, m, lenM, h, 'hangerCount');
     } else if(m.kind==='grid'){
       const spW = m.sw/1000 || gapM;
       const spD = m.sh/1000 || gapM;
@@ -3872,7 +3983,7 @@ function computePlanAgg(items, widthM, depthM, gapM){
   const area = widthM*depthM;
   items.forEach(item=>{
     const m = MAT[item.key];
-    if(m.kind==='gap') return;
+    if(m.kind==='gap' || m.excludeFromBom) return;
     if(m.kind==='fabricFrame'){
       addFabricFramePlan(agg, m, widthM, depthM, gapM, area);
       return;
@@ -3900,10 +4011,9 @@ function computePlanAgg(items, widthM, depthM, gapM){
         addPlanStudPieces(a, m, widthM, depthM, gapM);
       }
     } else if(m.kind==='gridpad'){
-      const spW = m.sw/1000, spD = m.sh/1000;
-      const countW = spW>0 ? Math.ceil(widthM/spW)+1 : 0;
-      const countD = spD>0 ? Math.ceil(depthM/spD)+1 : 0;
-      a.gridCount += countW*countD;
+      addGridPointCount(a, m, widthM, depthM, 'gridCount');
+    } else if(m.kind==='hanger'){
+      addGridPointCount(a, m, widthM, depthM, 'hangerCount');
     }
   });
   return agg;
@@ -3929,7 +4039,7 @@ function render(){
       const a = baseArea*(m.kind==='board' ? m.ply : 1);
       areaHTML = `<span class="layer-area">${Math.round(a*100)/100}m²</span>`;
     }
-    return `<span class="layer-thickness">${it.val}mm</span>${areaHTML || '<span class="layer-area"></span>'}`;
+    return `<span class="layer-thickness">${layerValueText(it)}</span>${areaHTML || '<span class="layer-area"></span>'}`;
   }, (i)=>`
       <button data-act="up" data-i="${i}" class="layer-button" aria-label="위로"><i class="ti ti-chevron-up" aria-hidden="true"></i></button>
       <button data-act="down" data-i="${i}" class="layer-button" aria-label="아래로"><i class="ti ti-chevron-down" aria-hidden="true"></i></button>
@@ -3963,7 +4073,7 @@ function populateSelectList(selectEl, keyList){
     } else {
       const m = MAT[k];
       const opt = document.createElement('option');
-      opt.value = k; opt.textContent = `${m.label} (${materialThicknessMm(m)}mm)`;
+      opt.value = k; opt.textContent = `${m.label} (${layerOptionMeta(m)})`;
       selectEl.appendChild(opt);
     }
   });
@@ -4072,7 +4182,7 @@ function plainRowsHTML(items, prefix, itemList, lenM, htM){
     }
     return `<div style="display:flex; align-items:center; gap:6px; border-radius:var(--radius); padding:6px 8px; ${rowStyle}">
       ${swapSelectHTML(it.key, itemList, prefix, i)}
-      <span class="layer-thickness">${it.val}mm</span>
+      <span class="layer-thickness">${layerValueText(it)}</span>
       ${areaHTML || '<span class="layer-area"></span>'}
       <button data-act="up" data-i="${i}" data-t="${prefix}" class="layer-button" aria-label="위로"><i class="ti ti-chevron-up" aria-hidden="true"></i></button>
       <button data-act="down" data-i="${i}" data-t="${prefix}" class="layer-button" aria-label="아래로"><i class="ti ti-chevron-down" aria-hidden="true"></i></button>
@@ -4211,6 +4321,9 @@ function analyzeAcousticAssembly(items, mode){
     bridgeCount:0,
     deckCount:0,
     hasRubber:false,
+    hangerCount:0,
+    hangerLoadKg:0,
+    structuralCount:0,
     derivedGapMm:0
   };
   items.forEach(item=>{
@@ -4221,6 +4334,17 @@ function analyzeAcousticAssembly(items, mode){
     if(m.kind==='gap'){
       gaps.push(Math.max(val, 1));
       leaves.push(newAcousticLeaf());
+      return;
+    }
+    if(m.kind==='hanger'){
+      f.hangerCount += 1;
+      f.hangerLoadKg = Math.max(f.hangerLoadKg, parseFloat(m.loadKg) || 0);
+      const hangerGap = Math.max(parseFloat(m.dropMm) || 100, 1);
+      f.derivedGapMm = Math.max(f.derivedGapMm, hangerGap);
+      if(leaves[leaves.length-1].mass>0.05){
+        gaps.push(hangerGap);
+        leaves.push(newAcousticLeaf());
+      }
       return;
     }
     const mass = acousticLayerMass(item.key);
@@ -4234,6 +4358,7 @@ function analyzeAcousticAssembly(items, mode){
       f.panelLayers += 1;
       if(item.key==='SH') f.sheetCount += 1;
       if(isDeckBoardMaterial(m)) f.deckCount += 1;
+      if(m.structuralBase) f.structuralCount += 1;
     }
     if(m.kind==='wool'){
       const info = woolLayerInfo(m);
@@ -4281,7 +4406,8 @@ function initialTlCurve(analysis, targetScore){
   const lastMass = analysis.leaves[analysis.leaves.length-1]?.mass || analysis.totalMass/2;
   const f0 = multiLeaf ? massAirMassFreq(firstMass, lastMass, gapMm) : 0;
   const cavityLimit = gapMm>0 ? AIR_SOUND_SPEED / (2 * (gapMm/1000)) : 0;
-  const bridgePenaltyMax = Math.min(9, f.bridgeCount * (analysis.mode==='wall' ? 1.7 : 1.25));
+  let bridgePenaltyMax = Math.min(9, f.bridgeCount * (analysis.mode==='wall' ? 1.7 : 1.25));
+  if(analysis.mode==='ceil' && f.hangerCount) bridgePenaltyMax *= 0.55;
   const coincidenceCenter = f.sheetCount ? 2500 : (f.deckCount ? 1600 : 2000);
 
   let points = TL_BANDS.map(freq=>{
@@ -4307,6 +4433,9 @@ function initialTlCurve(analysis, targetScore){
 
     if(f.frameCount && freq<=160) tl -= freq<=100 ? 4.5 : 3.0;
     if(analysis.mode==='ceil' && freq<=125) tl -= 1.5;
+    if(analysis.mode==='ceil' && f.hangerCount){
+      tl += freq<160 ? 1.2 : (freq<500 ? 2.5 : 4.2);
+    }
     if(analysis.mode==='floor'){
       tl -= freq<=160 ? 3.5 : 0;
       if(f.hasRubber) tl += freq<160 ? 1.5 : (freq<500 ? 3.5 : 5);
@@ -4477,6 +4606,9 @@ function estimateStc(items, mode){
     frameCount:0,
     deckCount:0,
     hasRubber:false,
+    hangerCount:0,
+    hangerLoadKg:0,
+    structuralCount:0,
     groups:new Set()
   };
 
@@ -4498,12 +4630,16 @@ function estimateStc(items, mode){
       f.boardMm += materialThicknessMm(m) * (item.key==='SH' ? 0.6 : finishScale);
       if(item.key==='SH') f.sheetCount += ply;
       if(isDeckBoardMaterial(m)) f.deckCount += 1;
+      if(m.structuralBase) f.structuralCount += 1;
     } else if(m.kind==='wool'){
       f.woolCount += 1;
       f.woolScore += woolLayerAbsorptionScore(m);
       f.woolLayers.push(woolLayerInfo(m));
     } else if(m.kind==='stud' || m.kind==='line' || m.kind==='grid' || m.kind==='fabricFrame'){
       f.frameCount += 1;
+    } else if(m.kind==='hanger'){
+      f.hangerCount += 1;
+      f.hangerLoadKg = Math.max(f.hangerLoadKg, parseFloat(m.loadKg) || 0);
     } else if(m.kind==='gridpad'){
       f.hasRubber = true;
     }
@@ -4519,6 +4655,7 @@ function estimateStc(items, mode){
 
   if(mode==='wall' && f.groups.size>=2 && f.gapCount>0) score += 3;
   if(mode==='ceil' && f.frameCount>0) score += 1;
+  if(mode==='ceil' && f.hangerCount) score += 3;
   if(mode==='floor'){
     score -= 1;
     if(f.hasRubber) score += 2;
@@ -4545,6 +4682,8 @@ function stcFactorsText(f){
   }
   if(f.gapCount) parts.push(`공기층 ${f.gapCount}개/${round2(f.gapMm)}mm`);
   if(f.hasRubber) parts.push('방진고무');
+  if(f.hangerCount) parts.push(`방진행거${f.hangerLoadKg ? ` ${round2(f.hangerLoadKg)}kg` : ''}`);
+  if(f.structuralCount) parts.push('기존 구조체');
   return parts.length ? parts.join(' · ') : '레이어 기준';
 }
 function stcCaution(mode){
@@ -4647,6 +4786,9 @@ function bomRowsSimpleHTML(agg, options={}){
     } else if(m.kind==='gridpad'){
       sizeCell = specForMaterial(m);
       qty = `${ceilValue(withLoss(a.gridCount, lossRate))}개${suffix}`;
+    } else if(m.kind==='hanger'){
+      sizeCell = specForMaterial(m);
+      qty = `${ceilValue(withLoss(a.hangerCount, lossRate))}개${suffix}`;
     }
     const cells = [
       `<td style="padding:5px 6px 5px 0; font-size:${compact ? '11px' : '12px'};">${m.label}</td>`,
@@ -4748,6 +4890,7 @@ function mergeAggInto(target, source){
     t.gridCount += (a.gridCount||0);
     t.gridLength += (a.gridLength||0);
     t.gridPieces += (a.gridPieces||0);
+    t.hangerCount += (a.hangerCount||0);
   });
 }
 
@@ -4765,6 +4908,7 @@ function consolidateForFinal(agg){
     t.gridCount += (a.gridCount||0);
     t.gridLength += (a.gridLength||0);
     t.gridPieces += (a.gridPieces||0);
+    t.hangerCount += (a.hangerCount||0);
   });
   return out;
 }
@@ -4826,7 +4970,7 @@ function copyAgg(agg){
 function aggHasQuantity(agg){
   return Object.values(agg || {}).some(a=>
     (a.count||0) || (a.boardArea||0) || (a.woolArea||0) ||
-    (a.studPieces||0) || (a.gridCount||0) || (a.gridLength||0) || (a.gridPieces||0)
+    (a.studPieces||0) || (a.gridCount||0) || (a.gridLength||0) || (a.gridPieces||0) || (a.hangerCount||0)
   );
 }
 function stackSummary(items){
@@ -4845,6 +4989,8 @@ function currentLayersForMode(mode){
       val:parseFloat(item.val)||materialThicknessMm(m)||0,
       kind:m.kind || '',
       category:m.category || '',
+      structuralBase:!!m.structuralBase,
+      loadKg:m.loadKg || null,
       zone:item.zone || '',
       groupLabel:item.label || '',
       role:item.role || '',
@@ -4861,14 +5007,17 @@ function captureLayerInfo(layer, mode){
 
   if(isGap) return {rowClass:' gap', meta:'공기층'};
   if(!isWall){
+    if(layer.structuralBase) return {rowClass:'', meta:'기존 구조체'};
     if(layer.key === 'SH') return {rowClass:'', meta:'차음시트'};
     if(layer.kind === 'wool') return {rowClass:'', meta:'흡음재'};
     if(layer.kind === 'gridpad') return {rowClass:'', meta:'방진'};
+    if(layer.kind === 'hanger') return {rowClass:'', meta:layer.loadKg ? `방진행거 ${round2(layer.loadKg)}kg` : '방진행거'};
     if(layer.kind === 'line' || layer.kind === 'grid' || layer.kind === 'stud' || layer.kind === 'fabricFrame') return {rowClass:'', meta:'구조틀'};
     if(layer.kind === 'board') return {rowClass:'', meta:isFinish ? '마감' : '판재'};
     return {rowClass:'', meta:'구조'};
   }
   if(isFinish) return {rowClass:' finish', meta:[layer.groupLabel, '마감'].filter(Boolean).join(' · ')};
+  if(layer.structuralBase) return {rowClass:' pro', meta:[layer.groupLabel, '기존 구조체'].filter(Boolean).join(' · ')};
 
   if(isWall && validRole){
     return {
@@ -4885,6 +5034,9 @@ function captureLayerInfo(layer, mode){
   }
   if(layer.kind === 'gridpad'){
     return {rowClass:' accent', meta:'방진'};
+  }
+  if(layer.kind === 'hanger'){
+    return {rowClass:' accent', meta:layer.loadKg ? `방진행거 ${round2(layer.loadKg)}kg` : '방진행거'};
   }
   if(layer.kind === 'line' || layer.kind === 'grid' || layer.kind === 'stud' || layer.kind === 'fabricFrame'){
     return {rowClass:' accent', meta:'구조틀'};
@@ -5037,7 +5189,7 @@ function renderCaptureLists(){
             ${layer.label}
             <div class="capture-layer-meta">${display.meta || '-'}</div>
           </div>
-          <div class="capture-layer-thick">${round2(layer.val)}mm</div>
+          <div class="capture-layer-thick">${layerValueText(layer)}</div>
         </div>`;
       }).join('')}
     </div>`;
@@ -5378,7 +5530,7 @@ function renderPresetAdmin(){
         <div class="material-chip-list">
           ${preset.seq.map((key, seqIndex)=>{
             const zone = inferredWallZonesFromSeq(preset.seq, preset.zones || [])[seqIndex];
-            const thickness = round2(draftMaterialThicknessForKey(key));
+            const layerMeasure = layerValueText({key, val:draftMaterialThicknessForKey(key)});
             return `
             <div class="material-chip-row ${wallZoneClass(zone)}">
               <div class="material-chip-main">
@@ -5389,7 +5541,7 @@ function renderPresetAdmin(){
                 <select class="material-zone-select" data-preset-zone="${index}" data-preset-zone-index="${seqIndex}" title="벽체 구간">
                   ${wallZoneOptionsHTML(zone, key)}
                 </select>
-                <span class="material-chip-thickness">${thickness}mm</span>
+                <span class="material-chip-thickness">${layerMeasure}</span>
               </div>
               <div class="material-chip-actions">
                 <button type="button" data-preset-layer-move="up" data-preset-index="${index}" data-layer-index="${seqIndex}" ${seqIndex===0 ? 'disabled' : ''}><i class="ti ti-chevron-up" aria-hidden="true"></i></button>
@@ -5672,7 +5824,7 @@ function renderPlanLayerAdmin(){
                 <select class="material-chip-select" data-plan-layer-seq="${index}" data-plan-layer-seq-index="${seqIndex}">
                   ${planLayerMaterialOptionsHTML(planLayerAdminMode, key)}
                 </select>
-                <span class="material-chip-thickness">${round2(draftMaterialThicknessForKey(key))}mm</span>
+                <span class="material-chip-thickness">${layerValueText({key, val:draftMaterialThicknessForKey(key)})}</span>
               </div>
               <div class="material-chip-actions">
                 <button type="button" data-plan-layer-row-move="up" data-plan-layer-index="${index}" data-layer-index="${seqIndex}" ${seqIndex===0 ? 'disabled' : ''}><i class="ti ti-chevron-up" aria-hidden="true"></i></button>
@@ -5837,11 +5989,11 @@ function numberInputHTML(field, value, options={}){
 function materialManagerFields(item){
   const kind = item.kind;
   return {
-    width: kind === 'grid' || kind === 'line' ? {field:'csw', value:item.csw} : (kind === 'gridpad' || kind === 'gap' ? {disabled:true} : {field:'sw', value:item.sw}),
+    width: kind === 'grid' || kind === 'line' ? {field:'csw', value:item.csw} : (kind === 'gridpad' || kind === 'gap' || kind === 'hanger' ? {disabled:true} : {field:'sw', value:item.sw}),
     depth: kind === 'grid' || kind === 'line' ? {field:'csh', value:item.csh} : (kind === 'stud' || kind === 'fabricFrame' ? {field:'sd', value:item.sd} : (kind === 'board' || kind === 'wool' ? {field:'sh', value:item.sh} : {disabled:true})),
     length: kind === 'grid' || kind === 'line' ? {field:'stick', value:item.stick} : (kind === 'stud' || kind === 'fabricFrame' ? {field:'sh', value:item.sh} : {disabled:true}),
-    gapX: kind === 'stud' ? {field:'spacing', value:item.spacing} : (kind === 'grid' || kind === 'gridpad' || kind === 'line' ? {field:'sw', value:item.sw} : {disabled:true}),
-    gapY: kind === 'grid' || kind === 'gridpad' ? {field:'sh', value:item.sh} : {disabled:true}
+    gapX: kind === 'stud' ? {field:'spacing', value:item.spacing} : (kind === 'grid' || kind === 'gridpad' || kind === 'line' || kind === 'hanger' ? {field:'sw', value:item.sw} : {disabled:true}),
+    gapY: kind === 'grid' || kind === 'gridpad' || kind === 'hanger' ? {field:'sh', value:item.sh} : {disabled:true}
   };
 }
 
@@ -5854,6 +6006,8 @@ function renderMaterialManager(){
     const locked = materialIsProtected(key);
     const fields = materialManagerFields(item);
     const plyValue = item.kind === 'board' ? (item.ply ?? 1) : '';
+    const loadOrDensityField = item.kind === 'hanger' ? 'loadKg' : 'density';
+    const loadOrDensityValue = item.kind === 'hanger' ? (item.loadKg ?? '') : (item.density ?? '');
     return `<tr data-mat-key="${key}">
       <td class="col-meta"><div class="materials-key">${key}</div></td>
       <td><div class="mat-name-cell"><i class="ti ti-grip-vertical mat-drag-handle" data-drag-key="${key}" title="끌어서 순서 변경" aria-label="끌어서 순서 변경"></i><input type="text" data-field="label" value="${item.label || ''}"></div></td>
@@ -5874,7 +6028,7 @@ function renderMaterialManager(){
       <td>${numberInputHTML(fields.gapX.field, fields.gapX.value, {disabled:fields.gapX.disabled})}</td>
       <td>${numberInputHTML(fields.gapY.field, fields.gapY.value, {disabled:fields.gapY.disabled})}</td>
       <td><input type="number" step="1" min="1" data-field="ply" value="${plyValue}" ${item.kind==='board' ? '' : 'disabled title="보드류 자재만 겹수를 사용합니다."'}></td>
-      <td><input type="number" step="1" data-field="density" value="${item.density ?? ''}"></td>
+      <td><input type="number" step="1" data-field="${loadOrDensityField}" value="${loadOrDensityValue}"></td>
       <td><span class="materials-readonly">${surfaceMassText(item, key)}</span></td>
       <td><input type="text" data-supplier="1" value="${supplier}"></td>
       <td><input type="checkbox" data-list="wall" ${materialDraft.wallItems.includes(key) ? 'checked' : ''}></td>
@@ -6027,6 +6181,12 @@ function updateMaterialDraftField(key, field, value){
     if(value === 'gridpad'){
       if(!item.sw) item.sw = 455;
       if(!item.sh) item.sh = 455;
+    }
+    if(value === 'hanger'){
+      if(!item.sw) item.sw = 900;
+      if(!item.sh) item.sh = 900;
+      if(!item.loadKg) item.loadKg = 100;
+      if(!item.dropMm) item.dropMm = 100;
     }
     return;
   }
@@ -6621,7 +6781,7 @@ document.getElementById('materialsTableBody').addEventListener('input', (e)=>{
   const key = row.dataset.matKey;
   if(e.target.dataset.field){
     updateMaterialDraftField(key, e.target.dataset.field, e.target.value);
-    if(['t','ply','density','areaMass'].includes(e.target.dataset.field)){
+    if(['t','ply','density','areaMass','loadKg'].includes(e.target.dataset.field)){
       const massEl = row.querySelector('.materials-readonly');
       if(massEl) massEl.textContent = surfaceMassText(materialDraft.MAT[key], key);
     }
