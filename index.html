@@ -445,6 +445,8 @@ td{ border-bottom:0.5px solid var(--border); }
 #tabLayersAdmin .material-chip-no{
   width:18px;
   font-size:10px;
+  color:currentColor;
+  opacity:0.68;
 }
 #tabLayersAdmin .material-chip-select{
   font-size:12px;
@@ -457,6 +459,21 @@ td{ border-bottom:0.5px solid var(--border); }
   font-size:12px;
   min-height:24px;
   padding:1px 5px;
+}
+#tabLayersAdmin .material-chip-row select{
+  color:currentColor;
+  -webkit-text-fill-color:currentColor;
+  border-color:color-mix(in srgb, currentColor 32%, transparent);
+  background:color-mix(in srgb, currentColor 7%, var(--surface-2));
+}
+#tabLayersAdmin .material-chip-row select option{
+  color:var(--text-primary);
+  background:var(--surface-2);
+}
+#tabLayersAdmin .material-chip-row .material-chip-actions button{
+  color:currentColor;
+  border-color:color-mix(in srgb, currentColor 32%, transparent);
+  background:color-mix(in srgb, currentColor 7%, var(--surface-2));
 }
 #tabLayersAdmin .material-chip-thickness{
   flex:0 0 54px;
