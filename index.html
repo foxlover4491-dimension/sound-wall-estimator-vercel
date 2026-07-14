@@ -333,6 +333,11 @@ td{ border-bottom:0.5px solid var(--border); }
   color:var(--text-danger);
   border-color:color-mix(in srgb, var(--text-danger) 28%, transparent);
 }
+.material-chip-row.zone-structural{
+  background:var(--bg-pro);
+  color:var(--text-pro);
+  border-color:color-mix(in srgb, var(--text-pro) 28%, transparent);
+}
 .material-chip-main{
   display:flex;
   align-items:center;
@@ -2253,12 +2258,14 @@ const BASE_FLOOR_DEFAULT = [...FLOOR_DEFAULT];
 const DEPTH_ROLES = ['accent','success','pro','warning'];
 const FINISH_ROLE = 'danger';
 const WALL_ZONE_OPTIONS = [
+  {value:'structural', label:'건물골조'},
   {value:'outer', label:'부차음'},
   {value:'inner', label:'기본차음'},
   {value:'gap', label:'공기층'},
   {value:'finish', label:'마감'}
 ];
 const WALL_ZONE_META = {
+  structural:{role:'pro', label:'건물골조'},
   outer:{role:'accent', label:'부차음'},
   inner:{role:'success', label:'기본차음'},
   gap:{role:null, label:'공기층'},
@@ -3011,6 +3018,12 @@ function hangerDefaultHeight(loadKg){
   if(load <= 200) return 180;
   return 220;
 }
+function migrateBundledMaterialLabel(item, key){
+  if(!item) return;
+  const label = String(item.label || '').trim();
+  if(key === 'POLY25' && label === '폴리에스터 40K 25T') item.label = BASE_MAT.POLY25.label;
+  if(key === 'POLY50' && label === '폴리에스터 40K 50T') item.label = BASE_MAT.POLY50.label;
+}
 function ensureBundledMaterialAvailability(next, key){
   if(!next.MAT[key] && BASE_MAT[key]){
     next.MAT[key] = deepCopy(BASE_MAT[key]);
@@ -3327,6 +3340,7 @@ function normalizeMaterialConfig(config){
     next.MAT[key] = {...base, ...next.MAT[key]};
     const item = next.MAT[key];
     item.label = item.label || key;
+    migrateBundledMaterialLabel(item, key);
     if(key === 'SQPIPE' && item.kind === 'grid') item.kind = 'line';
     item.kind = MATERIAL_KIND_OPTIONS.includes(item.kind) ? item.kind : 'board';
     if(item.kind !== 'gap'){
@@ -3538,6 +3552,15 @@ function autoClassifySeq(seq){
   return (seq || []).map((key)=>{
     const m = MAT[key];
     if(!m) return {role:null, label:null, groupId:null};
+    if(m.structuralBase){
+      const meta = WALL_ZONE_META.structural;
+      if('structural' !== lastResolved){
+        groupId++;
+        lastResolved = 'structural';
+      }
+      prevWasGap = false;
+      return {role:meta.role, label:meta.label, groupId};
+    }
     if(m.kind === 'gap'){
       passedGap = true;
       lastResolved = 'gap';
@@ -3560,6 +3583,7 @@ function inferredWallZonesFromSeq(seq, zones=[]){
   return (seq || []).map((key, index)=>{
     const m = MAT[key];
     if(!m) return 'outer';
+    if(m.structuralBase) return 'structural';
     if(m.kind === 'gap') return 'gap';
     const stored = normalizeWallZone(zones[index]);
     if(stored && stored !== 'gap') return stored;
@@ -5577,7 +5601,9 @@ function wallZoneOptionsHTML(selectedZone, key){
   const m = materialDraft.MAT[key] || MAT[key];
   const zone = inferredWallZonesFromSeq([key], [selectedZone])[0];
   return WALL_ZONE_OPTIONS.map((option)=>{
-    const disabled = m?.kind === 'gap' ? option.value !== 'gap' : option.value === 'gap';
+    const disabled = m?.structuralBase
+      ? option.value !== 'structural'
+      : (m?.kind === 'gap' ? option.value !== 'gap' : option.value === 'gap' || option.value === 'structural');
     return `<option value="${option.value}" ${zone===option.value ? 'selected' : ''} ${disabled ? 'disabled' : ''}>${option.label}</option>`;
   }).join('');
 }
