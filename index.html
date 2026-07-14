@@ -1475,33 +1475,327 @@ td{ border-bottom:0.5px solid var(--border); }
 
 <script>
 let MAT = {
-  G1:  {label:'일반석고 9.5T 1P', t:9.5, kind:'board', ply:1, sw:900, sh:1800, density:674, category:'frame', mergeKey:'G_MERGE'},
-  G:   {label:'일반석고 9.5T 2P', t:9.5,   kind:'board', ply:2, sw:900, sh:1800, density:674, category:'frame', mergeKey:'G_MERGE'},
-  S1:  {label:'차음석고 12.5T 1P', t:12.5, kind:'board', ply:1, sw:900, sh:1800, density:896, category:'frame', mergeKey:'S_MERGE'},
-  S2:  {label:'차음석고 12.5T 2P', t:12.5, kind:'board', ply:2, sw:900, sh:1800, density:896, category:'frame', mergeKey:'S_MERGE'},
-  SH:  {label:'차음시트 4T', t:4,   kind:'board', ply:1, sw:1000, sh:1000, density:1875, category:'frame'},
-  ST:  {label:'목재스터드 68x30', t:68,  kind:'stud', sw:68, sd:30, sh:3600, spacing:450, density:450, category:'frame'},
-  FRAME3030:{label:'목재틀 30x30', t:30, kind:'stud', sw:30, sd:30, sh:3600, spacing:450, density:450, category:'frame'},
-  W0:  {label:'미네랄울 60K 50T(충진)', t:0, kind:'wool', sw:450, sh:1000, density:60, acousticThickness:50, acousticFamily:'mineral', category:'frame', mergeKey:'W_MERGE'},
-  W50: {label:'미네랄울 60K 50T(덧붙이기)', t:50, kind:'wool', sw:450, sh:1000, density:60, acousticThickness:50, acousticFamily:'mineral', category:'frame', mergeKey:'W_MERGE'},
-  A100:{label:'공기층 100T', t:100, kind:'gap'},
-  A50: {label:'공기층 50T', t:50, kind:'gap'},
-  FAB30:{label:'마감 패브릭 액자틀 30T', t:30, kind:'fabricFrame', frameKey:'FRAME3030', fabricKey:'FABRIC', category:'finish'},
-  FABRIC:{label:'마감 패브릭', t:0, kind:'board', ply:1, sw:1000, sh:1000, areaMass:0.25, category:'finish', areaOnly:true, unitLabel:'면적'},
-  ART9: {label:'마감 아트보드 9T', t:9, kind:'board', ply:1, sw:1200, sh:2400, density:533, category:'finish'},
-  PERF9:{label:'마감 목재타공판 9T', t:9, kind:'board', ply:1, sw:1200, sh:2400, density:644, category:'finish'},
-  BATT: {label:'흡음각재틀 30x30', t:30, kind:'stud', sw:30, sd:30, sh:3600, spacing:450, density:450, category:'finish', hidden:true, mergeKey:'FRAME3030'},
-  POLY25:{label:'폴리에스터 25T', t:0, kind:'wool', sw:450, sh:1000, density:25, acousticThickness:25, acousticFamily:'polyester', category:'finish', bomCategory:'frame', hidden:true},
-  POLY50:{label:'폴리에스터 50T', t:0, kind:'wool', sw:450, sh:1000, density:25, acousticThickness:50, acousticFamily:'polyester', category:'finish', bomCategory:'frame', hidden:true},
-  PLY15:{label:'합판 15T', t:15, kind:'board', ply:1, sw:1200, sh:2400, density:553, category:'frame'},
-  PLY15_2P:{label:'합판 15T 2P', t:15, kind:'board', ply:2, sw:1200, sh:2400, density:553, category:'frame'},
-  SQPIPE:{label:'각파이프 50x50', t:50, kind:'line', sw:450, csw:50, csh:50, stick:6000, density:7850, category:'frame'},
-  GW50: {label:'글라스울 24K 50T(충진)', t:0, kind:'wool', sw:450, sh:1000, density:24, acousticThickness:50, acousticFamily:'glass', category:'frame'},
-  HWD75:{label:'마감 강마루 7.5T', t:7.5, kind:'board', ply:1, sw:900, sh:1800, density:693, category:'finish', areaOnly:true},
-  PB15: {label:'파티클보드 15T', t:15, kind:'board', ply:1, sw:1200, sh:2400, density:700, category:'frame'},
-  RUBBER:{label:'원형방진고무', t:30, kind:'gridpad', sw:455, sh:455, density:1100, category:'frame'},
-  CARPET7:{label:'마감 카펫타일 7T', t:7, kind:'board', ply:1, sw:500, sh:500, density:429, category:'finish', areaOnly:true},
-  DECO3:{label:'마감 데코타일 3T', t:3, kind:'board', ply:1, sw:300, sh:600, density:1667, category:'finish', areaOnly:true}
+  "G1": {
+    "label": "일반석고 9.5T 1P",
+    "t": 9.5,
+    "kind": "board",
+    "ply": 1,
+    "sw": 900,
+    "sh": 1800,
+    "density": 674,
+    "category": "frame",
+    "mergeKey": "G_MERGE",
+    "displaySpec": ""
+  },
+  "G": {
+    "label": "일반석고 9.5T 2P",
+    "t": 9.5,
+    "kind": "board",
+    "ply": 2,
+    "sw": 900,
+    "sh": 1800,
+    "density": 674,
+    "category": "frame",
+    "mergeKey": "G_MERGE",
+    "displaySpec": ""
+  },
+  "S1": {
+    "label": "차음석고 12.5T 1P",
+    "t": 12.5,
+    "kind": "board",
+    "ply": 1,
+    "sw": 900,
+    "sh": 1800,
+    "density": 896,
+    "category": "frame",
+    "mergeKey": "S_MERGE",
+    "displaySpec": ""
+  },
+  "S2": {
+    "label": "차음석고 12.5T 2P",
+    "t": 12.5,
+    "kind": "board",
+    "ply": 2,
+    "sw": 900,
+    "sh": 1800,
+    "density": 896,
+    "category": "frame",
+    "mergeKey": "S_MERGE",
+    "displaySpec": ""
+  },
+  "SH": {
+    "label": "차음시트 4T",
+    "t": 4,
+    "kind": "board",
+    "ply": 1,
+    "sw": 1000,
+    "sh": 1000,
+    "density": 1875,
+    "category": "frame",
+    "displaySpec": "1212121"
+  },
+  "ST": {
+    "label": "목재스터드 68x30",
+    "t": 68,
+    "kind": "stud",
+    "sw": 68,
+    "sd": 30,
+    "sh": 3600,
+    "spacing": 450,
+    "density": 450,
+    "category": "frame",
+    "displaySpec": ""
+  },
+  "FRAME3030": {
+    "label": "목재틀 30x30",
+    "t": 30,
+    "kind": "stud",
+    "sw": 30,
+    "sd": 30,
+    "sh": 3600,
+    "spacing": 450,
+    "density": 450,
+    "category": "frame",
+    "displaySpec": ""
+  },
+  "W0": {
+    "label": "미네랄울 60K 50T(충진)",
+    "t": 0,
+    "kind": "wool",
+    "sw": 450,
+    "sh": 1000,
+    "density": 60,
+    "acousticThickness": 50,
+    "acousticFamily": "mineral",
+    "category": "frame",
+    "mergeKey": "W_MERGE",
+    "displaySpec": ""
+  },
+  "W50": {
+    "label": "미네랄울 60K 50T(덧붙이기)",
+    "t": 50,
+    "kind": "wool",
+    "sw": 450,
+    "sh": 1000,
+    "density": 60,
+    "acousticThickness": 50,
+    "acousticFamily": "mineral",
+    "category": "frame",
+    "mergeKey": "W_MERGE",
+    "displaySpec": ""
+  },
+  "A100": {
+    "label": "공기층 100T",
+    "t": 100,
+    "kind": "gap",
+    "displaySpec": ""
+  },
+  "A50": {
+    "label": "공기층 50T",
+    "t": 50,
+    "kind": "gap",
+    "displaySpec": ""
+  },
+  "FAB30": {
+    "label": "마감 패브릭 액자틀 30T",
+    "t": 30,
+    "kind": "fabricFrame",
+    "frameKey": "FRAME3030",
+    "fabricKey": "FABRIC",
+    "category": "finish",
+    "displaySpec": ""
+  },
+  "FABRIC": {
+    "label": "마감 패브릭",
+    "t": 0,
+    "kind": "board",
+    "ply": 1,
+    "sw": 1000,
+    "sh": 1000,
+    "areaMass": 0.25,
+    "category": "finish",
+    "areaOnly": true,
+    "unitLabel": "면적",
+    "displaySpec": ""
+  },
+  "ART9": {
+    "label": "마감 아트보드 9T",
+    "t": 9,
+    "kind": "board",
+    "ply": 1,
+    "sw": 1200,
+    "sh": 2400,
+    "density": 533,
+    "category": "finish",
+    "displaySpec": ""
+  },
+  "PERF9": {
+    "label": "마감 목재타공판 9T",
+    "t": 9,
+    "kind": "board",
+    "ply": 1,
+    "sw": 1200,
+    "sh": 2400,
+    "density": 644,
+    "category": "finish",
+    "displaySpec": ""
+  },
+  "BATT": {
+    "label": "흡음각재틀 30x30",
+    "t": 30,
+    "kind": "stud",
+    "sw": 30,
+    "sd": 30,
+    "sh": 3600,
+    "spacing": 450,
+    "density": 450,
+    "category": "finish",
+    "hidden": true,
+    "mergeKey": "FRAME3030",
+    "displaySpec": ""
+  },
+  "POLY25": {
+    "label": "폴리에스터 40K 25T",
+    "t": 0,
+    "kind": "wool",
+    "sw": 450,
+    "sh": 1000,
+    "density": 40,
+    "acousticThickness": 25,
+    "acousticFamily": "polyester",
+    "category": "finish",
+    "bomCategory": "frame",
+    "hidden": true,
+    "displaySpec": ""
+  },
+  "POLY50": {
+    "label": "폴리에스터 40K 50T",
+    "t": 0,
+    "kind": "wool",
+    "sw": 450,
+    "sh": 1000,
+    "density": 40,
+    "acousticThickness": 50,
+    "acousticFamily": "polyester",
+    "category": "finish",
+    "bomCategory": "frame",
+    "hidden": true,
+    "displaySpec": ""
+  },
+  "PLY15": {
+    "label": "합판 15T",
+    "t": 15,
+    "kind": "board",
+    "ply": 1,
+    "sw": 1200,
+    "sh": 2400,
+    "density": 553,
+    "category": "frame",
+    "displaySpec": ""
+  },
+  "PLY15_2P": {
+    "label": "합판 15T 2P",
+    "t": 15,
+    "kind": "board",
+    "ply": 2,
+    "sw": 1200,
+    "sh": 2400,
+    "density": 553,
+    "category": "frame",
+    "displaySpec": ""
+  },
+  "SQPIPE": {
+    "label": "각파이프 50x50",
+    "t": 50,
+    "kind": "line",
+    "sw": 450,
+    "csw": 50,
+    "csh": 50,
+    "stick": 6000,
+    "density": 7850,
+    "category": "frame",
+    "sh": 450,
+    "displaySpec": "50x50 / 450격자"
+  },
+  "GW50": {
+    "label": "글라스울 24K 50T(충진)",
+    "t": 0,
+    "kind": "wool",
+    "sw": 450,
+    "sh": 1000,
+    "density": 24,
+    "acousticThickness": 50,
+    "acousticFamily": "glass",
+    "category": "frame",
+    "displaySpec": ""
+  },
+  "HWD75": {
+    "label": "마감 강마루 7.5T",
+    "t": 7.5,
+    "kind": "board",
+    "ply": 1,
+    "sw": 900,
+    "sh": 1800,
+    "density": 693,
+    "category": "finish",
+    "areaOnly": true,
+    "displaySpec": ""
+  },
+  "PB15": {
+    "label": "파티클보드 15T",
+    "t": 15,
+    "kind": "board",
+    "ply": 1,
+    "sw": 1200,
+    "sh": 2400,
+    "density": 700,
+    "category": "frame",
+    "displaySpec": ""
+  },
+  "RUBBER": {
+    "label": "원형방진고무",
+    "t": 30,
+    "kind": "gridpad",
+    "sw": 455,
+    "sh": 455,
+    "density": 1100,
+    "category": "frame",
+    "displaySpec": ""
+  },
+  "CARPET7": {
+    "label": "마감 카펫타일 7T",
+    "t": 7,
+    "kind": "board",
+    "ply": 1,
+    "sw": 500,
+    "sh": 500,
+    "density": 429,
+    "category": "finish",
+    "areaOnly": true,
+    "displaySpec": ""
+  },
+  "DECO3": {
+    "label": "마감 데코타일 3T",
+    "t": 3,
+    "kind": "board",
+    "ply": 1,
+    "sw": 300,
+    "sh": 600,
+    "density": 1667,
+    "category": "finish",
+    "areaOnly": true,
+    "displaySpec": ""
+  },
+  "USRMRG2NX7L": {
+    "label": "차음석고 15T 1P",
+    "t": 15,
+    "kind": "board",
+    "ply": 1,
+    "sw": 900,
+    "sh": 1800,
+    "density": 1000,
+    "category": "frame"
+  }
 };
 const MERGE_GROUPS = {
   G_MERGE: {label:'일반석고 9.5T', kind:'board', sw:900, sh:1800},
@@ -1529,38 +1823,37 @@ const BOM_ORDER = [
 ];
 const BOM_ORDER_RANK = Object.fromEntries(BOM_ORDER.map((key, i)=>[key, i]));
 let SUPPLIERS = {
-  // 병합(BOM) 키 — 최종 물량표 거래처 표시에 사용
-  G_MERGE: '오케이우드',
-  S_MERGE: '오케이우드',
-  W_MERGE: '오케이우드',
-  // 개별 자재 키 — 자재관리 화면 거래처 표시에 사용
-  A100: '-',
-  A50: '-',
-  G: '오케이우드',
-  G1: '오케이우드',
-  S1: '오케이우드',
-  S2: '오케이우드',
-  W0: '오케이우드',
-  W50: '오케이우드',
-  ST: '오케이우드',
-  FRAME3030: '오케이우드',
-  BATT: '오케이우드',
-  GW50: '오케이우드',
-  PLY15: '오케이우드',
-  PLY15_2P: '오케이우드',
-  PB15: '오케이우드',
-  SQPIPE: '성원철강',
-  RUBBER: '효성방진',
-  SH: '블랙홀',
-  POLY25: '블랙홀',
-  POLY50: '블랙홀',
-  PERF9: '레고리스',
-  HWD75: '오케이우드',
-  FABRIC: '위즈텍스',
-  ART9: '블랙홀',
-  CARPET7: '우성데코',
-  DECO3: '우성데코',
-  FAB30: '오케이우드'
+  "G_MERGE": "오케이우드",
+  "S_MERGE": "오케이우드",
+  "W_MERGE": "오케이우드",
+  "A100": "-",
+  "A50": "-",
+  "G": "오케이우드",
+  "G1": "오케이우드",
+  "S1": "오케이우드",
+  "S2": "오케이우드",
+  "W0": "오케이우드",
+  "W50": "오케이우드",
+  "ST": "오케이우드",
+  "FRAME3030": "오케이우드",
+  "BATT": "오케이우드",
+  "GW50": "오케이우드",
+  "PLY15": "오케이우드",
+  "PLY15_2P": "오케이우드",
+  "PB15": "오케이우드",
+  "SQPIPE": "성원철강",
+  "RUBBER": "효성방진",
+  "SH": "블랙홀",
+  "POLY25": "블랙홀",
+  "POLY50": "블랙홀",
+  "PERF9": "레고리스",
+  "HWD75": "오케이우드",
+  "FABRIC": "위즈텍스",
+  "ART9": "블랙홀",
+  "CARPET7": "우성데코",
+  "DECO3": "우성데코",
+  "FAB30": "오케이우드",
+  "USRMRG2NX7L": "오케이우드"
 };
 const COMPOSITES = {
   C_SANDWICH: {label:'차음석고 1P+차음시트+차음석고 1P', parts:['S1','SH','S1']},
@@ -1568,12 +1861,88 @@ const COMPOSITES = {
   C_ABS60: {label:'흡음 목재틀+폴리에스터 60T', parts:['BATT','BATT','POLY50']}
 };
 const HIDDEN_SWAP_GROUP = ['BATT','POLY25','POLY50'];
-let WALL_ITEMS = ['G1','G','C_SANDWICH','S1','S2','SH','ST','W0','W50','A50','A100','PLY15','PLY15_2P','PB15','C_ABS30','C_ABS60','FAB30','ART9','PERF9'];
-let CEIL_ITEMS = ['SQPIPE','FRAME3030','GW50','G','C_SANDWICH','S1','S2','SH','PLY15','PLY15_2P','PB15','C_ABS30','C_ABS60','FAB30','ART9','PERF9'];
-let FLOOR_ITEMS = ['RUBBER','SQPIPE','W0','PLY15','PLY15_2P','PB15','S1','S2','SH','HWD75','CARPET7','DECO3'];
-let WALL_DEFAULT = ['G','ST','G'];
-let CEIL_DEFAULT = ['SQPIPE','FRAME3030','GW50','S1','SH','S1'];
-let FLOOR_DEFAULT = ['RUBBER','SQPIPE','W0','PLY15','S2','SH','S1','PB15'];
+let WALL_ITEMS = [
+  "G1",
+  "G",
+  "S1",
+  "S2",
+  "SH",
+  "ST",
+  "W0",
+  "W50",
+  "A50",
+  "A100",
+  "PLY15",
+  "PLY15_2P",
+  "PB15",
+  "FAB30",
+  "ART9",
+  "PERF9",
+  "USRMRG2NX7L",
+  "POLY25",
+  "POLY50",
+  "BATT"
+];
+let CEIL_ITEMS = [
+  "SQPIPE",
+  "FRAME3030",
+  "GW50",
+  "G",
+  "S1",
+  "S2",
+  "SH",
+  "PLY15",
+  "PLY15_2P",
+  "PB15",
+  "FAB30",
+  "ART9",
+  "PERF9",
+  "USRMRG2NX7L",
+  "POLY25",
+  "POLY50",
+  "BATT"
+];
+let FLOOR_ITEMS = [
+  "RUBBER",
+  "SQPIPE",
+  "W0",
+  "PLY15",
+  "PLY15_2P",
+  "PB15",
+  "S1",
+  "S2",
+  "SH",
+  "HWD75",
+  "CARPET7",
+  "DECO3",
+  "USRMRG2NX7L",
+  "POLY50",
+  "POLY25",
+  "BATT"
+];
+let WALL_DEFAULT = [
+  "G",
+  "ST",
+  "G"
+];
+let CEIL_DEFAULT = [
+  "SQPIPE",
+  "FRAME3030",
+  "GW50",
+  "S1",
+  "SH",
+  "S1"
+];
+let FLOOR_DEFAULT = [
+  "RUBBER",
+  "SQPIPE",
+  "W0",
+  "PLY15",
+  "S2",
+  "SH",
+  "S1",
+  "PB15"
+];
 const BASE_MAT = JSON.parse(JSON.stringify(MAT));
 const LEGACY_TOTAL_THICKNESS_BY_KEY = {
   G: 19,
@@ -1605,47 +1974,560 @@ const WALL_ZONE_META = {
 
 let PRESET_GROUPS = [
   {
-    key:'room_room',
-    label:'룸과 룸 사이',
-    presets:[
-      {n:1, name:'기본단벽', seq:['G','ST','G'], m:['43~48','42~47','38~44','32~37','매우 약함','거의 없음','일반 칸막이']},
-      {n:2, name:'기본단벽 + 미네랄울충진', seq:['G','ST','W0','G'], m:['48~53','47~52','42~48','36~41','약함','제한적','사무실 고차음']},
-      {n:3, name:'기본차음단벽 + 미네랄울충진', seq:['S2','ST','W0','S2'], m:['54~59','53~58','47~54','40~45','보통','제한적','기본 음악연습실']},
-      {n:4, name:'기본이중벽 + 미네랄울충진', seq:['G','ST','W0','A100','ST','W0','G'], m:['58~64','57~63','51~58','44~59','보통~중급','제한적','기본 음악연습실']},
-      {n:5, name:'차음이중벽', seq:['S2','ST','W0','A100','ST','W0','S2'], m:['63~67','62~66','55~61','48~53','중급','일부 가능','고급 렌탈룸']},
-      {n:6, name:'차음이중벽 차음시트 한쪽벽', seq:['S1','SH','S1','ST','W0','A100','ST','W0','S2'], m:['65~69','64~68','57~63','50~55','중상급','일부 개선','음악 존재감 감소']},
-      {n:7, name:'차음이중벽 차음시트 양쪽벽', seq:['S1','SH','S1','ST','W0','A100','ST','W0','S1','SH','S1'], m:['67~71','66~70','59~65','52~57','좋음','중저역 안정','드럼 둔탁']},
-      {n:8, name:'녹음실 수준 (기본차음+부차음)', seq:['S1','SH','S1','ST','W0','A100','S1','SH','S1','ST','W0','S1','SH','S1','A100','ST','W0','S1','SH','S1'], m:['71~75','70~74','63~69','55~61','매우 좋음','킥 둔탁','전문 스튜디오']},
-      {n:9, name:'녹음실 수준 + 미네랄울 100T 보강', seq:['S1','SH','S1','ST','W0','A50','W50','S1','SH','S1','ST','W0','S1','SH','S1','W50','A50','ST','W0','S1','SH','S1'], m:['73~78','72~77','65~72','58~65','매우 강함','드럼 대응','하이엔드']},
-      {n:10, name:'녹음실 수준 + 기본차음이중벽 (공기층50)', seq:['S1','SH','S1','ST','W0','A50','W50','S1','SH','S1','ST','W0','A50','ST','W0','S1','SH','S1','W50','A50','ST','W0','S1','SH','S1'], m:['74~80','73~79','66~73','58~66','매우 강함','서브 일부 억제','드럼/EDM 대응']},
-      {n:11, name:'녹음실 수준 + 기본차음이중벽 (공기층100)', seq:['S1','SH','S1','ST','W0','A50','W50','S1','SH','S1','ST','W0','A100','ST','W0','S1','SH','S1','W50','A50','ST','W0','S1','SH','S1'], m:['76~82','75~81','68~75','60~68','최고 수준','매우 안정적','마스터링·Dolby급']}
+    "key": "ROOM_ROOM",
+    "label": "룸과 룸 사이",
+    "presets": [
+      {
+        "n": 1,
+        "name": "기본단벽",
+        "seq": [
+          "G",
+          "ST",
+          "G"
+        ],
+        "zones": [
+          "inner",
+          "inner",
+          "inner"
+        ],
+        "m": [
+          "43~48",
+          "42~47",
+          "38~44",
+          "32~37",
+          "매우 약함",
+          "거의 없음",
+          "일반 칸막이"
+        ]
+      },
+      {
+        "n": 2,
+        "name": "기본단벽 + 미네랄울충진",
+        "seq": [
+          "G",
+          "ST",
+          "W0",
+          "G"
+        ],
+        "zones": [
+          "inner",
+          "inner",
+          "inner",
+          "inner"
+        ],
+        "m": [
+          "48~53",
+          "47~52",
+          "42~48",
+          "36~41",
+          "약함",
+          "제한적",
+          "사무실 고차음"
+        ]
+      },
+      {
+        "n": 3,
+        "name": "기본차음단벽 + 미네랄울충진",
+        "seq": [
+          "S2",
+          "ST",
+          "W0",
+          "S2"
+        ],
+        "zones": [
+          "inner",
+          "inner",
+          "inner",
+          "inner"
+        ],
+        "m": [
+          "54~59",
+          "53~58",
+          "47~54",
+          "40~45",
+          "보통",
+          "제한적",
+          "기본 음악연습실"
+        ]
+      },
+      {
+        "n": 4,
+        "name": "기본이중벽 + 미네랄울충진",
+        "seq": [
+          "G",
+          "ST",
+          "W0",
+          "A100",
+          "ST",
+          "W0",
+          "G"
+        ],
+        "zones": [
+          "outer",
+          "outer",
+          "outer",
+          "gap",
+          "inner",
+          "inner",
+          "inner"
+        ],
+        "m": [
+          "58~64",
+          "57~63",
+          "51~58",
+          "44~59",
+          "보통~중급",
+          "제한적",
+          "기본 음악연습실"
+        ]
+      },
+      {
+        "n": 5,
+        "name": "차음이중벽",
+        "seq": [
+          "S2",
+          "ST",
+          "W0",
+          "A100",
+          "ST",
+          "W0",
+          "S2"
+        ],
+        "zones": [
+          "outer",
+          "outer",
+          "outer",
+          "gap",
+          "inner",
+          "inner",
+          "inner"
+        ],
+        "m": [
+          "63~67",
+          "62~66",
+          "55~61",
+          "48~53",
+          "중급",
+          "일부 가능",
+          "고급 렌탈룸"
+        ]
+      },
+      {
+        "n": 6,
+        "name": "차음이중벽 차음시트 한쪽벽",
+        "seq": [
+          "S1",
+          "SH",
+          "S1",
+          "ST",
+          "W0",
+          "A100",
+          "ST",
+          "W0",
+          "S2"
+        ],
+        "zones": [
+          "outer",
+          "outer",
+          "outer",
+          "outer",
+          "outer",
+          "gap",
+          "inner",
+          "inner",
+          "inner"
+        ],
+        "m": [
+          "65~69",
+          "64~68",
+          "57~63",
+          "50~55",
+          "중상급",
+          "일부 개선",
+          "음악 존재감 감소"
+        ]
+      },
+      {
+        "n": 7,
+        "name": "차음이중벽 차음시트 양쪽벽",
+        "seq": [
+          "S1",
+          "SH",
+          "S1",
+          "ST",
+          "W0",
+          "A100",
+          "ST",
+          "W0",
+          "S1",
+          "SH",
+          "S1"
+        ],
+        "zones": [
+          "outer",
+          "outer",
+          "outer",
+          "outer",
+          "outer",
+          "gap",
+          "inner",
+          "inner",
+          "inner",
+          "inner",
+          "inner"
+        ],
+        "m": [
+          "67~71",
+          "66~70",
+          "59~65",
+          "52~57",
+          "좋음",
+          "중저역 안정",
+          "드럼 둔탁"
+        ]
+      },
+      {
+        "n": 8,
+        "name": "녹음실 수준 (기본차음+부차음)",
+        "seq": [
+          "S1",
+          "SH",
+          "S1",
+          "ST",
+          "W0",
+          "A100",
+          "S1",
+          "SH",
+          "S1",
+          "ST",
+          "W0",
+          "S1",
+          "SH",
+          "S1",
+          "A100",
+          "ST",
+          "W0",
+          "S1",
+          "SH",
+          "S1"
+        ],
+        "zones": [
+          "outer",
+          "outer",
+          "outer",
+          "outer",
+          "outer",
+          "gap",
+          "inner",
+          "inner",
+          "inner",
+          "inner",
+          "inner",
+          "inner",
+          "inner",
+          "inner",
+          "gap",
+          "outer",
+          "outer",
+          "outer",
+          "outer",
+          "outer"
+        ],
+        "m": [
+          "71~75",
+          "70~74",
+          "63~69",
+          "55~61",
+          "매우 좋음",
+          "킥 둔탁",
+          "전문 스튜디오"
+        ]
+      },
+      {
+        "n": 9,
+        "name": "녹음실 수준 + 미네랄울 100T 보강",
+        "seq": [
+          "S1",
+          "SH",
+          "S1",
+          "ST",
+          "W0",
+          "A50",
+          "W50",
+          "S1",
+          "SH",
+          "S1",
+          "ST",
+          "W0",
+          "S1",
+          "SH",
+          "S1",
+          "W50",
+          "A50",
+          "ST",
+          "W0",
+          "S1",
+          "SH",
+          "S1"
+        ],
+        "zones": [
+          "outer",
+          "outer",
+          "outer",
+          "outer",
+          "outer",
+          "gap",
+          "inner",
+          "inner",
+          "inner",
+          "inner",
+          "inner",
+          "inner",
+          "inner",
+          "inner",
+          "inner",
+          "inner",
+          "gap",
+          "outer",
+          "outer",
+          "outer",
+          "outer",
+          "outer"
+        ],
+        "m": [
+          "73~78",
+          "72~77",
+          "65~72",
+          "58~65",
+          "매우 강함",
+          "드럼 대응",
+          "하이엔드"
+        ]
+      },
+      {
+        "n": 10,
+        "name": "녹음실 수준 + 기본차음이중벽 (공기층50)",
+        "seq": [
+          "S1",
+          "SH",
+          "S1",
+          "ST",
+          "W0",
+          "A50",
+          "W50",
+          "S1",
+          "SH",
+          "S1",
+          "ST",
+          "W0",
+          "A50",
+          "ST",
+          "W0",
+          "S1",
+          "SH",
+          "S1",
+          "W50",
+          "A50",
+          "ST",
+          "W0",
+          "S1",
+          "SH",
+          "S1"
+        ],
+        "zones": [
+          "outer",
+          "outer",
+          "outer",
+          "outer",
+          "outer",
+          "gap",
+          "inner",
+          "inner",
+          "inner",
+          "inner",
+          "inner",
+          "inner",
+          "gap",
+          "inner",
+          "inner",
+          "inner",
+          "inner",
+          "inner",
+          "inner",
+          "gap",
+          "outer",
+          "outer",
+          "outer",
+          "outer",
+          "outer"
+        ],
+        "m": [
+          "74~80",
+          "73~79",
+          "66~73",
+          "58~66",
+          "매우 강함",
+          "서브 일부 억제",
+          "드럼/EDM 대응"
+        ]
+      },
+      {
+        "n": 11,
+        "name": "녹음실 수준 + 기본차음이중벽 (공기층100)",
+        "seq": [
+          "S1",
+          "SH",
+          "S1",
+          "ST",
+          "W0",
+          "A50",
+          "W50",
+          "S1",
+          "SH",
+          "S1",
+          "ST",
+          "W0",
+          "A100",
+          "ST",
+          "W0",
+          "S1",
+          "SH",
+          "S1",
+          "W50",
+          "A50",
+          "ST",
+          "W0",
+          "S1",
+          "SH",
+          "S1"
+        ],
+        "zones": [
+          "outer",
+          "outer",
+          "outer",
+          "outer",
+          "outer",
+          "gap",
+          "inner",
+          "inner",
+          "inner",
+          "inner",
+          "inner",
+          "inner",
+          "gap",
+          "inner",
+          "inner",
+          "inner",
+          "inner",
+          "inner",
+          "inner",
+          "gap",
+          "outer",
+          "outer",
+          "outer",
+          "outer",
+          "inner"
+        ],
+        "m": [
+          "76~82",
+          "75~81",
+          "68~75",
+          "60~68",
+          "최고 수준",
+          "매우 안정적",
+          "마스터링·Dolby급"
+        ]
+      }
     ]
   },
   {
-    key:'room_corridor',
-    label:'복도와 인접한 벽체',
-    presets:[
-      {n:1, name:'복도 기본차음', seq:['G','ST','W0','G'], m:['48~53','47~52','42~48','36~41','약함','제한적','복도 기본']},
-      {n:2, name:'복도 보강형', seq:['S2','ST','W0','S2'], m:['54~59','53~58','47~54','40~45','보통','제한적','복도 보강']},
-      {n:3, name:'복도 이중벽', seq:['S2','ST','W0','A100','ST','W0','S2'], m:['63~67','62~66','55~61','48~53','중급','일부 가능','복도 강차음']}
+    "key": "ROOM_CORRIDOR",
+    "label": "복도와 인접한 벽체",
+    "presets": [
+      {
+        "n": 1,
+        "name": "복도 기본차음",
+        "seq": [
+          "S2",
+          "ST",
+          "W0",
+          "A100",
+          "W0",
+          "ST",
+          "S1",
+          "SH",
+          "S1",
+          "BATT",
+          "BATT",
+          "FAB30"
+        ],
+        "zones": [
+          "inner",
+          "inner",
+          "inner",
+          "gap",
+          "outer",
+          "outer",
+          "outer",
+          "outer",
+          "outer",
+          "finish",
+          "finish",
+          "finish"
+        ],
+        "m": [
+          "48~53",
+          "47~52",
+          "42~48",
+          "36~41",
+          "약함",
+          "제한적",
+          "복도 기본"
+        ]
+      }
     ]
   },
   {
-    key:'room_slab',
-    label:'슬라브와 인접한 벽체',
-    presets:[
-      {n:1, name:'슬라브 인접 기본', seq:['S2','ST','W0','S2'], m:['54~59','53~58','47~54','40~45','보통','제한적','슬라브 기본']},
-      {n:2, name:'슬라브 인접 보강', seq:['S1','SH','S1','ST','W0','A100','ST','W0','S2'], m:['65~69','64~68','57~63','50~55','중상급','일부 개선','슬라브 보강']},
-      {n:3, name:'슬라브 인접 고급', seq:['S1','SH','S1','ST','W0','A100','ST','W0','S1','SH','S1'], m:['67~71','66~70','59~65','52~57','좋음','중저역 안정','슬라브 고급']}
-    ]
-  },
-  {
-    key:'room_glass',
-    label:'유리벽과 인접한 벽체',
-    presets:[
-      {n:1, name:'유리벽 인접 기본', seq:['S2','ST','W0','S2'], m:['54~59','53~58','47~54','40~45','보통','제한적','유리벽 기본']},
-      {n:2, name:'유리벽 인접 이중벽', seq:['S2','ST','W0','A100','ST','W0','S2'], m:['63~67','62~66','55~61','48~53','중급','일부 가능','유리벽 보강']},
-      {n:3, name:'유리벽 인접 스튜디오형', seq:['S1','SH','S1','ST','W0','A100','ST','W0','S1','SH','S1'], m:['67~71','66~70','59~65','52~57','좋음','중저역 안정','유리벽 대응']}
+    "key": "ROOM_SLAB",
+    "label": "슬라브와 인접한 벽체",
+    "presets": [
+      {
+        "n": 1,
+        "name": "슬라브 인접 기본",
+        "seq": [
+          "A50",
+          "ST",
+          "W0",
+          "S2",
+          "A50",
+          "W0",
+          "ST",
+          "S1",
+          "SH",
+          "S1"
+        ],
+        "zones": [
+          "gap",
+          "inner",
+          "inner",
+          "inner",
+          "gap",
+          "inner",
+          "inner",
+          "inner",
+          "inner",
+          "inner"
+        ],
+        "m": [
+          "54~59",
+          "53~58",
+          "47~54",
+          "40~45",
+          "보통",
+          "제한적",
+          "슬라브 기본"
+        ]
+      }
     ]
   }
 ];
@@ -1669,21 +2551,148 @@ function deepCopy(value){
 
 const BASE_PRESET_GROUPS = deepCopy(PRESET_GROUPS);
 const BASE_PLAN_LAYER_PRESETS = {
-  ceil:[
+  "ceil": [
     {
-      key:'ceil_basic',
-      label:'천장 구조',
-      presets:[
-        {n:1, name:'천장 1단계', seq:[...BASE_CEIL_DEFAULT], m:['', '', '', '', '', '', '']}
+      "key": "CEIL_SAVED",
+      "label": "천장 저장 레이어",
+      "presets": [
+        {
+          "n": 1,
+          "name": "천장 기본형",
+          "seq": [
+            "SQPIPE",
+            "FRAME3030",
+            "GW50",
+            "S1",
+            "SH",
+            "S1"
+          ],
+          "m": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "key": "CEILGROUPMRG4ABST",
+      "label": "새 천장 구조 유형 2",
+      "presets": [
+        {
+          "n": 1,
+          "name": "새 단계 1",
+          "seq": [
+            "SQPIPE",
+            "SQPIPE",
+            "PERF9",
+            "SQPIPE"
+          ],
+          "m": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "key": "CEILGROUPMRG7GBHL",
+      "label": "새 천장 구조 유형 3",
+      "presets": [
+        {
+          "n": 1,
+          "name": "새 단계 1",
+          "seq": [
+            "SQPIPE"
+          ],
+          "m": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        }
+      ]
+    },
+    {
+      "key": "CEILGROUPMRG7GDSU",
+      "label": "새 천장 구조 유형 4",
+      "presets": [
+        {
+          "n": 1,
+          "name": "새 단계 1",
+          "seq": [
+            "SQPIPE"
+          ],
+          "m": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        }
       ]
     }
   ],
-  floor:[
+  "floor": [
     {
-      key:'floor_basic',
-      label:'바닥 구조',
-      presets:[
-        {n:1, name:'바닥 1단계', seq:[...BASE_FLOOR_DEFAULT], m:['', '', '', '', '', '', '']}
+      "key": "FLOOR_SAVED",
+      "label": "바닥 저장 레이어",
+      "presets": [
+        {
+          "n": 1,
+          "name": "바닥 기본형",
+          "seq": [
+            "RUBBER",
+            "SQPIPE",
+            "W0",
+            "PLY15",
+            "S2",
+            "SH",
+            "S1",
+            "PB15"
+          ],
+          "m": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        },
+        {
+          "n": 2,
+          "name": "바닥 새 레이어 2",
+          "seq": [
+            "RUBBER"
+          ],
+          "m": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        }
       ]
     }
   ]
