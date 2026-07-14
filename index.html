@@ -66,7 +66,10 @@ button{
   transition:background 0.12s, border-color 0.12s;
 }
 button:hover{ background:var(--border); }
-input[type="number"], select{
+input[type="number"],
+input[type="text"],
+input[type="password"],
+select{
   font-family:inherit;
   font-size:13px;
   color:var(--text-primary);
@@ -75,6 +78,8 @@ input[type="number"], select{
   border-radius:6px;
   padding:5px 8px;
 }
+input[type="text"]::placeholder,
+input[type="password"]::placeholder{ color:var(--text-muted); }
 select{ cursor:pointer; }
 table{ color:var(--text-primary); }
 td{ border-bottom:0.5px solid var(--border); }
@@ -135,12 +140,13 @@ td{ border-bottom:0.5px solid var(--border); }
   width:100%;
   min-width:1500px;
   border-collapse:collapse;
-  font-size:12px;
+  font-size:11px;
+  line-height:1.2;
   table-layout:fixed;
 }
 .materials-table th,
 .materials-table td{
-  padding:6px 8px;
+  padding:2px 5px;
   border-bottom:0.5px solid var(--border);
   text-align:left;
   vertical-align:middle;
@@ -156,6 +162,17 @@ td{ border-bottom:0.5px solid var(--border); }
 .materials-table select{
   width:100%;
   min-width:0;
+  min-height:22px;
+  height:22px;
+  padding:1px 5px;
+  font-size:11px;
+  line-height:1.15;
+}
+.materials-table input[type="checkbox"]{
+  width:16px;
+  height:16px;
+  min-height:16px;
+  padding:0;
 }
 .materials-table input[type="text"]{
   background:var(--surface-2) !important;
@@ -247,10 +264,11 @@ td{ border-bottom:0.5px solid var(--border); }
 .materials-table.hide-meta th:nth-child(18){ width:42px; }
 .materials-readonly{
   display:block;
-  min-height:32px;
-  padding:6px 2px;
+  min-height:20px;
+  padding:2px 1px;
   color:var(--text-secondary);
   white-space:nowrap;
+  line-height:1.2;
 }
 .materials-key{
   font-size:11px;
@@ -264,12 +282,12 @@ td{ border-bottom:0.5px solid var(--border); }
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  width:22px;
-  height:26px;
+  width:18px;
+  height:22px;
   margin-left:-4px;
   cursor:grab;
   color:var(--text-muted);
-  font-size:16px;
+  font-size:14px;
   line-height:1;
   touch-action:none;
   user-select:none;
@@ -401,6 +419,9 @@ td{ border-bottom:0.5px solid var(--border); }
   font-size:12px;
   min-height:26px;
   padding:2px 6px;
+  background:var(--surface-2);
+  color:var(--text-primary);
+  border-color:var(--border-strong);
 }
 #tabLayersAdmin .materials-actions{ gap:4px; }
 #tabLayersAdmin .materials-actions button{
