@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>방음 벽체·천장·바닥 설계 및 물량 산출</title>
+<title>건축음향 벽체·천장·바닥 레이어 설계 및 물량 산출</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.24.0/dist/tabler-icons.min.css">
 <style>
 :root{
@@ -1093,9 +1093,19 @@ td{ border-bottom:0.5px solid var(--border); }
   #layerList button i,
   #ceilLayerList button i,
   #floorLayerList button i{ font-size:12px !important; }
+  #addSearch,
+  #ceilAddSearch,
+  #floorAddSearch,
   #addSelect,
   #ceilAddSelect,
   #floorAddSelect{ min-width:0; }
+  #addSearch,
+  #ceilAddSearch,
+  #floorAddSearch{
+    flex:1 1 100% !important;
+    min-height:34px;
+    font-size:14px;
+  }
   #addBtn,
   #ceilAddBtn,
   #floorAddBtn{ flex:0 0 72px; padding:0 10px; }
@@ -1239,23 +1249,23 @@ td{ border-bottom:0.5px solid var(--border); }
 </head>
 <body>
 <div class="wrap">
-<h1>방음 벽체·천장·바닥 설계 및 물량 산출</h1>
-<p class="subtitle">녹음실·방음공간 차음 구조 설계 도구 · 벽체·천장·바닥 레이어에서 단계를 골라 각 산출 탭으로 보내고 최종에서 전체 자재를 합산합니다</p>
+<h1>건축음향 벽체·천장·바닥 레이어 설계 및 물량 산출</h1>
+<p class="subtitle">녹음실·건축음향 차음 구조 설계 도구 · 벽체·천장·바닥 레이어에서 단계를 골라 각 산출 탭으로 보내고 최종에서 전체 자재를 합산합니다</p>
 
 <h2 class="sr-only">벽체 차음 구성, 참조표, 벽체·천장·바닥 개별 설계 및 최종 합산 물량 산출 도구</h2>
 
 <div class="tab-bar">
-  <button id="tabRefBtn" style="border:2px solid var(--border-accent); font-weight:500;">레이어 참조</button>
+  <button id="tabLayersAdminBtn" style="border:2px solid var(--border-accent); font-weight:500;">레이어관리</button>
+  <button id="tabRefBtn">레이어 참조</button>
   <button id="tabWallBtn">벽체</button>
   <button id="tabCeilBtn">천장</button>
   <button id="tabFloorBtn">바닥</button>
   <button id="tabFinalBtn">최종</button>
   <button id="tabMaterialsBtn">자재관리</button>
-  <button id="tabLayersAdminBtn">레이어관리</button>
   <button id="tabSettingsBtn">설정</button>
 </div>
 
-<div id="tabRef">
+<div id="tabRef" style="display:none;">
   <div class="materials-actions" style="margin-bottom:10px;">
     <button type="button" data-ref-mode="wall">벽체 레이어</button>
     <button type="button" data-ref-mode="ceil">천장 레이어</button>
@@ -1302,6 +1312,7 @@ td{ border-bottom:0.5px solid var(--border); }
     <div>
       <div id="layerList" style="display:flex; flex-direction:column; gap:4px;"></div>
       <div style="display:flex; gap:6px; margin-top:8px;">
+        <input id="addSearch" type="text" placeholder="자재 검색" style="flex:0 0 140px;">
         <select id="addSelect" style="flex:1;"></select>
         <button id="addBtn"><i class="ti ti-plus" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 추가</button>
       </div>
@@ -1344,6 +1355,9 @@ td{ border-bottom:0.5px solid var(--border); }
     <label style="font-size:13px; display:flex; align-items:center; gap:6px;">가로(mm) <input type="number" id="ceilWidth" value="4000" style="width:90px;"></label>
     <label style="font-size:13px; display:flex; align-items:center; gap:6px;">세로(mm) <input type="number" id="ceilDepth" value="3000" style="width:90px;"></label>
     <label style="font-size:13px; display:flex; align-items:center; gap:6px;">틀/격자 간격(mm) <input type="number" id="ceilGap" value="450" style="width:70px;"></label>
+    <label style="font-size:13px; display:flex; align-items:center; gap:6px;">
+      <input type="checkbox" id="ceilIncludeHangerHeight" style="width:auto;"> 방진행거를 천장내리기 높이에 포함
+    </label>
     <button id="ceilResetBtn" type="button"><i class="ti ti-trash" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 천장 레이어 비우기</button>
   </div>
   <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">레이어 참조에서 천장 단계를 골라 "천장 물량 산출로 보내기"를 누르면 이 탭에 반영됩니다. 자재명을 클릭하면 다른 자재로 바로 바꿀 수 있어요</div>
@@ -1351,6 +1365,7 @@ td{ border-bottom:0.5px solid var(--border); }
     <div>
       <div id="ceilLayerList" style="display:flex; flex-direction:column; gap:4px; margin-bottom:6px;"></div>
       <div style="display:flex; gap:6px;">
+        <input id="ceilAddSearch" type="text" placeholder="자재 검색" style="flex:0 0 140px;">
         <select id="ceilAddSelect" style="flex:1;"></select>
         <button id="ceilAddBtn"><i class="ti ti-plus" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 추가</button>
       </div>
@@ -1394,6 +1409,7 @@ td{ border-bottom:0.5px solid var(--border); }
     <div>
       <div id="floorLayerList" style="display:flex; flex-direction:column; gap:4px; margin-bottom:6px;"></div>
       <div style="display:flex; gap:6px;">
+        <input id="floorAddSearch" type="text" placeholder="자재 검색" style="flex:0 0 140px;">
         <select id="floorAddSelect" style="flex:1;"></select>
         <button id="floorAddBtn"><i class="ti ti-plus" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 추가</button>
       </div>
@@ -1537,8 +1553,8 @@ td{ border-bottom:0.5px solid var(--border); }
             <th>간격/격자X</th>
             <th>격자Y</th>
             <th>겹수</th>
-            <th>밀도/하중</th>
-            <th>면밀도/하중</th>
+            <th>밀도</th>
+            <th>면밀도</th>
             <th>거래처</th>
             <th>벽</th>
             <th>천장</th>
@@ -1553,7 +1569,7 @@ td{ border-bottom:0.5px solid var(--border); }
 
 </div>
 
-<div id="tabLayersAdmin" style="display:none;">
+<div id="tabLayersAdmin">
   <div class="materials-panel">
     <div class="materials-head">
       <div>
@@ -1817,7 +1833,7 @@ let MAT = {
     "displaySpec": ""
   },
   "POLY25": {
-    "label": "폴리에스터 40K 25T",
+    "label": "폴리에스터 40K 25T(충진)",
     "t": 0,
     "kind": "wool",
     "sw": 450,
@@ -1830,9 +1846,37 @@ let MAT = {
     "hidden": true,
     "displaySpec": ""
   },
+  "POLY25_ADD": {
+    "label": "폴리에스터 40K 25T(덧붙이기)",
+    "t": 25,
+    "kind": "wool",
+    "sw": 450,
+    "sh": 1000,
+    "density": 40,
+    "acousticThickness": 25,
+    "acousticFamily": "polyester",
+    "category": "finish",
+    "bomCategory": "frame",
+    "hidden": true,
+    "displaySpec": ""
+  },
   "POLY50": {
-    "label": "폴리에스터 40K 50T",
+    "label": "폴리에스터 40K 50T(충진)",
     "t": 0,
+    "kind": "wool",
+    "sw": 450,
+    "sh": 1000,
+    "density": 40,
+    "acousticThickness": 50,
+    "acousticFamily": "polyester",
+    "category": "finish",
+    "bomCategory": "frame",
+    "hidden": true,
+    "displaySpec": ""
+  },
+  "POLY50_ADD": {
+    "label": "폴리에스터 40K 50T(덧붙이기)",
+    "t": 50,
     "kind": "wool",
     "sw": 450,
     "sh": 1000,
@@ -1929,47 +1973,47 @@ let MAT = {
   },
   "SHANGER50": {
     "label": "방진스프링 행거 50kg",
-    "t": 0,
+    "t": 172,
     "kind": "hanger",
     "sw": 900,
     "sh": 900,
     "loadKg": 50,
-    "dropMm": 100,
+    "dropMm": 172,
     "category": "frame",
-    "displaySpec": "50kg / 900x900"
+    "displaySpec": "50kg / A=172 / 900x900"
   },
   "SHANGER100": {
     "label": "방진스프링 행거 100kg",
-    "t": 0,
+    "t": 180,
     "kind": "hanger",
     "sw": 900,
     "sh": 900,
     "loadKg": 100,
-    "dropMm": 100,
+    "dropMm": 180,
     "category": "frame",
-    "displaySpec": "100kg / 900x900"
+    "displaySpec": "100kg / A=180 / 900x900"
   },
   "SHANGER150": {
     "label": "방진스프링 행거 150kg",
-    "t": 0,
+    "t": 180,
     "kind": "hanger",
     "sw": 900,
     "sh": 900,
     "loadKg": 150,
-    "dropMm": 100,
+    "dropMm": 180,
     "category": "frame",
-    "displaySpec": "150kg / 900x900"
+    "displaySpec": "150kg / A=180 / 900x900"
   },
   "SHANGER200": {
     "label": "방진스프링 행거 200kg",
-    "t": 0,
+    "t": 180,
     "kind": "hanger",
     "sw": 900,
     "sh": 900,
     "loadKg": 200,
-    "dropMm": 100,
+    "dropMm": 180,
     "category": "frame",
-    "displaySpec": "200kg / 900x900"
+    "displaySpec": "200kg / A=180 / 900x900"
   },
   "RUBBER": {
     "label": "원형방진고무",
@@ -2040,7 +2084,9 @@ const BOM_ORDER = [
   'RUBBER',
   'SH',
   'POLY25',
+  'POLY25_ADD',
   'POLY50',
+  'POLY50_ADD',
   'PERF9',
   'HWD75',
   'FABRIC'
@@ -2074,7 +2120,9 @@ let SUPPLIERS = {
   "RUBBER": "효성방진",
   "SH": "블랙홀",
   "POLY25": "블랙홀",
+  "POLY25_ADD": "블랙홀",
   "POLY50": "블랙홀",
+  "POLY50_ADD": "블랙홀",
   "PERF9": "레고리스",
   "HWD75": "오케이우드",
   "FABRIC": "위즈텍스",
@@ -2089,7 +2137,7 @@ const COMPOSITES = {
   C_ABS30: {label:'흡음 목재틀+폴리에스터 30T', parts:['BATT','POLY25']},
   C_ABS60: {label:'흡음 목재틀+폴리에스터 60T', parts:['BATT','BATT','POLY50']}
 };
-const HIDDEN_SWAP_GROUP = ['BATT','POLY25','POLY50'];
+const HIDDEN_SWAP_GROUP = ['BATT','POLY25','POLY25_ADD','POLY50','POLY50_ADD'];
 let WALL_ITEMS = [
   "G1",
   "G",
@@ -2110,7 +2158,9 @@ let WALL_ITEMS = [
   "PERF9",
   "USRMRG2NX7L",
   "POLY25",
+  "POLY25_ADD",
   "POLY50",
+  "POLY50_ADD",
   "BATT"
 ];
 let CEIL_ITEMS = [
@@ -2134,7 +2184,9 @@ let CEIL_ITEMS = [
   "PERF9",
   "USRMRG2NX7L",
   "POLY25",
+  "POLY25_ADD",
   "POLY50",
+  "POLY50_ADD",
   "BATT"
 ];
 let FLOOR_ITEMS = [
@@ -2153,7 +2205,9 @@ let FLOOR_ITEMS = [
   "DECO3",
   "USRMRG2NX7L",
   "POLY50",
+  "POLY50_ADD",
   "POLY25",
+  "POLY25_ADD",
   "BATT"
 ];
 let WALL_DEFAULT = [
@@ -2950,7 +3004,13 @@ function normalizeKey(text){
   return raw || `USR${Date.now().toString(36).toUpperCase()}`;
 }
 
-const REQUIRED_BUNDLED_MATERIALS = ['PLY15_2P', 'CONC200', 'SHANGER50', 'SHANGER100', 'SHANGER150', 'SHANGER200'];
+const REQUIRED_BUNDLED_MATERIALS = ['PLY15_2P', 'CONC200', 'SHANGER50', 'SHANGER100', 'SHANGER150', 'SHANGER200', 'POLY25_ADD', 'POLY50_ADD'];
+function hangerDefaultHeight(loadKg){
+  const load = parseFloat(loadKg) || 100;
+  if(load <= 70) return 172;
+  if(load <= 200) return 180;
+  return 220;
+}
 function ensureBundledMaterialAvailability(next, key){
   if(!next.MAT[key] && BASE_MAT[key]){
     next.MAT[key] = deepCopy(BASE_MAT[key]);
@@ -3289,7 +3349,8 @@ function normalizeMaterialConfig(config){
       if(!item.sw) item.sw = 900;
       if(!item.sh) item.sh = 900;
       if(!item.loadKg) item.loadKg = 100;
-      if(!item.dropMm) item.dropMm = 100;
+      if(!item.t) item.t = hangerDefaultHeight(item.loadKg);
+      if(!item.dropMm) item.dropMm = item.t;
     }
     migrateLegacyTotalThickness(item, key);
   });
@@ -3342,14 +3403,17 @@ function refreshMaterialSelects(){
   const ceilAddSelect = document.getElementById('ceilAddSelect');
   const floorAddSelect = document.getElementById('floorAddSelect');
   if(addSelect){
+    addSelect.dataset.searchQuery = document.getElementById('addSearch')?.value || '';
     addSelect.innerHTML = '';
     populateSelectList(addSelect, WALL_ITEMS);
   }
   if(ceilAddSelect){
+    ceilAddSelect.dataset.searchQuery = document.getElementById('ceilAddSearch')?.value || '';
     ceilAddSelect.innerHTML = '';
     populateSelectList(ceilAddSelect, CEIL_ITEMS);
   }
   if(floorAddSelect){
+    floorAddSelect.dataset.searchQuery = document.getElementById('floorAddSearch')?.value || '';
     floorAddSelect.innerHTML = '';
     populateSelectList(floorAddSelect, FLOOR_ITEMS);
   }
@@ -3460,7 +3524,7 @@ function syncPresetGroupSelect(){
   groupSelect.value = currentRefGroupKey(currentRefMode);
 }
 
-function presetThickness(p){ return p.seq.reduce((s,k)=>s+materialThicknessMm(MAT[k]),0); }
+function presetThickness(p){ return p.seq.reduce((s,k)=>s+visibleThicknessMmForKey(k),0); }
 
 function normalizeWallZone(zone){
   return WALL_ZONE_OPTIONS.some((option)=>option.value === zone) ? zone : '';
@@ -3714,7 +3778,7 @@ function itemsFromSeq(seq, zones=[]){
 }
 
 function updateTotalsOnly(){
-  const total = stack.reduce((s,item)=>s+item.val,0);
+  const total = stack.reduce((s,item)=>s+visibleThicknessMmForItem(item),0);
   document.getElementById('totalThick').textContent = Math.round(total*10)/10 + 'mm';
 }
 
@@ -3774,14 +3838,28 @@ function materialThicknessMm(m){
   const thickness = singleLayerThicknessMm(m);
   return m?.kind==='board' ? thickness * plyCountFor(m) : thickness;
 }
+function visibleThicknessMmForItem(item, options={}){
+  const m = MAT[item?.key];
+  if(!m || m.structuralBase) return 0;
+  if(m.kind === 'hanger' && options.includeHanger === false) return 0;
+  const value = parseFloat(item?.val);
+  if(m.kind === 'hanger' && (!Number.isFinite(value) || value <= 0)) return materialThicknessMm(m);
+  return Number.isFinite(value) ? value : materialThicknessMm(m);
+}
+function visibleThicknessMmForKey(key, options={}){
+  const m = MAT[key];
+  if(!m || m.structuralBase) return 0;
+  if(m.kind === 'hanger' && options.includeHanger === false) return 0;
+  return materialThicknessMm(m);
+}
 function layerValueText(itemOrKey){
   const key = typeof itemOrKey === 'string' ? itemOrKey : itemOrKey?.key;
   const m = MAT[key];
   if(!m) return '-';
-  if(m.kind === 'hanger') return m.loadKg ? `${round2(m.loadKg)}kg` : '방진행거';
   const value = typeof itemOrKey === 'string'
     ? materialThicknessMm(m)
     : (parseFloat(itemOrKey?.val) || materialThicknessMm(m));
+  if(m.kind === 'hanger') return `${round2(value)}mm`;
   return `${round2(value)}mm`;
 }
 function supplierFor(bk){ return SUPPLIERS[bk] || '-'; }
@@ -3799,7 +3877,7 @@ function surfaceMassForMaterial(m, key){
   return 0;
 }
 function surfaceMassText(m, key){
-  if(m?.kind === 'hanger') return m.loadKg ? `${round2(m.loadKg)}kg` : '-';
+  if(m?.kind === 'hanger') return '-';
   if(!m || (m.kind !== 'board' && m.kind !== 'wool')) return '-';
   const mass = surfaceMassForMaterial(m, key);
   return mass>0 ? `${round2(mass)}` : '-';
@@ -3807,7 +3885,7 @@ function surfaceMassText(m, key){
 function specForMaterial(m){
   if(!m) return '-';
   if(m.structuralBase) return m.displaySpec || '기존 구조체';
-  if(m.kind==='hanger') return `${m.loadKg || 0}kg / ${m.sw || 0}x${m.sh || 0}`;
+  if(m.kind==='hanger') return `${m.loadKg || 0}kg / A=${round2(materialThicknessMm(m))} / ${m.sw || 0}x${m.sh || 0}`;
   if(m.kind==='board') return m.areaOnly ? (m.unitLabel || '면적') : `${m.sw || 0}x${m.sh || 0}`;
   if(m.kind==='stud') return `${m.sw || 0}x${m.sd || 0}x${m.sh || 0} @${m.spacing || 450}`;
   if(m.kind==='fabricFrame') return `${m.sw || 0}x${m.sd || 0}x${m.sh || 0}`;
@@ -3819,7 +3897,7 @@ function specForMaterial(m){
 }
 function layerOptionMeta(m){
   if(!m) return '-';
-  if(m.kind === 'hanger') return m.loadKg ? `${round2(m.loadKg)}kg` : '방진행거';
+  if(m.kind === 'hanger') return `${m.loadKg ? `${round2(m.loadKg)}kg / ` : ''}A ${round2(materialThicknessMm(m))}mm`;
   if(m.structuralBase) return `${round2(singleLayerThicknessMm(m))}mm 기존`;
   return `${round2(materialThicknessMm(m))}mm`;
 }
@@ -4058,26 +4136,58 @@ function render(){
   updateStcIfVisible('wall');
 }
 
+function normalizedSearchText(text){
+  return String(text || '').replace(/\s+/g, '').toLowerCase();
+}
+
+function optionMatchesQuery(key, label, query){
+  if(!query) return true;
+  return normalizedSearchText(key).includes(query) || normalizedSearchText(label).includes(query);
+}
+
 function populateSelectList(selectEl, keyList){
+  const query = normalizedSearchText(selectEl.dataset.searchQuery || '');
   const ph = document.createElement('option');
-  ph.value = ''; ph.textContent = '자재 추가';
+  ph.value = ''; ph.textContent = query ? '검색 결과 선택' : '자재 추가';
   selectEl.appendChild(ph);
+  let count = 0;
   keyList.forEach(k=>{
     if(COMPOSITES[k]){
       const c = COMPOSITES[k];
+      if(!optionMatchesQuery(k, c.label, query)) return;
       const opt = document.createElement('option');
       opt.value = 'COMPOSITE:'+k;
       const totalT = c.parts.reduce((s,pk)=>s+materialThicknessMm(MAT[pk]),0);
       opt.textContent = `${c.label} (${totalT}mm)`;
       selectEl.appendChild(opt);
+      count += 1;
     } else {
       const m = MAT[k];
+      if(!m || !optionMatchesQuery(k, m.label, query)) return;
       const opt = document.createElement('option');
       opt.value = k; opt.textContent = `${m.label} (${layerOptionMeta(m)})`;
       selectEl.appendChild(opt);
+      count += 1;
     }
   });
+  if(!count && query){
+    const empty = document.createElement('option');
+    empty.value = '';
+    empty.textContent = '검색 결과 없음';
+    empty.disabled = true;
+    selectEl.appendChild(empty);
+  }
   selectEl.value = '';
+}
+
+function bindAddSearch(searchId, selectEl, keyListFn){
+  const searchEl = document.getElementById(searchId);
+  if(!searchEl || !selectEl) return;
+  searchEl.addEventListener('input', ()=>{
+    selectEl.dataset.searchQuery = searchEl.value || '';
+    selectEl.innerHTML = '';
+    populateSelectList(selectEl, keyListFn());
+  });
 }
 
 let activeMobileSelect = null;
@@ -4843,11 +4953,12 @@ function renderCeil(){
   const wM = (parseFloat(document.getElementById('ceilWidth').value)||0)/1000;
   const dM = (parseFloat(document.getElementById('ceilDepth').value)||0)/1000;
   const gapM = (parseFloat(document.getElementById('ceilGap').value)||450)/1000;
+  const includeHangerHeight = document.getElementById('ceilIncludeHangerHeight')?.checked === true;
   const area = wM*dM;
 
   document.getElementById('ceilLayerList').innerHTML = plainRowsHTML(ceilStack, 'ceil', CEIL_ITEMS, wM, dM);
 
-  const ceilThick = ceilStack.reduce((s,it)=>s+it.val,0);
+  const ceilThick = ceilStack.reduce((s,it)=>s+visibleThicknessMmForItem(it, {includeHanger:includeHangerHeight}),0);
   document.getElementById('ceilThick').textContent = Math.round(ceilThick*10)/10 + 'mm';
   document.getElementById('ceilArea').textContent = Math.round(area*100)/100 + 'm²';
 
@@ -4867,7 +4978,7 @@ function renderFloor(){
 
   document.getElementById('floorLayerList').innerHTML = plainRowsHTML(floorStack, 'floor', FLOOR_ITEMS, wM, dM);
 
-  const floorThick = floorStack.reduce((s,it)=>s+it.val,0);
+  const floorThick = floorStack.reduce((s,it)=>s+visibleThicknessMmForItem(it),0);
   document.getElementById('floorThick').textContent = Math.round(floorThick*10)/10 + 'mm';
   document.getElementById('floorArea').textContent = Math.round(area*100)/100 + 'm²';
 
@@ -5002,7 +5113,7 @@ function captureLayerInfo(layer, mode){
   const validRole = ['accent','success','pro','warning'].includes(layer.role) ? layer.role : '';
   const isWall = mode === 'wall';
   const isGap = layer.kind === 'gap';
-  const finishAsStructure = ['BATT','POLY25','POLY50'].includes(layer.key);
+  const finishAsStructure = ['BATT','POLY25','POLY25_ADD','POLY50','POLY50_ADD'].includes(layer.key);
   const isFinish = layer.category === 'finish' && !finishAsStructure;
 
   if(isGap) return {rowClass:' gap', meta:'공기층'};
@@ -5099,7 +5210,8 @@ function currentInputsForMode(mode){
     return {
       ceilWidth: document.getElementById('ceilWidth').value,
       ceilDepth: document.getElementById('ceilDepth').value,
-      ceilGap: document.getElementById('ceilGap').value
+      ceilGap: document.getElementById('ceilGap').value,
+      ceilIncludeHangerHeight: document.getElementById('ceilIncludeHangerHeight')?.checked === true
     };
   }
   return {
@@ -5480,7 +5592,9 @@ function defaultWallZoneForKey(key){
 }
 
 function draftMaterialThicknessForKey(key){
-  return materialThicknessMm(materialDraft.MAT?.[key] || MAT[key]);
+  const item = materialDraft.MAT?.[key] || MAT[key];
+  if(!item || item.structuralBase) return 0;
+  return materialThicknessMm(item);
 }
 
 function presetDraftThickness(preset){
@@ -6006,8 +6120,9 @@ function renderMaterialManager(){
     const locked = materialIsProtected(key);
     const fields = materialManagerFields(item);
     const plyValue = item.kind === 'board' ? (item.ply ?? 1) : '';
-    const loadOrDensityField = item.kind === 'hanger' ? 'loadKg' : 'density';
-    const loadOrDensityValue = item.kind === 'hanger' ? (item.loadKg ?? '') : (item.density ?? '');
+    const densityCell = item.kind === 'hanger'
+      ? numberInputHTML(null, '', {disabled:true})
+      : `<input type="number" step="1" data-field="density" value="${item.density ?? ''}">`;
     return `<tr data-mat-key="${key}">
       <td class="col-meta"><div class="materials-key">${key}</div></td>
       <td><div class="mat-name-cell"><i class="ti ti-grip-vertical mat-drag-handle" data-drag-key="${key}" title="끌어서 순서 변경" aria-label="끌어서 순서 변경"></i><input type="text" data-field="label" value="${item.label || ''}"></div></td>
@@ -6028,7 +6143,7 @@ function renderMaterialManager(){
       <td>${numberInputHTML(fields.gapX.field, fields.gapX.value, {disabled:fields.gapX.disabled})}</td>
       <td>${numberInputHTML(fields.gapY.field, fields.gapY.value, {disabled:fields.gapY.disabled})}</td>
       <td><input type="number" step="1" min="1" data-field="ply" value="${plyValue}" ${item.kind==='board' ? '' : 'disabled title="보드류 자재만 겹수를 사용합니다."'}></td>
-      <td><input type="number" step="1" data-field="${loadOrDensityField}" value="${loadOrDensityValue}"></td>
+      <td>${densityCell}</td>
       <td><span class="materials-readonly">${surfaceMassText(item, key)}</span></td>
       <td><input type="text" data-supplier="1" value="${supplier}"></td>
       <td><input type="checkbox" data-list="wall" ${materialDraft.wallItems.includes(key) ? 'checked' : ''}></td>
@@ -6186,7 +6301,8 @@ function updateMaterialDraftField(key, field, value){
       if(!item.sw) item.sw = 900;
       if(!item.sh) item.sh = 900;
       if(!item.loadKg) item.loadKg = 100;
-      if(!item.dropMm) item.dropMm = 100;
+      if(!item.t) item.t = hangerDefaultHeight(item.loadKg);
+      if(!item.dropMm) item.dropMm = item.t;
     }
     return;
   }
@@ -6232,6 +6348,8 @@ function resetAll(){
   resetWall();
   document.getElementById('ceilWidth').value = 4000;
   document.getElementById('ceilDepth').value = 3000;
+  const hangerHeightCheck = document.getElementById('ceilIncludeHangerHeight');
+  if(hangerHeightCheck) hangerHeightCheck.checked = false;
   document.getElementById('floorWidth').value = 4000;
   document.getElementById('floorDepth').value = 3000;
   document.getElementById('ceilGap').value = 450;
@@ -6276,6 +6394,8 @@ function serializeState(){
   const ids = ['wallLen','htOuter','htInner','studGap','wallOpeningArea','ceilWidth','ceilDepth','ceilGap','floorWidth','floorDepth','floorGap','lossRate'];
   const inputs = {};
   ids.forEach(id=>{ inputs[id] = document.getElementById(id).value; });
+  const ceilIncludeHangerHeight = document.getElementById('ceilIncludeHangerHeight');
+  if(ceilIncludeHangerHeight) inputs.ceilIncludeHangerHeight = ceilIncludeHangerHeight.checked;
   return {
     preset: window.currentPreset ? window.currentPreset.n : 1,
     presetGroup: window.currentPresetGroup || PRESET_GROUPS[0].key,
@@ -6293,7 +6413,8 @@ function applyState(state){
   if(state.inputs){
     Object.entries(state.inputs).forEach(([id,value])=>{
       const el = document.getElementById(id);
-      if(el) el.value = value;
+      if(el && el.type === 'checkbox') el.checked = !!value;
+      else if(el) el.value = value;
     });
   }
   if(Array.isArray(state.stack)) stack = state.stack;
@@ -6564,6 +6685,7 @@ let stack = [];
 
 const addSelect = document.getElementById('addSelect');
 populateSelectList(addSelect, WALL_ITEMS);
+bindAddSearch('addSearch', addSelect, ()=>WALL_ITEMS);
 addSelect.addEventListener('change', ()=>{ performWallAdd(addSelect.value); addSelect.value=''; });
 document.getElementById('addBtn').addEventListener('click', ()=>{ performWallAdd(addSelect.value); addSelect.value=''; });
 document.getElementById('layerList').addEventListener('click', (e)=>{
@@ -6610,6 +6732,8 @@ const ceilAddSelect = document.getElementById('ceilAddSelect');
 const floorAddSelect = document.getElementById('floorAddSelect');
 populateSelectList(ceilAddSelect, CEIL_ITEMS);
 populateSelectList(floorAddSelect, FLOOR_ITEMS);
+bindAddSearch('ceilAddSearch', ceilAddSelect, ()=>CEIL_ITEMS);
+bindAddSearch('floorAddSearch', floorAddSelect, ()=>FLOOR_ITEMS);
 ceilAddSelect.addEventListener('change', ()=>{ performCeilAdd(ceilAddSelect.value); ceilAddSelect.value=''; });
 document.getElementById('ceilAddBtn').addEventListener('click', ()=>{ performCeilAdd(ceilAddSelect.value); ceilAddSelect.value=''; });
 floorAddSelect.addEventListener('change', ()=>{ performFloorAdd(floorAddSelect.value); floorAddSelect.value=''; });
@@ -6644,6 +6768,7 @@ document.getElementById('ceilDepth').addEventListener('input', ()=>syncRoomSize(
 document.getElementById('floorWidth').addEventListener('input', ()=>syncRoomSize('floorWidth'));
 document.getElementById('floorDepth').addEventListener('input', ()=>syncRoomSize('floorDepth'));
 document.getElementById('ceilGap').addEventListener('input', renderCeil);
+document.getElementById('ceilIncludeHangerHeight').addEventListener('change', renderCeil);
 document.getElementById('floorGap').addEventListener('input', renderFloor);
 document.getElementById('ceilResetBtn').addEventListener('click', resetCeil);
 document.getElementById('floorResetBtn').addEventListener('click', resetFloor);
@@ -6982,7 +7107,7 @@ function activateTab(which){
   tabMaterials.style.display = which==='materials' ? 'block':'none';
   tabLayersAdmin.style.display = which==='layersadmin' ? 'block':'none';
   tabSettings.style.display = which==='settings' ? 'block':'none';
-  [tabRefBtn,tabWallBtn,tabCeilBtn,tabFloorBtn,tabFinalBtn,tabMaterialsBtn,tabLayersAdminBtn,tabSettingsBtn].forEach(b=>{ b.style.border='0.5px solid var(--border-strong)'; b.style.fontWeight='400'; });
+  [tabLayersAdminBtn,tabRefBtn,tabWallBtn,tabCeilBtn,tabFloorBtn,tabFinalBtn,tabMaterialsBtn,tabSettingsBtn].forEach(b=>{ b.style.border='0.5px solid var(--border-strong)'; b.style.fontWeight='400'; });
   const map = {ref:tabRefBtn, wall:tabWallBtn, ceil:tabCeilBtn, floor:tabFloorBtn, final:tabFinalBtn, materials:tabMaterialsBtn, layersadmin:tabLayersAdminBtn, settings:tabSettingsBtn};
   map[which].style.border='2px solid var(--border-accent)'; map[which].style.fontWeight='500';
   if(which==='final') renderFinal();
@@ -7032,6 +7157,7 @@ render();
 renderCeil();
 renderFloor();
 renderMaterialManager();
+activateTab('layersadmin');
 </script>
 </body>
 </html>
