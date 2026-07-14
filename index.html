@@ -665,6 +665,151 @@ td{ border-bottom:0.5px solid var(--border); }
   color:var(--text-muted);
   background:var(--surface-2);
 }
+.final-intro{
+  font-size:12px;
+  color:var(--text-muted);
+  margin-bottom:10px;
+}
+.final-room-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1.35fr) minmax(280px,0.65fr);
+  gap:12px;
+  align-items:stretch;
+  margin-bottom:12px;
+}
+.final-panel-head{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-bottom:8px;
+}
+.final-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:3px 8px;
+  border:0.5px solid var(--border-strong);
+  border-radius:999px;
+  background:var(--surface-2);
+  color:var(--text-secondary);
+  font-size:11px;
+  white-space:nowrap;
+}
+.final-room-svg{
+  overflow:hidden;
+  border:0.5px solid var(--border);
+  border-radius:var(--radius);
+  background:var(--surface-2);
+}
+.final-room-svg svg{
+  display:block;
+  width:100%;
+  height:auto;
+  overflow:visible;
+}
+.final-room-svg .face-top{ fill:var(--bg-warning); stroke:var(--text-primary); stroke-width:2; }
+.final-room-svg .face-left{ fill:var(--bg-accent); stroke:var(--text-primary); stroke-width:2; }
+.final-room-svg .face-right{ fill:var(--bg-success); stroke:var(--text-primary); stroke-width:2; }
+.final-room-svg .face-floor{ fill:var(--bg-pro); stroke:var(--text-primary); stroke-width:1.5; stroke-dasharray:5 5; opacity:0.9; }
+.final-room-svg .room-edge{ fill:none; stroke:var(--text-primary); stroke-width:2.5; stroke-linejoin:round; stroke-linecap:round; }
+.final-room-svg .room-axis{ stroke:var(--fill-success); stroke-width:1.2; opacity:0.5; }
+.final-room-svg .room-dim,
+.final-room-svg .room-dim-guide{ fill:none; stroke:var(--text-muted); stroke-width:1.35; }
+.final-room-svg .room-dim-guide{ opacity:0.75; }
+.final-room-svg text{ fill:var(--text-primary); font-weight:400; }
+.final-room-svg .room-muted{ fill:var(--text-muted); }
+.final-room-metrics{
+  margin-top:8px;
+  margin-bottom:0;
+}
+.final-room-metrics.metric-grid.cols-2{
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+}
+.final-room-metrics .metric-card{
+  padding:10px;
+}
+.planner-internal-fields{ display:none; }
+.final-section-grid{
+  display:grid;
+  grid-template-columns:minmax(0,0.95fr) minmax(0,1.05fr);
+  gap:12px;
+  align-items:start;
+}
+.final-selected-list{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.final-structure-card{
+  border:0.5px solid var(--border);
+  border-radius:var(--radius);
+  background:var(--surface-2);
+  padding:9px 10px;
+}
+.final-structure-head{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+  gap:8px;
+  margin-bottom:7px;
+}
+.final-structure-title{
+  min-width:0;
+  font-size:13px;
+  font-weight:700;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.final-structure-meta{
+  font-size:11px;
+  color:var(--text-muted);
+  line-height:1.35;
+  margin-top:2px;
+}
+.final-layer-chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:4px;
+}
+.final-layer-chip{
+  display:inline-flex;
+  min-width:0;
+  max-width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  padding:2px 6px;
+  border:0.5px solid var(--border);
+  border-radius:5px;
+  background:var(--surface-1);
+  color:var(--text-secondary);
+  font-size:11px;
+  line-height:1.25;
+  white-space:nowrap;
+}
+.final-layer-chip.accent{ background:var(--bg-accent); color:var(--text-accent); border-color:var(--text-accent); }
+.final-layer-chip.success{ background:var(--bg-success); color:var(--text-success); border-color:var(--text-success); }
+.final-layer-chip.pro{ background:var(--bg-pro); color:var(--text-pro); border-color:var(--text-pro); }
+.final-layer-chip.warning{ background:var(--bg-warning); color:var(--text-warning); border-color:var(--text-warning); }
+.final-layer-chip.finish{ background:var(--bg-danger); color:var(--text-danger); border-color:var(--text-danger); }
+.final-layer-chip.gap{ background:transparent; color:var(--text-secondary); border-style:dashed; }
+.final-bom-panel table{ margin-top:2px; }
+.final-saved-details{
+  margin-top:12px;
+  border:0.5px solid var(--border);
+  border-radius:var(--radius);
+  background:var(--surface-1);
+  padding:8px 10px;
+}
+.final-saved-details summary{
+  cursor:pointer;
+  font-size:12px;
+  font-weight:700;
+  color:var(--text-secondary);
+}
+.final-saved-details .capture-list{ margin-top:8px; }
 .layer-badge{
   flex:0 0 auto;
   font-size:10px;
@@ -1406,6 +1551,16 @@ td{ border-bottom:0.5px solid var(--border); }
   .planner-grid,
   .planner-fields,
   .planner-assign-grid{ grid-template-columns:1fr; }
+  .final-room-grid,
+  .final-section-grid{ grid-template-columns:1fr; }
+  .final-panel-head{ align-items:flex-start; }
+  .final-room-svg svg{ min-width:0; }
+  .final-room-metrics.metric-grid.cols-2{ grid-template-columns:repeat(2, minmax(0, 1fr)); }
+  .final-room-metrics .metric-card{ padding:8px; }
+  .final-badge{ font-size:10px; padding:2px 6px; }
+  .final-structure-title{ font-size:12px; }
+  .final-layer-chip{ flex:1 1 118px; font-size:10px; }
+  .final-saved-details{ padding:7px 8px; }
   .planner-wall-row{ grid-template-columns:1fr; }
   .planner-wall-side{ padding-top:0; }
 }
@@ -1614,29 +1769,45 @@ td{ border-bottom:0.5px solid var(--border); }
 </div>
 
 <div id="tabFinal" style="display:none;">
-  <div style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">각 탭에서 저장한 벽체·천장·바닥 구조를 실제 현장 크기에 배치하고, 최종 물량을 바로 검산하는 탭입니다.</div>
-  <div class="planner-grid" style="margin-bottom:12px;">
+  <div class="final-intro">각 탭에서 저장한 벽체·천장·바닥 구간을 조합하고, 선택된 구간의 실제 치수와 물량을 기준으로 최종표를 검산합니다.</div>
+  <div class="final-room-grid">
     <div class="planner-panel">
-      <div class="planner-section">
-        <div class="planner-section-title">현장 기본 치수</div>
-        <div class="planner-fields">
-          <div class="planner-field">
-            <label for="roomWidth">전체 가로(mm)</label>
-            <input type="number" id="roomWidth" value="4000" min="0" step="1">
-          </div>
-          <div class="planner-field">
-            <label for="roomDepth">전체 세로(mm)</label>
-            <input type="number" id="roomDepth" value="3000" min="0" step="1">
-          </div>
-          <div class="planner-field">
-            <label for="roomOuterHeight">부차음/마감 높이(mm)</label>
-            <input type="number" id="roomOuterHeight" value="2400" min="0" step="1">
-          </div>
-          <div class="planner-field">
-            <label for="roomInnerHeight">기본차음 높이(mm)</label>
-            <input type="number" id="roomInnerHeight" value="3000" min="0" step="1">
-          </div>
+      <div class="final-panel-head">
+        <div class="planner-section-title" style="margin-bottom:0;">공간 검산</div>
+        <div id="finalRoomDimensionBadge" class="final-badge">치수 대기</div>
+      </div>
+      <div id="finalRoomIso" class="final-room-svg"></div>
+      <div class="metric-grid cols-2 final-room-metrics">
+        <div class="metric-card">
+          <div class="metric-label">가로 기준</div>
+          <div id="roomInnerWidthMetric" class="metric-value">0mm</div>
         </div>
+        <div class="metric-card">
+          <div class="metric-label">세로 기준</div>
+          <div id="roomInnerDepthMetric" class="metric-value">0mm</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">천장 기준 면적</div>
+          <div id="roomCeilAreaMetric" class="metric-value">0m²</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">바닥 기준 면적</div>
+          <div id="roomFloorAreaMetric" class="metric-value">0m²</div>
+        </div>
+      </div>
+      <div id="roomPlanStatus" class="copy-status" aria-live="polite" style="margin-top:8px;"></div>
+      <div id="roomPlanSummary" class="planner-summary" style="display:none;"></div>
+    </div>
+    <div class="planner-panel">
+      <div class="final-panel-head">
+        <div class="planner-section-title" style="margin-bottom:0;">구조 선택</div>
+        <span class="final-badge">저장구간</span>
+      </div>
+      <div class="planner-internal-fields" aria-hidden="true">
+        <input type="number" id="roomWidth" value="4000" min="0" step="1">
+        <input type="number" id="roomDepth" value="3000" min="0" step="1">
+        <input type="number" id="roomOuterHeight" value="2400" min="0" step="1">
+        <input type="number" id="roomInnerHeight" value="3000" min="0" step="1">
       </div>
       <div class="planner-section">
         <div class="planner-section-title">벽체 4면 배치</div>
@@ -1656,29 +1827,6 @@ td{ border-bottom:0.5px solid var(--border); }
         </div>
       </div>
     </div>
-    <div class="planner-panel">
-      <div class="planner-section-title">자동 계산 미리보기</div>
-      <div class="metric-grid cols-2">
-        <div class="metric-card">
-          <div class="metric-label">천장/바닥 유효 가로</div>
-          <div id="roomInnerWidthMetric" class="metric-value">0mm</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">천장/바닥 유효 세로</div>
-          <div id="roomInnerDepthMetric" class="metric-value">0mm</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">천장 면적</div>
-          <div id="roomCeilAreaMetric" class="metric-value">0m²</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">바닥 면적</div>
-          <div id="roomFloorAreaMetric" class="metric-value">0m²</div>
-        </div>
-      </div>
-      <div id="roomPlanStatus" class="copy-status" aria-live="polite" style="margin:6px 0 10px;"></div>
-      <div id="roomPlanSummary" class="planner-summary"></div>
-    </div>
   </div>
   <div class="action-row">
     <label style="font-size:13px; display:flex; align-items:center; gap:6px;">최종 로스율(%) <input type="number" id="lossRate" value="0" min="0" step="1" style="width:70px;"></label>
@@ -1688,11 +1836,29 @@ td{ border-bottom:0.5px solid var(--border); }
   </div>
   <div id="copyStatus" class="copy-status" aria-live="polite"></div>
   <div id="finalPlanStatus" class="copy-status" aria-live="polite" style="margin-bottom:8px;"></div>
-  <div id="finalRoomSummary" class="planner-summary" style="margin-bottom:12px;"></div>
-  <div id="capturedList" class="capture-list"></div>
-  <table id="finalBomTable" style="width:100%; font-size:12px; border-collapse:collapse; table-layout:fixed;">
-    <colgroup><col style="width:18%"><col style="width:12%"><col style="width:7%"><col style="width:17%"><col style="width:16%"><col style="width:30%"></colgroup>
-  </table>
+  <div id="finalRoomSummary" class="planner-summary" style="display:none;"></div>
+  <div class="final-section-grid">
+    <div class="planner-panel">
+      <div class="final-panel-head">
+        <div class="planner-section-title" style="margin-bottom:0;">선택 구조 상세</div>
+        <span class="final-badge">레이어</span>
+      </div>
+      <div id="finalSelectedDetails" class="final-selected-list"></div>
+    </div>
+    <div class="planner-panel final-bom-panel">
+      <div class="final-panel-head">
+        <div class="planner-section-title" style="margin-bottom:0;">최종 물량표</div>
+        <span class="final-badge">자동 합산</span>
+      </div>
+      <table id="finalBomTable" style="width:100%; font-size:12px; border-collapse:collapse; table-layout:fixed;">
+        <colgroup><col style="width:18%"><col style="width:12%"><col style="width:7%"><col style="width:17%"><col style="width:16%"><col style="width:30%"></colgroup>
+      </table>
+    </div>
+  </div>
+  <details class="final-saved-details">
+    <summary>저장구간 전체 목록</summary>
+    <div id="capturedList" class="capture-list"></div>
+  </details>
 </div>
 
 <div id="tabMaterials" style="display:none;">
@@ -4553,6 +4719,15 @@ function plainRowsHTML(items, prefix, itemList, lenM, htM){
 
 function ceilValue(n){ return Math.ceil(n); }
 function round2(n){ return Math.round(n*100)/100; }
+function escapeHTML(value){
+  return String(value ?? '').replace(/[&<>"']/g, (ch)=>({
+    '&':'&amp;',
+    '<':'&lt;',
+    '>':'&gt;',
+    '"':'&quot;',
+    "'":'&#39;'
+  }[ch]));
+}
 function withLoss(value, lossRate){ return value * (1 + lossRate/100); }
 
 const TL_BANDS = [63,80,100,125,160,200,250,315,400,500,630,800,1000,1250,1600,2000,2500,3150,4000,5000];
@@ -5635,10 +5810,11 @@ function wallBaseThicknessMm(capture){
     .reduce((sum, layer)=>sum + (parseFloat(layer.val) || 0), 0);
 }
 function summarizeRoomPlan(){
-  const widthMm = Math.max(parseFloat(roomPlan.width) || 0, 0);
-  const depthMm = Math.max(parseFloat(roomPlan.depth) || 0, 0);
-  const outerHeightMm = Math.max(parseFloat(roomPlan.outerHeight) || 0, 0);
-  const innerHeightMm = Math.max(parseFloat(roomPlan.innerHeight) || 0, 0);
+  const derived = deriveRoomDimensionsFromSelections();
+  const widthMm = Math.max(derived.widthMm || 0, 0);
+  const depthMm = Math.max(derived.depthMm || 0, 0);
+  const outerHeightMm = Math.max(derived.outerHeightMm || 0, 0);
+  const innerHeightMm = Math.max(derived.innerHeightMm || 0, 0);
   const wallCaptures = Object.fromEntries(ROOM_SIDES.map((side)=>[side.key, findCaptureById(roomPlan.walls?.[side.key])]));
   const baseRight = wallBaseThicknessMm(wallCaptures.wall2);
   const baseLeft = wallBaseThicknessMm(wallCaptures.wall4);
@@ -5650,15 +5826,17 @@ function summarizeRoomPlan(){
   const floorCapture = findCaptureById(roomPlan.floor);
   const rows = ROOM_SIDES.map((side)=>{
     const capture = wallCaptures[side.key];
-    const lengthMm = side.axis === 'width' ? widthMm : depthMm;
+    const lengthMm = captureInputMm(capture, 'wallLen') || (side.axis === 'width' ? widthMm : depthMm);
+    const rowOuterHeightMm = captureInputMm(capture, 'htOuter') || outerHeightMm;
+    const rowInnerHeightMm = captureInputMm(capture, 'htInner') || innerHeightMm;
     return {
       type:'wall',
       sideKey:side.key,
       label:side.label,
       capture,
       lengthMm,
-      outerAreaM2: round2((lengthMm/1000) * (outerHeightMm/1000)),
-      innerAreaM2: round2((lengthMm/1000) * (innerHeightMm/1000)),
+      outerAreaM2: round2((lengthMm/1000) * (rowOuterHeightMm/1000)),
+      innerAreaM2: round2((lengthMm/1000) * (rowInnerHeightMm/1000)),
       baseThicknessMm: round2(wallBaseThicknessMm(capture))
     };
   });
@@ -5692,32 +5870,63 @@ function roomPlanHasAnySelection(){
   const wallSelected = ROOM_SIDES.some((side)=>roomPlan.walls?.[side.key]);
   return wallSelected || !!roomPlan.ceil || !!roomPlan.floor;
 }
+function captureInputMm(capture, key){
+  const value = parseFloat(capture?.inputs?.[key]);
+  return Number.isFinite(value) && value > 0 ? value : 0;
+}
+function firstPositiveNumber(values, fallback=0){
+  const found = values.find((value)=>Number.isFinite(value) && value > 0);
+  return found || fallback;
+}
+function selectedRoomCaptures(){
+  const rows = ROOM_SIDES.map((side)=>({
+    type:'wall',
+    sideKey:side.key,
+    label:side.label,
+    capture:findCaptureById(roomPlan.walls?.[side.key])
+  }));
+  rows.push({type:'ceil', label:'천장', capture:findCaptureById(roomPlan.ceil)});
+  rows.push({type:'floor', label:'바닥', capture:findCaptureById(roomPlan.floor)});
+  return rows;
+}
+function deriveRoomDimensionsFromSelections(){
+  const rows = selectedRoomCaptures();
+  const bySide = Object.fromEntries(rows.filter((row)=>row.type==='wall').map((row)=>[row.sideKey, row.capture]));
+  const ceilCapture = rows.find((row)=>row.type==='ceil')?.capture || null;
+  const floorCapture = rows.find((row)=>row.type==='floor')?.capture || null;
+  const widthMm = firstPositiveNumber([
+    captureInputMm(ceilCapture, 'ceilWidth'),
+    captureInputMm(floorCapture, 'floorWidth'),
+    captureInputMm(bySide.wall1, 'wallLen'),
+    captureInputMm(bySide.wall3, 'wallLen'),
+    parseFloat(roomPlan.width)
+  ], 0);
+  const depthMm = firstPositiveNumber([
+    captureInputMm(ceilCapture, 'ceilDepth'),
+    captureInputMm(floorCapture, 'floorDepth'),
+    captureInputMm(bySide.wall2, 'wallLen'),
+    captureInputMm(bySide.wall4, 'wallLen'),
+    parseFloat(roomPlan.depth)
+  ], 0);
+  const wallOuterHeights = Object.values(bySide).map((capture)=>captureInputMm(capture, 'htOuter')).filter(Boolean);
+  const wallInnerHeights = Object.values(bySide).map((capture)=>captureInputMm(capture, 'htInner')).filter(Boolean);
+  const outerHeightMm = firstPositiveNumber([
+    ...wallOuterHeights,
+    parseFloat(roomPlan.outerHeight)
+  ], 0);
+  const innerHeightMm = firstPositiveNumber([
+    ...wallInnerHeights,
+    parseFloat(roomPlan.innerHeight),
+    outerHeightMm
+  ], 0);
+  return {widthMm, depthMm, outerHeightMm, innerHeightMm};
+}
 function computeRoomPlanAgg(){
   if(!roomPlanHasAnySelection()) return null;
   const summary = summarizeRoomPlan();
   const merged = {};
-  summary.rows.forEach((row)=>{
-    if(!row.capture) return;
-    const items = captureLayersToItems(row.capture);
-    if(!items.length) return;
-    let agg = null;
-    if(row.type === 'wall'){
-      agg = computeAggGeneric(
-        items,
-        row.lengthMm / 1000,
-        (item)=>heightForItem(item, summary.outerHeightMm / 1000, summary.innerHeightMm / 1000),
-        captureGapMm(row.capture, 'wall') / 1000,
-        ()=>0
-      );
-    } else {
-      agg = computePlanAgg(
-        items,
-        summary.innerWidthMm / 1000,
-        summary.innerDepthMm / 1000,
-        captureGapMm(row.capture, row.type) / 1000
-      );
-    }
-    if(agg) mergeAggInto(merged, agg);
+  selectedRoomCaptures().forEach((row)=>{
+    if(row.capture) mergeAggInto(merged, row.capture.agg || {});
   });
   return {
     summary,
@@ -5737,6 +5946,92 @@ function roomRowSummary(row){
     return `${round2(row.lengthMm/1000)}m · 부차음 ${row.outerAreaM2}m² · 기본차음 ${row.innerAreaM2}m² · 기본차음 두께 ${row.baseThicknessMm}mm`;
   }
   return `${round2(row.widthMm/1000)}m x ${round2(row.depthMm/1000)}m · ${row.areaM2}m²`;
+}
+function compactCaptureName(capture){
+  if(!capture) return '선택 안 함';
+  const summary = capture.meta?.summary || '';
+  return summary && summary !== '레이어 없음' ? summary : capture.name;
+}
+function shortLabel(text, limit=18){
+  const value = String(text || '');
+  return value.length > limit ? `${value.slice(0, limit-1)}…` : value;
+}
+function renderFinalRoomIso(summary){
+  const wrap = document.getElementById('finalRoomIso');
+  const badge = document.getElementById('finalRoomDimensionBadge');
+  if(!wrap) return;
+  const w = round2(summary.widthMm || 0);
+  const d = round2(summary.depthMm || 0);
+  const h = round2(summary.innerHeightMm || summary.outerHeightMm || 0);
+  const rowsByKey = Object.fromEntries(summary.rows.filter((row)=>row.type==='wall').map((row)=>[row.sideKey, row]));
+  const ceilRow = summary.rows.find((row)=>row.type==='ceil');
+  const floorRow = summary.rows.find((row)=>row.type==='floor');
+  const wall2 = rowsByKey.wall2;
+  const wall4 = rowsByKey.wall4;
+  const dimText = w && d && h ? `${w} × ${d} × ${h}mm` : '선택 대기';
+  if(badge) badge.textContent = dimText;
+  const label = (text, limit=18)=>escapeHTML(shortLabel(text || '선택 안 함', limit));
+  wrap.innerHTML = `<svg viewBox="0 0 780 500" role="img" aria-label="최종 조합 공간 검산">
+    <defs>
+      <marker id="final-room-arrow" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+        <path d="M0,0 L8,4 L0,8 Z" fill="var(--text-muted)"></path>
+      </marker>
+    </defs>
+    <line class="room-axis" x1="-20" y1="347" x2="802" y2="-54"></line>
+    <polygon class="face-top" points="192,150 514,58 654,154 332,246"></polygon>
+    <polygon class="face-left" points="192,150 332,246 332,424 192,328"></polygon>
+    <polygon class="face-right" points="332,246 654,154 654,332 332,424"></polygon>
+    <polygon class="face-floor" points="192,328 332,424 654,332 514,236"></polygon>
+    <polyline class="room-edge" points="192,150 514,58 654,154 654,332 332,424 192,328 192,150 332,246 654,154"></polyline>
+    <line class="room-edge" x1="332" y1="246" x2="332" y2="424"></line>
+    <line class="room-dim-guide" x1="192" y1="150" x2="146" y2="124"></line>
+    <line class="room-dim-guide" x1="514" y1="58" x2="468" y2="32"></line>
+    <line class="room-dim" x1="146" y1="124" x2="468" y2="32" marker-start="url(#final-room-arrow)" marker-end="url(#final-room-arrow)"></line>
+    <text class="room-muted" x="305" y="68" text-anchor="middle">${w || 0} mm</text>
+    <line class="room-dim-guide" x1="514" y1="58" x2="548" y2="34"></line>
+    <line class="room-dim-guide" x1="654" y1="154" x2="688" y2="130"></line>
+    <line class="room-dim" x1="548" y1="34" x2="688" y2="130" marker-start="url(#final-room-arrow)" marker-end="url(#final-room-arrow)"></line>
+    <text class="room-muted" x="637" y="74" text-anchor="middle">${d || 0} mm</text>
+    <line class="room-dim-guide" x1="192" y1="150" x2="116" y2="150"></line>
+    <line class="room-dim-guide" x1="192" y1="328" x2="116" y2="328"></line>
+    <line class="room-dim" x1="116" y1="150" x2="116" y2="328" marker-start="url(#final-room-arrow)" marker-end="url(#final-room-arrow)"></line>
+    <text class="room-muted" x="86" y="244" text-anchor="middle">${h || 0} mm</text>
+    <text x="422" y="150" text-anchor="middle">천장 · ${label(ceilRow?.capture?.name, 14)}</text>
+    <text x="252" y="292" text-anchor="middle">${label(wall4?.label || '벽체 4')}</text>
+    <text class="room-muted" x="252" y="313" text-anchor="middle">${label(wall4?.capture?.name, 14)}</text>
+    <text x="500" y="298" text-anchor="middle">${label(wall2?.label || '벽체 2')}</text>
+    <text class="room-muted" x="500" y="319" text-anchor="middle">${label(wall2?.capture?.name, 14)}</text>
+    <text class="room-muted" x="432" y="418" text-anchor="middle">바닥 · ${label(floorRow?.capture?.name, 14)}</text>
+    <text class="room-muted" x="310" y="462" text-anchor="middle">벽체 1·3은 앞/뒤 면으로 조합</text>
+  </svg>`;
+}
+function renderFinalSelectedDetails(summary){
+  const el = document.getElementById('finalSelectedDetails');
+  if(!el) return;
+  const rows = summary.rows.filter((row)=>row.capture);
+  if(!rows.length){
+    el.innerHTML = '<div class="planner-empty">아직 선택된 구조가 없습니다. 오른쪽 구조 선택에서 벽체·천장·바닥 저장구간을 골라주세요.</div>';
+    return;
+  }
+  el.innerHTML = rows.map((row)=>{
+    const capture = row.capture;
+    const layers = Array.isArray(capture.layers) ? capture.layers : [];
+    const layerHTML = layers.length ? layers.slice(0, 10).map((layer)=>{
+      const display = captureLayerInfo(layer, capture.mode);
+      const chipClass = (display.rowClass || '').trim();
+      return `<span class="final-layer-chip ${chipClass}">${escapeHTML(layer.label)} · ${escapeHTML(layerValueText(layer))}</span>`;
+    }).join('') + (layers.length > 10 ? `<span class="final-layer-chip">외 ${layers.length - 10}</span>` : '') : '<span class="final-layer-chip">레이어 정보 없음</span>';
+    return `<div class="final-structure-card">
+      <div class="final-structure-head">
+        <div>
+          <div class="final-structure-title">${escapeHTML(row.label)} · ${escapeHTML(capture.name)}</div>
+          <div class="final-structure-meta">${escapeHTML(roomRowSummary(row))}<br>${escapeHTML(capture.meta?.summary || '')}</div>
+        </div>
+        <span class="final-badge">${escapeHTML(capture.meta?.thick || '-')}</span>
+      </div>
+      <div class="final-layer-chips">${layerHTML}</div>
+    </div>`;
+  }).join('');
 }
 function renderRoomPlanner(){
   const wallWrap = document.getElementById('roomWallAssignments');
@@ -5765,18 +6060,20 @@ function renderRoomPlanner(){
   floorSelect.innerHTML = roomCaptureOptionHTML('floor', roomPlan.floor || '');
 
   const summary = summarizeRoomPlan();
+  renderFinalRoomIso(summary);
+  renderFinalSelectedDetails(summary);
   document.getElementById('roomInnerWidthMetric').textContent = `${round2(summary.innerWidthMm)}mm`;
   document.getElementById('roomInnerDepthMetric').textContent = `${round2(summary.innerDepthMm)}mm`;
   document.getElementById('roomCeilAreaMetric').textContent = `${round2((summary.innerWidthMm/1000)*(summary.innerDepthMm/1000))}m²`;
   document.getElementById('roomFloorAreaMetric').textContent = `${round2((summary.innerWidthMm/1000)*(summary.innerDepthMm/1000))}m²`;
 
   if(!roomPlanHasAnySelection()){
-    statusEl.textContent = '벽체·천장·바닥 저장구간을 선택하면 이 방 크기에 맞는 최종 물량으로 다시 계산됩니다.';
+    statusEl.textContent = '벽체·천장·바닥 저장구간을 선택하면 선택된 구간 치수와 물량으로 최종표가 구성됩니다.';
     summaryEl.innerHTML = '<div class="planner-empty">아직 배치된 구조가 없습니다. 각 탭에서 구조를 저장한 뒤 여기서 벽체 1~4, 천장, 바닥을 골라주세요.</div>';
     return;
   }
 
-  statusEl.textContent = '사이즈표 기준으로 최종 탭 물량이 다시 계산됩니다.';
+  statusEl.textContent = '선택된 저장구간의 실제 치수와 물량을 기준으로 최종표를 구성합니다.';
   summaryEl.innerHTML = `<div class="planner-summary-list">
     ${summary.rows.map((row)=>{
       const captureName = row.capture ? row.capture.name : '선택 안 함';
@@ -5798,13 +6095,13 @@ function renderFinal(){
   let finalAgg = {};
   if(roomAgg){
     finalAgg = roomAgg.agg;
-    if(planStatusEl) planStatusEl.textContent = '위 자동계산 미리보기를 기준으로 최종 물량을 계산합니다. 아래 저장구간 카드를 열면 각 레이어 세부내역을 확인할 수 있습니다.';
+    if(planStatusEl) planStatusEl.textContent = '선택된 벽체·천장·바닥 저장구간의 실제 물량을 합산합니다. 상세 레이어는 왼쪽 카드에서 확인할 수 있습니다.';
     if(planSummaryEl) planSummaryEl.innerHTML = '';
   } else {
     const merged = {};
     savedCaptures.forEach(c=>mergeAggInto(merged, c.agg || {}));
     finalAgg = consolidateForFinal(merged);
-    if(planStatusEl) planStatusEl.textContent = '사이즈표 배치가 없어서 저장구간 합산 방식으로 표시합니다.';
+    if(planStatusEl) planStatusEl.textContent = '구조 선택이 없어서 저장구간 전체 합산 방식으로 표시합니다.';
     if(planSummaryEl) planSummaryEl.innerHTML = '';
   }
   const lossRate = parseFloat(document.getElementById('lossRate').value)||0;
@@ -6988,9 +7285,13 @@ function syncRoomSize(source, dim){
   };
   const targetId = pair[source];
   if(!targetId) return;
-  document.getElementById(targetId).value = document.getElementById(source).value;
+  const value = document.getElementById(source).value;
+  document.getElementById(targetId).value = value;
+  if(source === 'ceilWidth' || source === 'floorWidth') roomPlan.width = value;
+  if(source === 'ceilDepth' || source === 'floorDepth') roomPlan.depth = value;
   renderCeil();
   renderFloor();
+  renderRoomPlanner();
 }
 
 function rerenderTab(t){ if(t==='ceil') renderCeil(); else renderFloor(); }
@@ -7556,7 +7857,10 @@ function activateTab(which){
   [tabLayersAdminBtn,tabRefBtn,tabWallBtn,tabCeilBtn,tabFloorBtn,tabFinalBtn,tabMaterialsBtn,tabSettingsBtn].forEach(b=>{ b.style.border='0.5px solid var(--border-strong)'; b.style.fontWeight='400'; });
   const map = {ref:tabRefBtn, wall:tabWallBtn, ceil:tabCeilBtn, floor:tabFloorBtn, final:tabFinalBtn, materials:tabMaterialsBtn, layersadmin:tabLayersAdminBtn, settings:tabSettingsBtn};
   map[which].style.border='2px solid var(--border-accent)'; map[which].style.fontWeight='500';
-  if(which==='final') renderFinal();
+  if(which==='final'){
+    renderRoomPlanner();
+    renderFinal();
+  }
   if(which==='materials') renderMaterialManager();
   if(which==='layersadmin') renderLayerAdmin();
 }
