@@ -297,6 +297,22 @@ td{ border-bottom:0.5px solid var(--border); }
 .materials-table tbody tr.drag-over-before td{ box-shadow:inset 0 2px 0 0 var(--border-accent); }
 .materials-table tbody tr.drag-over-after td{ box-shadow:inset 0 -2px 0 0 var(--border-accent); }
 .materials-table tbody tr.dragging{ opacity:0.4; }
+.layer-drag-handle{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:18px;
+  height:24px;
+  cursor:grab;
+  color:currentColor;
+  opacity:0.5;
+  font-size:14px;
+  line-height:1;
+  touch-action:none;
+  user-select:none;
+}
+.layer-drag-handle:hover{ opacity:0.86; }
+.layer-drag-handle:active{ cursor:grabbing; }
 .material-chip-list{
   display:flex;
   flex-direction:column;
@@ -304,7 +320,7 @@ td{ border-bottom:0.5px solid var(--border); }
 }
 .material-chip-row{
   display:grid;
-  grid-template-columns:minmax(0,1fr) auto;
+  grid-template-columns:auto minmax(0,1fr) auto;
   gap:8px;
   align-items:center;
   padding:8px 10px;
@@ -312,6 +328,9 @@ td{ border-bottom:0.5px solid var(--border); }
   border-radius:var(--radius);
   background:var(--surface-2);
 }
+.material-chip-row.drag-over-before{ box-shadow:inset 0 2px 0 0 var(--border-accent); }
+.material-chip-row.drag-over-after{ box-shadow:inset 0 -2px 0 0 var(--border-accent); }
+.material-chip-row.dragging{ opacity:0.42; }
 .material-chip-row.zone-outer{
   background:var(--bg-accent);
   color:var(--text-accent);
@@ -413,6 +432,13 @@ td{ border-bottom:0.5px solid var(--border); }
   gap:6px;
   align-items:end;
 }
+#tabLayersAdmin .admin-stage-name-field{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+  gap:6px;
+  min-width:0;
+}
 #tabLayersAdmin .admin-stage-toggle{
   min-width:88px;
   min-height:28px;
@@ -450,19 +476,38 @@ td{ border-bottom:0.5px solid var(--border); }
   border-radius:6px;
   min-height:28px;
 }
-#tabLayersAdmin .material-chip-main{ gap:5px; }
+#tabLayersAdmin .material-chip-main{
+  display:grid;
+  grid-template-columns:18px minmax(96px,0.42fr) minmax(160px,1fr) 54px;
+  grid-template-areas:"no search select thick";
+  align-items:center;
+  gap:5px;
+  width:100%;
+  min-width:0;
+}
+#tabLayersAdmin .material-chip-main.has-zone{
+  grid-template-columns:18px minmax(96px,0.4fr) minmax(160px,1fr) 78px 54px;
+  grid-template-areas:"no search select zone thick";
+}
 #tabLayersAdmin .material-chip-no{
+  grid-area:no;
   width:18px;
   font-size:10px;
   color:currentColor;
   opacity:0.68;
 }
 #tabLayersAdmin .material-chip-select{
+  grid-area:select;
+  width:100%;
+  min-width:0;
   font-size:12px;
   min-height:24px;
   padding:1px 5px;
 }
 #tabLayersAdmin .material-chip-search{
+  grid-area:search;
+  width:100%;
+  min-width:0;
   font-size:12px;
   min-height:24px;
   padding:1px 5px;
@@ -472,6 +517,7 @@ td{ border-bottom:0.5px solid var(--border); }
   border-color:color-mix(in srgb, currentColor 28%, transparent);
 }
 #tabLayersAdmin .material-zone-select{
+  grid-area:zone;
   flex:0 0 82px;
   min-width:72px;
   font-size:12px;
@@ -494,6 +540,7 @@ td{ border-bottom:0.5px solid var(--border); }
   background:color-mix(in srgb, currentColor 7%, var(--surface-2));
 }
 #tabLayersAdmin .material-chip-thickness{
+  grid-area:thick;
   flex:0 0 54px;
   text-align:right;
   font-size:11px;
@@ -1218,21 +1265,21 @@ td{ border-bottom:0.5px solid var(--border); }
   .admin-stage-toggle{ width:100%; }
   .material-chip-main{ flex-wrap:wrap; }
   .material-zone-select{ flex:1 1 96px; }
-  .material-chip-row{ grid-template-columns:1fr; }
+  .material-chip-row{ grid-template-columns:auto minmax(0,1fr); }
   .material-chip-actions{ justify-content:flex-end; }
   #tabLayersAdmin .admin-stage-card{ padding:5px; }
   #tabLayersAdmin .admin-stage-detail{ margin-left:0; }
   #tabLayersAdmin .admin-stage-summary{
-    grid-template-columns:72px minmax(0, 1fr) auto;
+    grid-template-columns:62px minmax(0, 1fr) auto;
     align-items:center;
     gap:4px;
   }
   #tabLayersAdmin .admin-stage-toggle{
     width:auto;
-    min-width:72px;
-    min-height:32px;
-    height:32px;
-    padding:4px 6px;
+    min-width:62px;
+    min-height:30px;
+    height:30px;
+    padding:3px 5px;
     font-size:11px;
     justify-content:center;
     white-space:nowrap;
@@ -1246,79 +1293,97 @@ td{ border-bottom:0.5px solid var(--border); }
   }
   #tabLayersAdmin .admin-stage-summary input[type="text"]{
     width:100%;
-    min-height:32px;
-    height:32px;
+    min-height:30px;
+    height:30px;
     font-size:12px;
-    padding:3px 7px;
+    padding:3px 6px;
+  }
+  #tabLayersAdmin .admin-stage-name-field{
+    grid-template-columns:minmax(0,1fr) auto;
+    gap:4px;
+  }
+  #tabLayersAdmin .admin-stage-total{
+    margin-left:0;
+    font-size:10px;
+    white-space:nowrap;
   }
   #tabLayersAdmin .admin-stage-summary > .materials-actions{
     flex-wrap:nowrap;
     justify-content:flex-end;
-    gap:3px;
+    gap:2px;
   }
   #tabLayersAdmin .admin-stage-summary > .materials-actions button{
-    width:26px;
-    min-width:26px;
-    height:26px;
-    min-height:26px;
+    width:24px;
+    min-width:24px;
+    height:24px;
+    min-height:24px;
     padding:0;
   }
   #tabLayersAdmin .material-chip-row{
-    grid-template-columns:minmax(0, 1fr) auto;
-    align-items:start;
-    gap:5px;
-    padding:4px 5px;
+    grid-template-columns:14px minmax(0, 1fr) auto;
+    align-items:center;
+    gap:3px;
+    padding:3px 4px;
     min-height:0;
+  }
+  #tabLayersAdmin .layer-drag-handle{
+    width:14px;
+    height:24px;
+    font-size:12px;
+    opacity:0.52;
   }
   #tabLayersAdmin .material-chip-main{
     display:grid;
-    grid-template-columns:minmax(0, 1fr) 54px;
-    grid-template-areas:
-      "select thick"
-      "search search";
-    gap:4px 5px;
+    grid-template-columns:58px minmax(0, 1fr) 42px;
+    grid-template-areas:"search select thick";
+    align-items:center;
+    gap:3px;
     width:100%;
     min-width:0;
   }
   #tabLayersAdmin .material-chip-main.has-zone{
-    grid-template-columns:minmax(0, 1fr) 62px 54px;
-    grid-template-areas:
-      "select select thick"
-      "search zone zone";
+    grid-template-columns:54px minmax(0, 1fr) 56px 42px;
+    grid-template-areas:"search select zone thick";
   }
   #tabLayersAdmin .material-chip-no{ display:none; }
   #tabLayersAdmin .material-chip-select{
     grid-area:select;
     width:100%;
     min-width:0;
-    min-height:28px;
-    font-size:12px;
+    min-height:24px;
+    height:24px;
+    font-size:11px;
     line-height:1.2;
+    padding:1px 4px;
   }
   #tabLayersAdmin .material-chip-search{
     grid-area:search;
     flex:unset;
     width:100%;
     min-width:0;
-    min-height:26px;
-    font-size:12px;
+    min-height:24px;
+    height:24px;
+    font-size:11px;
     line-height:1.2;
+    padding:1px 4px;
   }
   #tabLayersAdmin .material-zone-select{
     grid-area:zone;
     flex:unset;
     width:100%;
     min-width:0;
-    min-height:26px;
-    font-size:11px;
+    min-height:24px;
+    height:24px;
+    font-size:10px;
+    padding:1px 3px;
   }
   #tabLayersAdmin .material-chip-thickness{
     grid-area:thick;
     flex:unset;
     justify-self:end;
     align-self:center;
-    min-width:48px;
-    font-size:11px;
+    min-width:40px;
+    font-size:10px;
     text-align:right;
     white-space:nowrap;
   }
@@ -1326,11 +1391,15 @@ td{ border-bottom:0.5px solid var(--border); }
     justify-content:flex-end;
     gap:2px;
   }
+  #tabLayersAdmin .material-chip-row .material-chip-actions button[data-preset-layer-move],
+  #tabLayersAdmin .material-chip-row .material-chip-actions button[data-plan-layer-row-move]{
+    display:none;
+  }
   #tabLayersAdmin .material-chip-actions button{
-    width:26px;
-    min-width:26px;
-    min-height:26px;
-    height:26px;
+    width:22px;
+    min-width:22px;
+    min-height:22px;
+    height:22px;
     padding:0;
   }
   .planner-grid,
@@ -5839,9 +5908,9 @@ function renderPresetAdmin(){
         <button type="button" class="admin-stage-toggle" data-preset-toggle="${index}" aria-expanded="${isOpen ? 'true' : 'false'}">
           <i class="ti ti-chevron-right" aria-hidden="true"></i>${index+1}단계
         </button>
-        <div class="planner-field">
-          <label>단계 이름 <span class="admin-stage-total">총 ${totalThickness}mm</span></label>
-          <input type="text" data-preset-name="${index}" value="${preset.name}">
+        <div class="planner-field admin-stage-name-field">
+          <input type="text" data-preset-name="${index}" value="${preset.name}" aria-label="${index+1}단계 이름">
+          <span class="admin-stage-total">총 ${totalThickness}mm</span>
         </div>
         <div class="materials-actions">
           <button type="button" data-preset-move="up" data-preset-index="${index}" ${index===0 ? 'disabled' : ''}><i class="ti ti-chevron-up" aria-hidden="true"></i></button>
@@ -5855,10 +5924,11 @@ function renderPresetAdmin(){
             const zone = inferredWallZonesFromSeq(preset.seq, preset.zones || [])[seqIndex];
             const layerMeasure = layerValueText({key, val:draftMaterialThicknessForKey(key)});
             return `
-            <div class="material-chip-row ${wallZoneClass(zone)}">
+            <div class="material-chip-row ${wallZoneClass(zone)}" data-layer-drag-scope="wall" data-preset-index="${index}" data-layer-index="${seqIndex}">
+              <i class="ti ti-grip-vertical layer-drag-handle" data-layer-drag-scope="wall" data-preset-index="${index}" data-layer-index="${seqIndex}" title="끌어서 순서 변경" aria-label="끌어서 순서 변경"></i>
               <div class="material-chip-main has-zone">
                 <div class="material-chip-no">${seqIndex+1}</div>
-                <input class="material-chip-search" type="text" data-preset-search="${index}" data-preset-seq-index="${seqIndex}" placeholder="자재 검색">
+                <input class="material-chip-search" type="text" data-preset-search="${index}" data-preset-seq-index="${seqIndex}" placeholder="검색">
                 <select class="material-chip-select" data-preset-seq="${index}" data-preset-seq-index="${seqIndex}">
                   ${presetDraftMaterialOptionsHTML(key)}
                 </select>
@@ -5999,6 +6069,27 @@ function movePresetLayer(presetIndex, layerIndex, direction){
   commitPresetDrafts({message:'레이어 순서를 변경했습니다.'});
 }
 
+function moveArrayIndex(items, fromIndex, toIndex, after){
+  if(!Array.isArray(items) || fromIndex < 0 || toIndex < 0 || fromIndex >= items.length || toIndex >= items.length) return fromIndex;
+  const [item] = items.splice(fromIndex, 1);
+  let insertIndex = toIndex + (after ? 1 : 0);
+  if(fromIndex < insertIndex) insertIndex -= 1;
+  insertIndex = Math.max(0, Math.min(insertIndex, items.length));
+  items.splice(insertIndex, 0, item);
+  return insertIndex;
+}
+
+function reorderPresetLayer(presetIndex, fromIndex, toIndex, after){
+  const group = currentPresetDraftGroup();
+  const preset = group?.presets[presetIndex];
+  if(!preset || fromIndex === toIndex) return;
+  preset.zones = inferredWallZonesFromSeq(preset.seq, preset.zones || []);
+  moveArrayIndex(preset.seq, fromIndex, toIndex, after);
+  moveArrayIndex(preset.zones, fromIndex, toIndex, after);
+  openPresetAdminIndex = presetIndex;
+  commitPresetDrafts({message:'레이어 순서를 변경했습니다.'});
+}
+
 function deletePresetLayer(presetIndex, layerIndex){
   const group = currentPresetDraftGroup();
   const preset = group?.presets[presetIndex];
@@ -6126,9 +6217,9 @@ function renderPlanLayerAdmin(){
         <button type="button" class="admin-stage-toggle" data-plan-layer-toggle="${index}" aria-expanded="${isOpen ? 'true' : 'false'}">
           <i class="ti ti-chevron-right" aria-hidden="true"></i>${index+1}단계
         </button>
-        <div class="planner-field">
-          <label>단계 이름 <span class="admin-stage-total">총 ${totalThickness}mm</span></label>
-          <input type="text" data-plan-layer-name="${index}" value="${preset.name}">
+        <div class="planner-field admin-stage-name-field">
+          <input type="text" data-plan-layer-name="${index}" value="${preset.name}" aria-label="${index+1}단계 이름">
+          <span class="admin-stage-total">총 ${totalThickness}mm</span>
         </div>
         <div class="materials-actions">
           <button type="button" data-plan-layer-move="up" data-plan-layer-index="${index}" ${index===0 ? 'disabled' : ''}><i class="ti ti-chevron-up" aria-hidden="true"></i></button>
@@ -6139,10 +6230,11 @@ function renderPlanLayerAdmin(){
       <div class="admin-stage-detail">
         <div class="material-chip-list">
           ${preset.seq.map((key, seqIndex)=>`
-            <div class="material-chip-row">
+            <div class="material-chip-row" data-layer-drag-scope="plan" data-plan-layer-index="${index}" data-layer-index="${seqIndex}">
+              <i class="ti ti-grip-vertical layer-drag-handle" data-layer-drag-scope="plan" data-plan-layer-index="${index}" data-layer-index="${seqIndex}" title="끌어서 순서 변경" aria-label="끌어서 순서 변경"></i>
               <div class="material-chip-main">
                 <div class="material-chip-no">${seqIndex+1}</div>
-                <input class="material-chip-search" type="text" data-plan-layer-search="${index}" data-plan-layer-seq-index="${seqIndex}" placeholder="자재 검색">
+                <input class="material-chip-search" type="text" data-plan-layer-search="${index}" data-plan-layer-seq-index="${seqIndex}" placeholder="검색">
                 <select class="material-chip-select" data-plan-layer-seq="${index}" data-plan-layer-seq-index="${seqIndex}">
                   ${planLayerMaterialOptionsHTML(planLayerAdminMode, key)}
                 </select>
@@ -6286,6 +6378,14 @@ function movePlanLayerRow(presetIndex, layerIndex, direction){
   const target = direction === 'up' ? layerIndex - 1 : layerIndex + 1;
   if(target < 0 || target >= preset.seq.length) return;
   [preset.seq[layerIndex], preset.seq[target]] = [preset.seq[target], preset.seq[layerIndex]];
+  commitPlanLayerDrafts({message:'자재 순서를 변경했습니다.'});
+}
+
+function reorderPlanLayerRow(presetIndex, fromIndex, toIndex, after){
+  const preset = currentPlanLayerGroup()?.presets[presetIndex];
+  if(!preset || fromIndex === toIndex) return;
+  moveArrayIndex(preset.seq, fromIndex, toIndex, after);
+  openPlanLayerAdminIndex[planLayerAdminMode] = presetIndex;
   commitPlanLayerDrafts({message:'자재 순서를 변경했습니다.'});
 }
 
@@ -7107,6 +7207,85 @@ document.getElementById('settingsImportFile').addEventListener('change', (e)=>{
   });
   body.addEventListener('pointerup', endDrag);
   body.addEventListener('pointercancel', endDrag);
+})();
+// 레이어 관리 행 드래그 정렬. 벽체는 자재와 구간(부차음/기본차음 등)을 함께 이동한다.
+(function(){
+  let activeDrag = null, overRow = null, overAfter = false, moved = false, startY = 0;
+  function clearOver(){
+    if(overRow){
+      overRow.classList.remove('drag-over-before','drag-over-after');
+      overRow = null;
+    }
+  }
+  function compatibleRow(row){
+    if(!row || !activeDrag) return false;
+    if(row.dataset.layerDragScope !== activeDrag.scope) return false;
+    if(activeDrag.scope === 'wall') return row.dataset.presetIndex === activeDrag.presetIndex;
+    return row.dataset.planLayerIndex === activeDrag.presetIndex;
+  }
+  function rowFromPoint(x, y){
+    const el = document.elementFromPoint(x, y);
+    const row = el ? el.closest('.material-chip-row[data-layer-drag-scope]') : null;
+    return compatibleRow(row) ? row : null;
+  }
+  function updateOver(x, y){
+    const row = rowFromPoint(x, y);
+    if(!row || row === activeDrag.row){ clearOver(); return; }
+    const rect = row.getBoundingClientRect();
+    const after = (y - rect.top) > rect.height / 2;
+    if(overRow !== row) clearOver();
+    overRow = row;
+    overAfter = after;
+    row.classList.toggle('drag-over-after', after);
+    row.classList.toggle('drag-over-before', !after);
+  }
+  function endDrag(){
+    if(!activeDrag) return;
+    const drag = activeDrag;
+    const targetRow = overRow;
+    const after = overAfter;
+    activeDrag = null;
+    document.body.style.userSelect = '';
+    if(drag.row) drag.row.classList.remove('dragging');
+    clearOver();
+    if(!moved || !targetRow) return;
+    const targetIndex = parseInt(targetRow.dataset.layerIndex, 10);
+    if(!Number.isFinite(targetIndex) || targetIndex === drag.layerIndex) return;
+    if(drag.scope === 'wall'){
+      reorderPresetLayer(parseInt(drag.presetIndex, 10), drag.layerIndex, targetIndex, after);
+    } else {
+      reorderPlanLayerRow(parseInt(drag.presetIndex, 10), drag.layerIndex, targetIndex, after);
+    }
+  }
+  document.addEventListener('pointerdown', (e)=>{
+    if(e.button !== undefined && e.button !== 0) return;
+    const handle = e.target.closest('.layer-drag-handle');
+    if(!handle) return;
+    const scope = handle.dataset.layerDragScope;
+    const presetIndex = scope === 'wall' ? handle.dataset.presetIndex : handle.dataset.planLayerIndex;
+    const layerIndex = parseInt(handle.dataset.layerIndex, 10);
+    const row = handle.closest('.material-chip-row[data-layer-drag-scope]');
+    if(!scope || presetIndex == null || !Number.isFinite(layerIndex) || !row) return;
+    e.preventDefault();
+    activeDrag = {scope, presetIndex, layerIndex, row, pointerId:e.pointerId};
+    startY = e.clientY;
+    moved = false;
+    row.classList.add('dragging');
+    try{ handle.setPointerCapture(e.pointerId); }catch(_){}
+    document.body.style.userSelect = 'none';
+  });
+  document.addEventListener('pointermove', (e)=>{
+    if(!activeDrag || e.pointerId !== activeDrag.pointerId) return;
+    if(!moved && Math.abs(e.clientY - startY) < 3) return;
+    moved = true;
+    updateOver(e.clientX, e.clientY);
+  });
+  document.addEventListener('pointerup', (e)=>{
+    if(activeDrag && e.pointerId === activeDrag.pointerId) endDrag();
+  });
+  document.addEventListener('pointercancel', (e)=>{
+    if(activeDrag && e.pointerId === activeDrag.pointerId) endDrag();
+  });
 })();
 document.getElementById('materialsTableBody').addEventListener('input', (e)=>{
   const row = e.target.closest('tr[data-mat-key]');
