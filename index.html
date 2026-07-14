@@ -832,6 +832,12 @@ td{ border-bottom:0.5px solid var(--border); }
   flex-wrap:wrap;
   gap:4px;
 }
+.final-layer-list{
+  margin-bottom:0;
+}
+.final-layer-list .capture-layer-row{
+  padding:4px 7px;
+}
 .final-layer-chip{
   display:inline-flex;
   min-width:0;
@@ -6110,20 +6116,28 @@ function renderFinalSelectedDetails(summary){
   el.innerHTML = rows.map((row)=>{
     const capture = row.capture;
     const layers = Array.isArray(capture.layers) ? capture.layers : [];
-    const layerHTML = layers.length ? layers.slice(0, 10).map((layer)=>{
+    const layerHTML = layers.length ? `<div class="capture-layer-list final-layer-list">
+      ${layers.map((layer)=>{
       const display = captureLayerInfo(layer, capture.mode);
-      const chipClass = (display.rowClass || '').trim();
-      return `<span class="final-layer-chip ${chipClass}">${escapeHTML(layer.label)} · ${escapeHTML(layerValueText(layer))}</span>`;
-    }).join('') + (layers.length > 10 ? `<span class="final-layer-chip">외 ${layers.length - 10}</span>` : '') : '<span class="final-layer-chip">레이어 정보 없음</span>';
+      return `<div class="capture-layer-row${display.rowClass}">
+        <div class="capture-layer-no">${layer.index}</div>
+        <div class="capture-layer-name">
+          ${escapeHTML(layer.label)}
+          <div class="capture-layer-meta">${escapeHTML(display.meta || '-')}</div>
+        </div>
+        <div class="capture-layer-thick">${escapeHTML(layerValueText(layer))}</div>
+      </div>`;
+    }).join('')}
+    </div>` : '<div class="capture-layer-empty">레이어 정보 없음</div>';
     return `<div class="final-structure-card">
       <div class="final-structure-head">
         <div>
           <div class="final-structure-title">${escapeHTML(row.label)} · ${escapeHTML(capture.name)}</div>
-          <div class="final-structure-meta">${escapeHTML(roomRowSummary(row))}<br>${escapeHTML(capture.meta?.summary || '')}</div>
+          <div class="final-structure-meta">${escapeHTML(roomRowSummary(row))}<br>전체 ${layers.length}개 레이어</div>
         </div>
         <span class="final-badge">${escapeHTML(capture.meta?.thick || '-')}</span>
       </div>
-      <div class="final-layer-chips">${layerHTML}</div>
+      ${layerHTML}
     </div>`;
   }).join('');
 }
