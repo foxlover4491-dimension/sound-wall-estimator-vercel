@@ -2241,6 +2241,10 @@ td{ border-bottom:0.5px solid var(--border); }
         <div id="refName" style="font-size:15px; font-weight:500; margin-bottom:8px;">-</div>
         <table style="width:100%; font-size:13px; border-collapse:collapse;" id="refMetricsTable"></table>
       </div>
+      <div class="stc-action" style="margin-bottom:12px;">
+        <button id="refStcBtn" class="stc-button" type="button"><i class="ti ti-wave-sine" style="font-size:16px;" aria-hidden="true"></i> 차음성능 예측</button>
+        <div id="refStcResult" class="stc-result" aria-live="polite"></div>
+      </div>
       <button id="sendToModeBtn" style="width:100%; padding:10px; font-weight:500;"><i class="ti ti-arrow-right" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 이 레이어를 벽체 물량 산출로 보내기</button>
     </div>
   </div>
@@ -4740,6 +4744,7 @@ function renderRef(){
     document.getElementById('refTotalThick').textContent = '0mm';
     document.getElementById('refName').textContent = '-';
     document.getElementById('refMetricsTable').innerHTML = '';
+    resetRefStcResult();
     return;
   }
   const zones = inferredWallZonesFromSeq(preset.seq, preset.zones || []);
@@ -4749,6 +4754,7 @@ function renderRef(){
   document.getElementById('refTotalThick').textContent = presetThickness(preset) + 'mm';
   document.getElementById('refName').textContent = `${preset.groupLabel || ''} · ${presetStageLabel(preset)} · ${preset.name}`;
   document.getElementById('refMetricsTable').innerHTML = metricsForPreset(preset, mode).map((v,i)=>`<tr><td style="padding:3px 0; color:var(--text-secondary);">${METRIC_LABELS[i]}</td><td style="padding:3px 0; text-align:right;">${v}</td></tr>`).join('');
+  if(refStcVisible) renderRefStcResult();
 }
 
 function presetsForCurrentGroup(mode='wall'){
@@ -5752,6 +5758,7 @@ function renderFrequencyProfile(profile){
 }
 
 const STC_VISIBLE = {wall:false, ceil:false, floor:false};
+let refStcVisible = false;
 function itemsForStcMode(mode){
   if(mode==='wall') return stack;
   if(mode==='ceil') return ceilStack;
@@ -5870,11 +5877,10 @@ function stcCaution(mode){
   if(mode==='ceil') return '천장은 접합부, 행거, 틈새 처리에 따라 현장 성능이 크게 달라질 수 있습니다.';
   return '실험실 인증값이 아니라 현재 레이어를 기준으로 한 빠른 예상값입니다.';
 }
-function renderStcResult(mode){
-  const el = document.getElementById(`${mode}StcResult`);
+function renderStcResultForItems(el, mode, items){
   if(!el) return;
-  const estimate = estimateStc(itemsForStcMode(mode), mode);
-  const profile = estimate.empty ? {empty:true} : makeFrequencyProfile(itemsForStcMode(mode), mode, estimate.score);
+  const estimate = estimateStc(items, mode);
+  const profile = estimate.empty ? {empty:true} : makeFrequencyProfile(items, mode, estimate.score);
   el.classList.add('show');
   if(estimate.empty){
     el.innerHTML = '<div class="stc-detail">레이어를 먼저 추가해주세요.</div>';
@@ -5897,12 +5903,33 @@ function renderStcResult(mode){
     ${renderFrequencyProfile(profile)}
   `;
 }
+function renderStcResult(mode){
+  renderStcResultForItems(document.getElementById(`${mode}StcResult`), mode, itemsForStcMode(mode));
+}
 function showStcResult(mode){
   STC_VISIBLE[mode] = true;
   renderStcResult(mode);
 }
 function updateStcIfVisible(mode){
   if(STC_VISIBLE[mode]) renderStcResult(mode);
+}
+function itemsForCurrentRefStc(){
+  return itemsFromPresetForMode(currentRefPreset(currentRefMode), currentRefMode);
+}
+function renderRefStcResult(){
+  renderStcResultForItems(document.getElementById('refStcResult'), currentRefMode, itemsForCurrentRefStc());
+}
+function showRefStcResult(){
+  refStcVisible = true;
+  renderRefStcResult();
+}
+function resetRefStcResult(){
+  refStcVisible = false;
+  const el = document.getElementById('refStcResult');
+  if(el){
+    el.classList.remove('show');
+    el.innerHTML = '';
+  }
 }
 
 function bomRowsSimpleHTML(agg, options={}){
@@ -9233,6 +9260,7 @@ document.getElementById('sendToModeBtn').addEventListener('click', ()=>{
     activateTab('structure');
   }
 });
+document.getElementById('refStcBtn').addEventListener('click', showRefStcResult);
 
 renderRef();
 renderRoomPlanner();
