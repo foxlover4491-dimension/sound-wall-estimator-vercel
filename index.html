@@ -635,6 +635,64 @@ td{ border-bottom:0.5px solid var(--border); }
 }
 .planner-wall-row{ grid-template-columns:72px minmax(0, 1fr); }
 .planner-summary-row{ grid-template-columns:minmax(0, 1fr) auto; }
+.structure-mode-tabs{
+  margin-bottom:12px;
+}
+.structure-mode-tabs button{
+  min-width:76px;
+}
+.structure-work-panel{
+  display:none;
+}
+.planner-choice-body{
+  min-width:0;
+}
+.planner-choice-body select,
+.planner-field select{
+  min-width:0;
+  max-width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.planner-choice-detail{
+  margin-top:6px;
+  border:0.5px solid var(--border);
+  border-radius:var(--radius-sm);
+  background:var(--surface-1);
+  overflow:hidden;
+}
+.planner-choice-detail summary{
+  cursor:pointer;
+  display:grid;
+  grid-template-columns:minmax(0, 1fr) auto;
+  gap:8px;
+  align-items:center;
+  padding:6px 8px;
+  list-style:none;
+}
+.planner-choice-detail summary::-webkit-details-marker{
+  display:none;
+}
+.planner-choice-title{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:12px;
+  font-weight:700;
+}
+.planner-choice-meta{
+  font-size:11px;
+  color:var(--text-muted);
+  white-space:nowrap;
+}
+.planner-choice-detail .capture-layer-list{
+  padding:0 7px 7px;
+  margin-bottom:0;
+}
+.planner-choice-detail .capture-layer-row{
+  padding:4px 7px;
+}
 .planner-wall-side{
   font-size:12px;
   font-weight:700;
@@ -804,14 +862,38 @@ td{ border-bottom:0.5px solid var(--border); }
   border:0.5px solid var(--border);
   border-radius:var(--radius);
   background:var(--surface-2);
-  padding:9px 10px;
+  padding:0;
+  overflow:hidden;
+}
+.final-structure-card[open]{
+  background:var(--surface-2);
 }
 .final-structure-head{
   display:grid;
-  grid-template-columns:minmax(0,1fr) auto;
+  grid-template-columns:16px minmax(0,1fr) auto;
   align-items:center;
   gap:8px;
-  margin-bottom:7px;
+  padding:9px 10px;
+  cursor:pointer;
+  list-style:none;
+}
+.final-structure-head::-webkit-details-marker{
+  display:none;
+}
+.final-structure-head:before{
+  content:"›";
+  color:var(--text-accent);
+  font-size:16px;
+  line-height:1;
+  transform:rotate(0deg);
+  transition:transform 0.12s;
+  grid-row:1;
+}
+.final-structure-card[open] .final-structure-head:before{
+  transform:rotate(90deg);
+}
+.final-structure-head > div{
+  min-width:0;
 }
 .final-structure-title{
   min-width:0;
@@ -834,6 +916,7 @@ td{ border-bottom:0.5px solid var(--border); }
 }
 .final-layer-list{
   margin-bottom:0;
+  padding:0 10px 10px;
 }
 .final-layer-list .capture-layer-row{
   padding:4px 7px;
@@ -860,6 +943,30 @@ td{ border-bottom:0.5px solid var(--border); }
 .final-layer-chip.finish{ background:var(--bg-danger); color:var(--text-danger); border-color:var(--text-danger); }
 .final-layer-chip.gap{ background:transparent; color:var(--text-secondary); border-style:dashed; }
 .final-bom-panel table{ margin-top:2px; }
+#finalBomTable td:first-child,
+#finalBomTable td:nth-child(4),
+#finalBomTable td:nth-child(5){
+  white-space:nowrap;
+}
+.settings-section{
+  margin-top:12px;
+  border:0.5px solid var(--border);
+  border-radius:var(--radius);
+  background:var(--surface-1);
+  padding:8px 10px;
+}
+.settings-section summary{
+  cursor:pointer;
+  font-size:13px;
+  font-weight:700;
+  color:var(--text-primary);
+}
+.settings-section .materials-panel{
+  margin-top:10px;
+  padding:0;
+  border:none;
+  background:transparent;
+}
 .final-saved-details{
   margin-top:12px;
   border:0.5px solid var(--border);
@@ -1644,18 +1751,15 @@ td{ border-bottom:0.5px solid var(--border); }
 <body>
 <div class="wrap">
 <h1>건축음향 벽체·천장·바닥 레이어 설계 및 물량 산출</h1>
-<p class="subtitle">녹음실·건축음향 차음 구조 설계 도구 · 벽체·천장·바닥 레이어에서 단계를 골라 각 산출 탭으로 보내고 최종에서 전체 자재를 합산합니다</p>
+<p class="subtitle">녹음실·건축음향 차음 구조 설계 도구 · 벽체·천장·바닥 레이어에서 단계를 골라 구조 산출로 보내고 물량 산출에서 전체 자재를 합산합니다</p>
 
-<h2 class="sr-only">벽체 차음 구성, 참조표, 벽체·천장·바닥 개별 설계 및 최종 합산 물량 산출 도구</h2>
+<h2 class="sr-only">벽체 차음 구성, 참조표, 벽체·천장·바닥 개별 설계 및 물량 합산 산출 도구</h2>
 
 <div class="tab-bar">
   <button id="tabLayersAdminBtn" style="border:2px solid var(--border-accent); font-weight:500;">레이어관리</button>
   <button id="tabRefBtn">레이어 참조</button>
-  <button id="tabWallBtn">벽체</button>
-  <button id="tabCeilBtn">천장</button>
-  <button id="tabFloorBtn">바닥</button>
-  <button id="tabFinalBtn">최종</button>
-  <button id="tabMaterialsBtn">자재관리</button>
+  <button id="tabStructureBtn">구조 산출</button>
+  <button id="tabFinalBtn">물량 산출</button>
   <button id="tabSettingsBtn">설정</button>
 </div>
 
@@ -1691,7 +1795,14 @@ td{ border-bottom:0.5px solid var(--border); }
   </div>
 </div>
 
-<div id="tabWall" style="display:none;">
+<div id="tabStructure" style="display:none;">
+  <div class="materials-actions structure-mode-tabs">
+    <button type="button" data-structure-mode="wall">벽체</button>
+    <button type="button" data-structure-mode="ceil">천장</button>
+    <button type="button" data-structure-mode="floor">바닥</button>
+  </div>
+
+<div id="tabWall" class="structure-work-panel">
   <div class="input-panel">
     <label style="font-size:13px; display:flex; align-items:center; gap:6px;">벽체 길이(mm) <input type="number" id="wallLen" value="4000" style="width:90px;"></label>
     <label style="font-size:13px; display:flex; align-items:center; gap:6px;">부차음/마감 높이(mm) <input type="number" id="htOuter" value="2400" style="width:90px;"></label>
@@ -1734,7 +1845,7 @@ td{ border-bottom:0.5px solid var(--border); }
 
       <div class="capture-head">
         <div class="capture-head-title">자재 물량 산출</div>
-        <button id="wallCaptureBtn" class="capture-save-btn" type="button"><i class="ti ti-stack-push" style="font-size:16px;" aria-hidden="true"></i> 벽체 최종에 추가</button>
+        <button id="wallCaptureBtn" class="capture-save-btn" type="button"><i class="ti ti-stack-push" style="font-size:16px;" aria-hidden="true"></i> 벽체 물량 산출에 추가</button>
       </div>
       <div id="wallCaptureStatus" class="capture-status" aria-live="polite"></div>
       <table id="bomTable" style="width:100%; font-size:12px; border-collapse:collapse; table-layout:fixed;">
@@ -1744,7 +1855,7 @@ td{ border-bottom:0.5px solid var(--border); }
   </div>
 </div>
 
-<div id="tabCeil" style="display:none;">
+<div id="tabCeil" class="structure-work-panel">
   <div class="input-panel">
     <label style="font-size:13px; display:flex; align-items:center; gap:6px;">가로(mm) <input type="number" id="ceilWidth" value="4000" style="width:90px;"></label>
     <label style="font-size:13px; display:flex; align-items:center; gap:6px;">세로(mm) <input type="number" id="ceilDepth" value="3000" style="width:90px;"></label>
@@ -1781,7 +1892,7 @@ td{ border-bottom:0.5px solid var(--border); }
       </div>
       <div class="capture-head">
         <div class="capture-head-title">자재 물량 산출</div>
-        <button id="ceilCaptureBtn" class="capture-save-btn" type="button"><i class="ti ti-stack-push" style="font-size:16px;" aria-hidden="true"></i> 천장 최종에 추가</button>
+        <button id="ceilCaptureBtn" class="capture-save-btn" type="button"><i class="ti ti-stack-push" style="font-size:16px;" aria-hidden="true"></i> 천장 물량 산출에 추가</button>
       </div>
       <div id="ceilCaptureStatus" class="capture-status" aria-live="polite"></div>
       <table id="ceilBomTable" style="width:100%; font-size:12px; border-collapse:collapse; table-layout:fixed;">
@@ -1791,7 +1902,7 @@ td{ border-bottom:0.5px solid var(--border); }
   </div>
 </div>
 
-<div id="tabFloor" style="display:none;">
+<div id="tabFloor" class="structure-work-panel">
   <div class="input-panel">
     <label style="font-size:13px; display:flex; align-items:center; gap:6px;">가로(mm) <input type="number" id="floorWidth" value="4000" style="width:90px;"></label>
     <label style="font-size:13px; display:flex; align-items:center; gap:6px;">세로(mm) <input type="number" id="floorDepth" value="3000" style="width:90px;"></label>
@@ -1825,7 +1936,7 @@ td{ border-bottom:0.5px solid var(--border); }
       </div>
       <div class="capture-head">
         <div class="capture-head-title">자재 물량 산출</div>
-        <button id="floorCaptureBtn" class="capture-save-btn" type="button"><i class="ti ti-stack-push" style="font-size:16px;" aria-hidden="true"></i> 바닥 최종에 추가</button>
+        <button id="floorCaptureBtn" class="capture-save-btn" type="button"><i class="ti ti-stack-push" style="font-size:16px;" aria-hidden="true"></i> 바닥 물량 산출에 추가</button>
       </div>
       <div id="floorCaptureStatus" class="capture-status" aria-live="polite"></div>
       <table id="floorBomTable" style="width:100%; font-size:12px; border-collapse:collapse; table-layout:fixed;">
@@ -1834,9 +1945,10 @@ td{ border-bottom:0.5px solid var(--border); }
     </div>
   </div>
 </div>
+</div>
 
 <div id="tabFinal" style="display:none;">
-  <div class="final-intro">각 탭에서 저장한 벽체·천장·바닥 구간을 조합하고, 선택된 구간의 실제 치수와 물량을 기준으로 최종표를 검산합니다.</div>
+  <div class="final-intro">구조 산출에서 저장한 벽체·천장·바닥 구간을 조합하고, 선택된 구간의 실제 치수와 물량을 기준으로 산출표를 검산합니다.</div>
   <div class="final-room-grid">
     <div class="planner-panel">
       <div class="final-panel-head">
@@ -1889,18 +2001,20 @@ td{ border-bottom:0.5px solid var(--border); }
           <div class="planner-field">
             <label for="roomCeilCapture">천장 구조</label>
             <select id="roomCeilCapture"></select>
+            <div id="roomCeilSelectionDetail"></div>
           </div>
           <div class="planner-field">
             <label for="roomFloorCapture">바닥 구조</label>
             <select id="roomFloorCapture"></select>
+            <div id="roomFloorSelectionDetail"></div>
           </div>
         </div>
       </div>
     </div>
   </div>
   <div class="action-row">
-    <label style="font-size:13px; display:flex; align-items:center; gap:6px;">최종 로스율(%) <input type="number" id="lossRate" value="0" min="0" step="1" style="width:70px;"></label>
-    <button id="copyFinalBtn" type="button"><i class="ti ti-copy" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 최종표 복사</button>
+    <label style="font-size:13px; display:flex; align-items:center; gap:6px;">물량 산출 로스율(%) <input type="number" id="lossRate" value="0" min="0" step="1" style="width:70px;"></label>
+    <button id="copyFinalBtn" type="button"><i class="ti ti-copy" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 산출표 복사</button>
     <button id="clearCapturesBtn" type="button"><i class="ti ti-trash" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 저장구간 비우기</button>
     <button id="resetAllBtn" type="button"><i class="ti ti-refresh" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 현재 입력 비우기</button>
   </div>
@@ -1917,11 +2031,11 @@ td{ border-bottom:0.5px solid var(--border); }
     </div>
     <div class="planner-panel final-bom-panel">
       <div class="final-panel-head">
-        <div class="planner-section-title" style="margin-bottom:0;">최종 물량표</div>
+        <div class="planner-section-title" style="margin-bottom:0;">물량 산출표</div>
         <span class="final-badge">자동 합산</span>
       </div>
       <table id="finalBomTable" style="width:100%; font-size:12px; border-collapse:collapse; table-layout:fixed;">
-        <colgroup><col style="width:18%"><col style="width:12%"><col style="width:7%"><col style="width:17%"><col style="width:16%"><col style="width:30%"></colgroup>
+        <colgroup><col style="width:24%"><col style="width:10%"><col style="width:6%"><col style="width:22%"><col style="width:20%"><col style="width:18%"></colgroup>
       </table>
     </div>
   </div>
@@ -2054,6 +2168,10 @@ td{ border-bottom:0.5px solid var(--border); }
       <button id="factoryPasswordSaveBtn" type="button"><i class="ti ti-lock" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 비밀번호 저장</button>
       <button id="materialsFactoryBtn" type="button"><i class="ti ti-refresh-dot" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 공장 초기화</button>
     </div>
+    <details class="settings-section">
+      <summary>자재 리스트 관리</summary>
+      <div id="settingsMaterialsSlot"></div>
+    </details>
     <div id="settingsStatus" class="copy-status" aria-live="polite"></div>
   </div>
 </div>
@@ -5747,7 +5865,7 @@ function captureCurrentMode(mode){
     createdAt:new Date().toISOString()
   });
   saveCapturedSections();
-  captureStatus(mode, `${name} 저장됨. 최종 탭에 합산됩니다.`);
+  captureStatus(mode, `${name} 저장됨. 물량 산출에 합산됩니다.`);
   renderCaptureLists();
   renderRoomPlanner();
   renderFinal();
@@ -5789,7 +5907,7 @@ function renderCaptureLists(){
   if(!list) return;
   if(!savedCaptures.length){
     openCaptureId = null;
-    list.innerHTML = '<div class="empty-captures">아직 저장된 구간이 없습니다. 벽체·천장·바닥 탭에서 “최종에 추가”를 눌러 구간을 쌓아주세요.</div>';
+    list.innerHTML = '<div class="empty-captures">아직 저장된 구간이 없습니다. 구조 산출에서 “물량 산출에 추가”를 눌러 구간을 쌓아주세요.</div>';
     return;
   }
   if(openCaptureId && !savedCaptures.some(c=>c.id===openCaptureId)) openCaptureId = null;
@@ -5797,7 +5915,7 @@ function renderCaptureLists(){
   const renderLayerList = (c)=>{
     const layers = Array.isArray(c.layers) ? c.layers : [];
     if(!layers.length){
-      return '<div class="capture-layer-empty">이 구간은 레이어 저장 기능 추가 전에 저장되어 레이어 정보가 없습니다. 새로 “최종에 추가”하면 레이어도 같이 저장됩니다.</div>';
+      return '<div class="capture-layer-empty">이 구간은 레이어 저장 기능 추가 전에 저장되어 레이어 정보가 없습니다. 새로 “물량 산출에 추가”하면 레이어도 같이 저장됩니다.</div>';
     }
     return `<div class="capture-layer-list">
       ${layers.map(layer=>{
@@ -6007,8 +6125,9 @@ function roomCaptureOptionHTML(mode, selectedId){
   const options = captureOptionsForMode(mode);
   const emptyLabel = options.length ? '선택 안 함' : `${modeName(mode)} 저장구간 없음`;
   return [`<option value="">${emptyLabel}</option>`].concat(options.map((capture)=>{
+    const thick = capture.meta?.thick ? ` · ${capture.meta.thick}` : '';
     const size = capture.meta?.size ? ` · ${capture.meta.size}` : '';
-    return `<option value="${capture.id}" ${capture.id===selectedId ? 'selected' : ''}>${capture.name}${size}</option>`;
+    return `<option value="${capture.id}" ${capture.id===selectedId ? 'selected' : ''}>${capture.name}${thick}${size}</option>`;
   })).join('');
 }
 function roomRowSummary(row){
@@ -6025,6 +6144,44 @@ function compactCaptureName(capture){
 function shortLabel(text, limit=18){
   const value = String(text || '');
   return value.length > limit ? `${value.slice(0, limit-1)}…` : value;
+}
+function rowCompactSizeText(row){
+  if(!row) return '-';
+  if(row.type === 'wall') return `${round2(row.lengthMm/1000)}m`;
+  return `${round2(row.widthMm/1000)}m x ${round2(row.depthMm/1000)}m`;
+}
+function captureLayerListHTML(capture, emptyText='레이어 정보 없음'){
+  const layers = Array.isArray(capture?.layers) ? capture.layers : [];
+  if(!layers.length) return `<div class="capture-layer-empty">${escapeHTML(emptyText)}</div>`;
+  return `<div class="capture-layer-list final-layer-list">
+    ${layers.map((layer)=>{
+      const display = captureLayerInfo(layer, capture.mode);
+      return `<div class="capture-layer-row${display.rowClass}">
+        <div class="capture-layer-no">${layer.index}</div>
+        <div class="capture-layer-name">
+          ${escapeHTML(layer.label)}
+          <div class="capture-layer-meta">${escapeHTML(display.meta || '-')}</div>
+        </div>
+        <div class="capture-layer-thick">${escapeHTML(layerValueText(layer))}</div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+function plannerChoiceDetailHTML(row){
+  const capture = row?.capture;
+  if(!capture){
+    return '<div class="planner-wall-meta">저장된 구조를 선택하세요.</div>';
+  }
+  const thick = capture.meta?.thick || '-';
+  const size = rowCompactSizeText(row);
+  const layerCount = Array.isArray(capture.layers) ? capture.layers.length : 0;
+  return `<details class="planner-choice-detail">
+    <summary>
+      <span class="planner-choice-title">${escapeHTML(row.label)} · ${escapeHTML(capture.name)}</span>
+      <span class="planner-choice-meta">${escapeHTML(size)} · ${escapeHTML(thick)} · ${layerCount}개</span>
+    </summary>
+    ${captureLayerListHTML(capture)}
+  </details>`;
 }
 function renderFinalRoomIso(summary){
   const wrap = document.getElementById('finalRoomIso');
@@ -6044,7 +6201,7 @@ function renderFinalRoomIso(summary){
   const dimText = w && d && h ? `${w} × ${d} × ${h}mm` : '선택 대기';
   if(badge) badge.textContent = dimText;
   const label = (text, limit=18)=>escapeHTML(shortLabel(text || '선택 안 함', limit));
-  wrap.innerHTML = `<svg viewBox="0 0 780 500" role="img" aria-label="최종 조합 공간 검산">
+  wrap.innerHTML = `<svg viewBox="0 0 780 500" role="img" aria-label="물량 산출 조합 공간 검산">
     <defs>
       <marker id="final-room-arrow" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
         <path d="M0,0 L8,4 L0,8 Z" fill="var(--text-muted)"></path>
@@ -6116,35 +6273,25 @@ function renderFinalSelectedDetails(summary){
   el.innerHTML = rows.map((row)=>{
     const capture = row.capture;
     const layers = Array.isArray(capture.layers) ? capture.layers : [];
-    const layerHTML = layers.length ? `<div class="capture-layer-list final-layer-list">
-      ${layers.map((layer)=>{
-      const display = captureLayerInfo(layer, capture.mode);
-      return `<div class="capture-layer-row${display.rowClass}">
-        <div class="capture-layer-no">${layer.index}</div>
-        <div class="capture-layer-name">
-          ${escapeHTML(layer.label)}
-          <div class="capture-layer-meta">${escapeHTML(display.meta || '-')}</div>
-        </div>
-        <div class="capture-layer-thick">${escapeHTML(layerValueText(layer))}</div>
-      </div>`;
-    }).join('')}
-    </div>` : '<div class="capture-layer-empty">레이어 정보 없음</div>';
-    return `<div class="final-structure-card">
-      <div class="final-structure-head">
+    const layerHTML = captureLayerListHTML(capture);
+    return `<details class="final-structure-card">
+      <summary class="final-structure-head">
         <div>
           <div class="final-structure-title">${escapeHTML(row.label)} · ${escapeHTML(capture.name)}</div>
-          <div class="final-structure-meta">${escapeHTML(roomRowSummary(row))}<br>전체 ${layers.length}개 레이어</div>
+          <div class="final-structure-meta">${escapeHTML(rowCompactSizeText(row))} · ${escapeHTML(capture.meta?.thick || '-')} · 전체 ${layers.length}개 레이어</div>
         </div>
         <span class="final-badge">${escapeHTML(capture.meta?.thick || '-')}</span>
-      </div>
+      </summary>
       ${layerHTML}
-    </div>`;
+    </details>`;
   }).join('');
 }
 function renderRoomPlanner(){
   const wallWrap = document.getElementById('roomWallAssignments');
   const ceilSelect = document.getElementById('roomCeilCapture');
   const floorSelect = document.getElementById('roomFloorCapture');
+  const ceilDetail = document.getElementById('roomCeilSelectionDetail');
+  const floorDetail = document.getElementById('roomFloorSelectionDetail');
   const summaryEl = document.getElementById('roomPlanSummary');
   const statusEl = document.getElementById('roomPlanStatus');
   if(!wallWrap || !ceilSelect || !floorSelect || !summaryEl || !statusEl) return;
@@ -6154,20 +6301,26 @@ function renderRoomPlanner(){
   document.getElementById('roomOuterHeight').value = roomPlan.outerHeight;
   document.getElementById('roomInnerHeight').value = roomPlan.innerHeight;
 
+  const summary = summarizeRoomPlan();
+  const rowsByKey = Object.fromEntries(summary.rows.filter((row)=>row.type==='wall').map((row)=>[row.sideKey, row]));
+  const ceilRow = summary.rows.find((row)=>row.type==='ceil');
+  const floorRow = summary.rows.find((row)=>row.type==='floor');
+
   wallWrap.innerHTML = ROOM_SIDES.map((side)=>{
-    const capture = findCaptureById(roomPlan.walls?.[side.key]);
+    const row = rowsByKey[side.key];
     return `<div class="planner-wall-row">
       <div class="planner-wall-side">${side.label}</div>
-      <div>
+      <div class="planner-choice-body">
         <select data-room-wall="${side.key}">${roomCaptureOptionHTML('wall', roomPlan.walls?.[side.key] || '')}</select>
-        <div class="planner-wall-meta">${capture ? `${capture.meta?.thick || ''} · ${capture.meta?.summary || ''}` : '저장된 벽체 구간을 선택하세요.'}</div>
+        ${plannerChoiceDetailHTML(row)}
       </div>
     </div>`;
   }).join('');
   ceilSelect.innerHTML = roomCaptureOptionHTML('ceil', roomPlan.ceil || '');
   floorSelect.innerHTML = roomCaptureOptionHTML('floor', roomPlan.floor || '');
+  if(ceilDetail) ceilDetail.innerHTML = plannerChoiceDetailHTML(ceilRow);
+  if(floorDetail) floorDetail.innerHTML = plannerChoiceDetailHTML(floorRow);
 
-  const summary = summarizeRoomPlan();
   renderFinalRoomIso(summary);
   renderFinalSelectedDetails(summary);
   document.getElementById('roomInnerWidthMetric').textContent = `${round2(summary.innerWidthMm)}mm`;
@@ -6176,12 +6329,12 @@ function renderRoomPlanner(){
   document.getElementById('roomFloorAreaMetric').textContent = `${round2((summary.innerWidthMm/1000)*(summary.innerDepthMm/1000))}m²`;
 
   if(!roomPlanHasAnySelection()){
-    statusEl.textContent = '벽체·천장·바닥 저장구간을 선택하면 선택된 구간 치수와 물량으로 최종표가 구성됩니다.';
+    statusEl.textContent = '벽체·천장·바닥 저장구간을 선택하면 선택된 구간 치수와 물량으로 산출표가 구성됩니다.';
     summaryEl.innerHTML = '<div class="planner-empty">아직 배치된 구조가 없습니다. 각 탭에서 구조를 저장한 뒤 여기서 벽체 1~4, 천장, 바닥을 골라주세요.</div>';
     return;
   }
 
-  statusEl.textContent = '선택된 저장구간의 실제 치수와 물량을 기준으로 최종표를 구성합니다.';
+  statusEl.textContent = '선택된 저장구간의 실제 치수와 물량을 기준으로 산출표를 구성합니다.';
   summaryEl.innerHTML = `<div class="planner-summary-list">
     ${summary.rows.map((row)=>{
       const captureName = row.capture ? row.capture.name : '선택 안 함';
@@ -7107,7 +7260,7 @@ function tableToTSV(tableId){
 function copyFinalTable(){
   const text = tableToTSV('finalBomTable');
   const status = document.getElementById('copyStatus');
-  const done = ()=>{ status.textContent = '최종 산출표를 클립보드에 복사했습니다. 엑셀/시트에 바로 붙여넣을 수 있어요.'; };
+  const done = ()=>{ status.textContent = '물량 산출표를 클립보드에 복사했습니다. 엑셀/시트에 바로 붙여넣을 수 있어요.'; };
   const fail = ()=>{
     const ta = document.createElement('textarea');
     ta.value = text;
@@ -7938,14 +8091,12 @@ document.getElementById('presetAdminList').addEventListener('click', (e)=>{
   }
 });
 const tabRefBtn = document.getElementById('tabRefBtn');
-const tabWallBtn = document.getElementById('tabWallBtn');
-const tabCeilBtn = document.getElementById('tabCeilBtn');
-const tabFloorBtn = document.getElementById('tabFloorBtn');
+const tabStructureBtn = document.getElementById('tabStructureBtn');
 const tabFinalBtn = document.getElementById('tabFinalBtn');
-const tabMaterialsBtn = document.getElementById('tabMaterialsBtn');
 const tabLayersAdminBtn = document.getElementById('tabLayersAdminBtn');
 const tabSettingsBtn = document.getElementById('tabSettingsBtn');
 const tabRef = document.getElementById('tabRef');
+const tabStructure = document.getElementById('tabStructure');
 const tabWall = document.getElementById('tabWall');
 const tabCeil = document.getElementById('tabCeil');
 const tabFloor = document.getElementById('tabFloor');
@@ -7953,33 +8104,50 @@ const tabFinal = document.getElementById('tabFinal');
 const tabMaterials = document.getElementById('tabMaterials');
 const tabLayersAdmin = document.getElementById('tabLayersAdmin');
 const tabSettings = document.getElementById('tabSettings');
+const settingsMaterialsSlot = document.getElementById('settingsMaterialsSlot');
+if(settingsMaterialsSlot && tabMaterials){
+  settingsMaterialsSlot.appendChild(tabMaterials);
+  tabMaterials.style.display = 'block';
+}
+function activateStructureMode(mode){
+  const current = ['wall','ceil','floor'].includes(mode) ? mode : 'wall';
+  tabWall.style.display = current==='wall' ? 'block':'none';
+  tabCeil.style.display = current==='ceil' ? 'block':'none';
+  tabFloor.style.display = current==='floor' ? 'block':'none';
+  document.querySelectorAll('[data-structure-mode]').forEach((btn)=>{
+    const active = btn.dataset.structureMode === current;
+    btn.style.border = active ? '2px solid var(--border-accent)' : '0.5px solid var(--border-strong)';
+    btn.style.fontWeight = active ? '500' : '400';
+  });
+}
 function activateTab(which){
   tabRef.style.display = which==='ref' ? 'block':'none';
-  tabWall.style.display = which==='wall' ? 'block':'none';
-  tabCeil.style.display = which==='ceil' ? 'block':'none';
-  tabFloor.style.display = which==='floor' ? 'block':'none';
+  tabStructure.style.display = which==='structure' ? 'block':'none';
   tabFinal.style.display = which==='final' ? 'block':'none';
-  tabMaterials.style.display = which==='materials' ? 'block':'none';
   tabLayersAdmin.style.display = which==='layersadmin' ? 'block':'none';
   tabSettings.style.display = which==='settings' ? 'block':'none';
-  [tabLayersAdminBtn,tabRefBtn,tabWallBtn,tabCeilBtn,tabFloorBtn,tabFinalBtn,tabMaterialsBtn,tabSettingsBtn].forEach(b=>{ b.style.border='0.5px solid var(--border-strong)'; b.style.fontWeight='400'; });
-  const map = {ref:tabRefBtn, wall:tabWallBtn, ceil:tabCeilBtn, floor:tabFloorBtn, final:tabFinalBtn, materials:tabMaterialsBtn, layersadmin:tabLayersAdminBtn, settings:tabSettingsBtn};
+  [tabLayersAdminBtn,tabRefBtn,tabStructureBtn,tabFinalBtn,tabSettingsBtn].forEach(b=>{ b.style.border='0.5px solid var(--border-strong)'; b.style.fontWeight='400'; });
+  const map = {ref:tabRefBtn, structure:tabStructureBtn, final:tabFinalBtn, layersadmin:tabLayersAdminBtn, settings:tabSettingsBtn};
   map[which].style.border='2px solid var(--border-accent)'; map[which].style.fontWeight='500';
+  if(which==='structure') activateStructureMode(window.currentStructureMode || 'wall');
   if(which==='final'){
     renderRoomPlanner();
     renderFinal();
   }
-  if(which==='materials') renderMaterialManager();
   if(which==='layersadmin') renderLayerAdmin();
+  if(which==='settings') renderMaterialManager();
 }
 tabRefBtn.addEventListener('click', ()=>activateTab('ref'));
-tabWallBtn.addEventListener('click', ()=>activateTab('wall'));
-tabCeilBtn.addEventListener('click', ()=>activateTab('ceil'));
-tabFloorBtn.addEventListener('click', ()=>activateTab('floor'));
+tabStructureBtn.addEventListener('click', ()=>activateTab('structure'));
 tabFinalBtn.addEventListener('click', ()=>activateTab('final'));
-tabMaterialsBtn.addEventListener('click', ()=>activateTab('materials'));
 tabLayersAdminBtn.addEventListener('click', ()=>activateTab('layersadmin'));
 tabSettingsBtn.addEventListener('click', ()=>activateTab('settings'));
+document.querySelectorAll('[data-structure-mode]').forEach((btn)=>{
+  btn.addEventListener('click', ()=>{
+    window.currentStructureMode = btn.dataset.structureMode;
+    activateStructureMode(window.currentStructureMode);
+  });
+});
 
 document.querySelectorAll('[data-ref-mode]').forEach((btn)=>{
   btn.addEventListener('click', ()=>{
@@ -7997,15 +8165,18 @@ document.getElementById('sendToModeBtn').addEventListener('click', ()=>{
   if(currentRefMode === 'wall'){
     stack = itemsFromPresetForMode(preset, 'wall');
     render();
-    activateTab('wall');
+    window.currentStructureMode = 'wall';
+    activateTab('structure');
   } else if(currentRefMode === 'ceil'){
     ceilStack = safePlanStackFromSeq(preset.seq);
     renderCeil();
-    activateTab('ceil');
+    window.currentStructureMode = 'ceil';
+    activateTab('structure');
   } else {
     floorStack = safePlanStackFromSeq(preset.seq);
     renderFloor();
-    activateTab('floor');
+    window.currentStructureMode = 'floor';
+    activateTab('structure');
   }
 });
 
