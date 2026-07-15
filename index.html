@@ -4819,6 +4819,7 @@ function addFabricFramePlan(agg, m, widthM, depthM, gapM, area){
 }
 function isFinishBomKey(bk){
   const m = infoFor(bk);
+  if(bk === 'POLY50') return true;
   return m && (m.bomCategory || m.category) === 'finish';
 }
 function bomKindRank(m){
@@ -4832,10 +4833,10 @@ function sortedAggEntries(agg){
   return Object.entries(agg).sort(([ak],[bk])=>{
     const am = infoFor(ak);
     const bm = infoFor(bk);
-    const rankDiff = (BOM_ORDER_RANK[ak] ?? 999) - (BOM_ORDER_RANK[bk] ?? 999);
-    if(rankDiff) return rankDiff;
     const finishDiff = Number(isFinishBomKey(ak)) - Number(isFinishBomKey(bk));
     if(finishDiff) return finishDiff;
+    const rankDiff = (BOM_ORDER_RANK[ak] ?? 999) - (BOM_ORDER_RANK[bk] ?? 999);
+    if(rankDiff) return rankDiff;
     const kindDiff = bomKindRank(am) - bomKindRank(bm);
     if(kindDiff) return kindDiff;
     return am.label.localeCompare(bm.label, 'ko-KR');
@@ -6049,7 +6050,7 @@ function captureLayerInfo(layer, mode){
   const validRole = ['accent','success','pro','warning'].includes(layer.role) ? layer.role : '';
   const isWall = mode === 'wall';
   const isGap = layer.kind === 'gap';
-  const finishAsStructure = ['POLY25','POLY25_ADD','POLY50','POLY50_ADD'].includes(layer.key);
+  const finishAsStructure = ['POLY25','POLY25_ADD','POLY50_ADD'].includes(layer.key);
   const isFinish = !finishAsStructure && (
     layer.category === 'finish' ||
     layer.zone === 'finish' ||
@@ -6359,7 +6360,7 @@ function wallPlanBreakdown(capture){
     const amount = wallLayerCalcThickness(layer);
     if(!amount) return;
     const isGap = layer.kind === 'gap' || groupLabel === '공기층' || zone === 'gap' || role === 'gap';
-    const isFinish = layer.category === 'finish' || groupLabel === '마감' || zone === 'finish' || role === FINISH_ROLE;
+    const isFinish = layer.key === 'POLY50' || layer.category === 'finish' || groupLabel === '마감' || zone === 'finish' || role === FINISH_ROLE;
     const isBasic = groupLabel === '기본차음' || zone === 'inner' || role === 'success';
     const isSub = groupLabel === '부차음' || zone === 'outer' || role === 'accent';
     if(isGap){
@@ -6404,10 +6405,12 @@ function summarizeRoomPlan(){
   const thickFront = sideThickness('wall1');
   const thickBack = sideThickness('wall3');
   const sideLengths = derived.sideLengths || {};
-  const bottomWidthMm = firstPositiveNumber([sideLengths.A, widthMm], widthMm);
-  const topWidthMm = firstPositiveNumber([sideLengths.C, widthMm], widthMm);
-  const rightDepthMm = firstPositiveNumber([sideLengths.B, depthMm], depthMm);
-  const leftDepthMm = firstPositiveNumber([sideLengths.D, depthMm], depthMm);
+  const planWidthBaseMm = firstPositiveNumber([sideLengths.A, sideLengths.C, widthMm], widthMm);
+  const planDepthBaseMm = firstPositiveNumber([sideLengths.B, sideLengths.D, depthMm], depthMm);
+  const bottomWidthMm = planWidthBaseMm;
+  const topWidthMm = planWidthBaseMm;
+  const rightDepthMm = planDepthBaseMm;
+  const leftDepthMm = planDepthBaseMm;
   const trapezoid = trapezoidGeometryFromSides({
     bottomWidthMm,
     topWidthMm,
@@ -6513,6 +6516,88 @@ function captureWallLengthMm(capture){
     parseLengthMmFromText(capture?.meta?.size) ||
     parseLengthMmFromText(capture?.meta?.sourceName) ||
     parseLengthMmFromText(capture?.name);
+}
+const ROOM_DIM_TOLERANCE_MM = 1;
+function sameRoomDimensionMm(a, b){
+  return Math.abs((parseFloat(a) || 0) - (parseFloat(b) || 0)) <= ROOM_DIM_TOLERANCE_MM;
+}
+function parsePlanDimensionsFromText(text){
+  const value = String(text || '');
+  const match = value.match(/([0-9.,]+)\s*(mm|m)?\s*[x×]\s*([0-9.,]+)\s*(mm|m)?/i);
+  if(!match) return {widthMm:0, depthMm:0};
+  const parseUnit = (num, unit)=>{
+    const n = parseFloat(String(num || '').replace(/,/g, ''));
+    if(!Number.isFinite(n) || n <= 0) return 0;
+    return String(unit || 'm').toLowerCase() === 'mm' ? n : n * 1000;
+  };
+  return {
+    widthMm:parseUnit(match[1], match[2]),
+    depthMm:parseUnit(match[3], match[4])
+  };
+}
+function capturePlanDimensionsMm(capture){
+  if(!capture) return {widthMm:0, depthMm:0};
+  const widthKey = capture.mode === 'ceil' ? 'ceilWidth' : 'floorWidth';
+  const depthKey = capture.mode === 'ceil' ? 'ceilDepth' : 'floorDepth';
+  const parsed = parsePlanDimensionsFromText(capture?.meta?.size || capture?.meta?.sourceName || capture?.name);
+  return {
+    widthMm:captureInputMm(capture, widthKey) || parsed.widthMm,
+    depthMm:captureInputMm(capture, depthKey) || parsed.depthMm
+  };
+}
+function cloneRoomPlanWithSelection(type, key, captureId){
+  const next = {
+    ...roomPlan,
+    walls:{...roomPlan.walls}
+  };
+  if(type === 'wall') next.walls[key] = captureId;
+  if(type === 'ceil') next.ceil = captureId;
+  if(type === 'floor') next.floor = captureId;
+  return next;
+}
+function wallLengthForPlan(plan, key){
+  return captureWallLengthMm(findCaptureById(plan.walls?.[key]));
+}
+function roomPlanValidationIssues(plan){
+  const issues = [];
+  const sideLengths = {
+    A:wallLengthForPlan(plan, 'wall1'),
+    B:wallLengthForPlan(plan, 'wall2'),
+    C:wallLengthForPlan(plan, 'wall3'),
+    D:wallLengthForPlan(plan, 'wall4')
+  };
+  if(sideLengths.A && sideLengths.C && !sameRoomDimensionMm(sideLengths.A, sideLengths.C)){
+    issues.push(`A와 C 벽체 길이가 다릅니다. A ${round2(sideLengths.A)}mm / C ${round2(sideLengths.C)}mm`);
+  }
+  if(sideLengths.B && sideLengths.D && !sameRoomDimensionMm(sideLengths.B, sideLengths.D)){
+    issues.push(`B와 D 벽체 길이가 다릅니다. B ${round2(sideLengths.B)}mm / D ${round2(sideLengths.D)}mm`);
+  }
+  const expectedWidth = sideLengths.A || sideLengths.C || 0;
+  const expectedDepth = sideLengths.B || sideLengths.D || 0;
+  [
+    {slot:'E 천장', capture:findCaptureById(plan.ceil)},
+    {slot:'F 바닥', capture:findCaptureById(plan.floor)}
+  ].forEach(({slot, capture})=>{
+    if(!capture) return;
+    const dims = capturePlanDimensionsMm(capture);
+    if(expectedWidth && dims.widthMm && !sameRoomDimensionMm(expectedWidth, dims.widthMm)){
+      issues.push(`${slot} 후보의 가로가 벽체 기준과 다릅니다. 기준 ${round2(expectedWidth)}mm / 후보 ${round2(dims.widthMm)}mm`);
+    }
+    if(expectedDepth && dims.depthMm && !sameRoomDimensionMm(expectedDepth, dims.depthMm)){
+      issues.push(`${slot} 후보의 세로가 벽체 기준과 다릅니다. 기준 ${round2(expectedDepth)}mm / 후보 ${round2(dims.depthMm)}mm`);
+    }
+  });
+  return issues;
+}
+function validateRoomSelection(type, key, captureId){
+  if(!captureId) return true;
+  const issues = roomPlanValidationIssues(cloneRoomPlanWithSelection(type, key, captureId));
+  if(!issues.length) return true;
+  const message = `선택한 후보의 치수가 현재 공간 기준과 맞지 않습니다.\n\n${issues.join('\n')}\n\n후보 치수를 수정하거나 맞는 후보를 선택해주세요.`;
+  const statusEl = document.getElementById('roomPlanStatus');
+  if(statusEl) statusEl.textContent = issues[0];
+  alert(message);
+  return false;
 }
 function firstPositiveNumber(values, fallback=0){
   const found = values.find((value)=>Number.isFinite(value) && value > 0);
@@ -6859,14 +6944,13 @@ function renderFinalRoomIso(summary){
     : `${round2(summary.innerWidthMm)}mm`;
   const roomWidthPx = Math.max(roomBounds.maxX - roomBounds.minX, 0);
   const roomHeightPx = Math.max(roomBounds.maxY - roomBounds.minY, 0);
-  const innerDimPadX = Math.min(28, Math.max(14, roomWidthPx * 0.07));
   const innerDimPadY = Math.min(34, Math.max(18, roomHeightPx * 0.1));
   const innerDimY = round2(roomBounds.minY + innerDimPadY);
-  const innerDimX1 = round2(roomBounds.minX + innerDimPadX);
-  const innerDimX2 = round2(roomBounds.maxX - innerDimPadX);
-  const innerDimX = round2(roomBounds.minX + innerDimPadX);
-  const innerDimY1 = round2(roomBounds.minY + innerDimPadY + 22);
-  const innerDimY2 = round2(roomBounds.maxY - innerDimPadY);
+  const innerDimX1 = round2(roomBounds.minX);
+  const innerDimX2 = round2(roomBounds.maxX);
+  const innerDimX = round2(roomBounds.minX + Math.min(30, Math.max(18, roomWidthPx * 0.06)));
+  const innerDimY1 = round2(roomBounds.minY);
+  const innerDimY2 = round2(roomBounds.maxY);
   const innerDimensionMarkup = roomWidthPx > 120 && roomHeightPx > 120 ? `
     <line class="plan-inner-dim-guide" x1="${innerDimX1}" y1="${roomBounds.minY}" x2="${innerDimX1}" y2="${innerDimY + 6}"></line>
     <line class="plan-inner-dim-guide" x1="${innerDimX2}" y1="${roomBounds.minY}" x2="${innerDimX2}" y2="${innerDimY + 6}"></line>
@@ -7004,7 +7088,10 @@ function renderRoomPlanner(){
     return;
   }
 
-  statusEl.textContent = 'A~F에 배치된 저장 구조의 실제 치수와 물량을 기준으로 산출표를 구성합니다.';
+  const validationIssues = roomPlanValidationIssues(roomPlan);
+  statusEl.textContent = validationIssues.length
+    ? validationIssues[0]
+    : 'A~F에 배치된 저장 구조의 실제 치수와 물량을 기준으로 산출표를 구성합니다.';
   summaryEl.innerHTML = `<div class="planner-summary-list">
     ${summary.rows.map((row)=>{
       const captureName = row.capture ? captureDisplayName(row.capture) : '선택 안 함';
@@ -8373,16 +8460,32 @@ document.getElementById('floorCaptureBtn').addEventListener('click', ()=>capture
 document.getElementById('roomWallAssignments').addEventListener('change', (e)=>{
   const sel = e.target.closest('select[data-room-wall]');
   if(!sel) return;
-  roomPlan.walls[sel.dataset.roomWall] = sel.value;
+  const sideKey = sel.dataset.roomWall;
+  const previous = roomPlan.walls[sideKey] || '';
+  if(!validateRoomSelection('wall', sideKey, sel.value)){
+    sel.value = previous;
+    return;
+  }
+  roomPlan.walls[sideKey] = sel.value;
   renderRoomPlanner();
   renderFinal();
 });
 document.getElementById('roomCeilCapture').addEventListener('change', (e)=>{
+  const previous = roomPlan.ceil || '';
+  if(!validateRoomSelection('ceil', 'ceil', e.target.value)){
+    e.target.value = previous;
+    return;
+  }
   roomPlan.ceil = e.target.value;
   renderRoomPlanner();
   renderFinal();
 });
 document.getElementById('roomFloorCapture').addEventListener('change', (e)=>{
+  const previous = roomPlan.floor || '';
+  if(!validateRoomSelection('floor', 'floor', e.target.value)){
+    e.target.value = previous;
+    return;
+  }
   roomPlan.floor = e.target.value;
   renderRoomPlanner();
   renderFinal();
