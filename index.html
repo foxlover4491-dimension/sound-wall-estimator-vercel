@@ -847,16 +847,21 @@ td{ border-bottom:0.5px solid var(--border); }
 .final-room-svg .plan-basic{ fill:var(--fill-success); opacity:0.72; stroke:var(--fill-success); stroke-width:0.5; }
 .final-room-svg .plan-gap{ fill:var(--surface-1); stroke:var(--text-muted); stroke-width:1; stroke-dasharray:5 5; opacity:0.95; }
 .final-room-svg .plan-sub{ fill:#2563eb; opacity:0.74; stroke:#2563eb; stroke-width:0.5; }
+.final-room-svg .plan-finish{ fill:var(--fill-danger); opacity:0.74; stroke:var(--fill-danger); stroke-width:0.5; }
 .final-room-svg .plan-room{ fill:var(--surface-0); stroke:var(--text-primary); stroke-width:1.5; }
 .final-room-svg .plan-outline{ fill:none; stroke:var(--text-primary); stroke-width:1.2; }
 .final-room-svg .plan-dim,
 .final-room-svg .plan-dim-guide{ fill:none; stroke:var(--text-muted); stroke-width:1; }
 .final-room-svg .plan-dim-guide{ opacity:0.75; }
+.final-room-svg .plan-inner-dim,
+.final-room-svg .plan-inner-dim-guide{ fill:none; stroke:var(--text-secondary); stroke-width:1; }
+.final-room-svg .plan-inner-dim-guide{ opacity:0.7; }
 .final-room-svg .plan-badge{ fill:var(--surface-1); stroke:var(--border-strong); stroke-width:1; }
 .final-room-svg .plan-badge-text{ fill:var(--text-primary); font-size:13px; font-weight:800; }
 .final-room-svg .plan-title{ fill:var(--text-primary); font-size:13px; font-weight:800; }
 .final-room-svg .plan-subtitle{ fill:var(--text-muted); font-size:12px; font-weight:700; }
 .final-room-svg .plan-dim-text{ fill:var(--text-muted); font-size:12px; font-weight:700; }
+.final-room-svg .plan-inner-dim-text{ fill:var(--text-secondary); font-size:11px; font-weight:800; }
 .final-room-svg .plan-center-label{ fill:var(--text-primary); font-size:13px; font-weight:800; }
 .final-room-svg .plan-center-value{ fill:var(--text-muted); font-size:12px; font-weight:700; }
 .final-room-svg .plan-legend-text{ fill:var(--text-secondary); font-size:11px; font-weight:800; }
@@ -947,6 +952,7 @@ td{ border-bottom:0.5px solid var(--border); }
 .final-plan-swatch.basic{ background:var(--fill-success); opacity:0.7; }
 .final-plan-swatch.gap{ background:var(--surface-1); border-style:dashed; }
 .final-plan-swatch.sub{ background:#2563eb; opacity:0.72; }
+.final-plan-swatch.finish{ background:var(--fill-danger); opacity:0.72; }
 .final-plan-swatch.room{ background:var(--surface-0); }
 .final-plan-structure-row{
   display:grid;
@@ -6043,8 +6049,13 @@ function captureLayerInfo(layer, mode){
   const validRole = ['accent','success','pro','warning'].includes(layer.role) ? layer.role : '';
   const isWall = mode === 'wall';
   const isGap = layer.kind === 'gap';
-  const finishAsStructure = ['BATT','POLY25','POLY25_ADD','POLY50','POLY50_ADD'].includes(layer.key);
-  const isFinish = layer.category === 'finish' && !finishAsStructure;
+  const finishAsStructure = ['POLY25','POLY25_ADD','POLY50','POLY50_ADD'].includes(layer.key);
+  const isFinish = !finishAsStructure && (
+    layer.category === 'finish' ||
+    layer.zone === 'finish' ||
+    layer.groupLabel === '마감' ||
+    layer.role === FINISH_ROLE
+  );
 
   if(isGap) return {rowClass:' gap', meta:'공기층'};
   if(!isWall){
@@ -6338,7 +6349,7 @@ function wallBaseThicknessMm(capture){
     .reduce((sum, layer)=>sum + wallLayerCalcThickness(layer), 0);
 }
 function wallPlanBreakdown(capture){
-  const result = {basic:0, gap:0, sub:0, total:0};
+  const result = {basic:0, gap:0, sub:0, finish:0, total:0};
   if(!capture || !Array.isArray(capture.layers)) return result;
   capture.layers.forEach((layer)=>{
     const groupLabel = String(layer.groupLabel || '');
@@ -6348,15 +6359,16 @@ function wallPlanBreakdown(capture){
     const amount = wallLayerCalcThickness(layer);
     if(!amount) return;
     const isGap = layer.kind === 'gap' || groupLabel === '공기층' || zone === 'gap' || role === 'gap';
+    const isFinish = layer.category === 'finish' || groupLabel === '마감' || zone === 'finish' || role === FINISH_ROLE;
     const isBasic = groupLabel === '기본차음' || zone === 'inner' || role === 'success';
     const isSub = groupLabel === '부차음' || zone === 'outer' || role === 'accent';
     if(isGap){
       result.gap += amount;
+    }else if(isFinish){
+      result.finish += amount;
     }else if(isBasic){
       result.basic += amount;
     }else if(isSub){
-      result.sub += amount;
-    }else if(groupLabel === '마감' || zone === 'finish'){
       result.sub += amount;
     }else{
       result.sub += amount;
@@ -6365,7 +6377,8 @@ function wallPlanBreakdown(capture){
   result.basic = round2(result.basic);
   result.gap = round2(result.gap);
   result.sub = round2(result.sub);
-  result.total = round2(result.basic + result.gap + result.sub);
+  result.finish = round2(result.finish);
+  result.total = round2(result.basic + result.gap + result.sub + result.finish);
   return result;
 }
 function captureThicknessText(capture){
@@ -6779,12 +6792,12 @@ function renderFinalRoomIso(summary){
     if(!inner?.length) return polygonPath(outer);
     return `${polygonPath(outer)} ${polygonPath(inner)}`;
   };
-  const bandPolygon = ({includeGap=false, includeTotal=false}={})=>{
+  const bandPolygon = ({includeGap=false, includeSub=false, includeTotal=false}={})=>{
     const offsets = {
-      A:pxOffset(side.A.basic + (includeGap ? side.A.gap : 0)),
-      B:pxOffset(side.B.basic + (includeGap ? side.B.gap : 0)),
-      C:pxOffset(side.C.basic + (includeGap ? side.C.gap : 0)),
-      D:pxOffset(side.D.basic + (includeGap ? side.D.gap : 0))
+      A:pxOffset(side.A.basic + (includeGap ? side.A.gap : 0) + (includeSub ? side.A.sub : 0)),
+      B:pxOffset(side.B.basic + (includeGap ? side.B.gap : 0) + (includeSub ? side.B.sub : 0)),
+      C:pxOffset(side.C.basic + (includeGap ? side.C.gap : 0) + (includeSub ? side.C.sub : 0)),
+      D:pxOffset(side.D.basic + (includeGap ? side.D.gap : 0) + (includeSub ? side.D.sub : 0))
     };
     if(includeTotal){
       offsets.A = pxOffset(side.A.total);
@@ -6796,6 +6809,7 @@ function renderFinalRoomIso(summary){
   };
   const basicInnerPoly = bandPolygon({includeGap:false});
   const gapInnerPoly = bandPolygon({includeGap:true});
+  const subInnerPoly = bandPolygon({includeGap:true, includeSub:true});
   const roomPoly = bandPolygon({includeTotal:true});
   const roomBounds = roomPoly.length ? {
     minX:Math.min(...roomPoly.map((point)=>point.x)),
@@ -6805,10 +6819,12 @@ function renderFinalRoomIso(summary){
   } : {minX:centerX - 12, maxX:centerX + 12, minY:planY + planH/2 - 12, maxY:planY + planH/2 + 12};
   const roomCenterX = round2((roomBounds.minX + roomBounds.maxX) / 2);
   const roomCenterY = round2((roomBounds.minY + roomBounds.maxY) / 2);
+  const hasFinishBand = ['A','B','C','D'].some((key)=>side[key]?.finish > 0);
   const continuousBands = [
     `<path class="plan-basic" fill-rule="evenodd" d="${ringPath(outerPoly, basicInnerPoly)}"></path>`,
     `<path class="plan-gap" fill-rule="evenodd" d="${ringPath(basicInnerPoly, gapInnerPoly)}"></path>`,
-    `<path class="plan-sub" fill-rule="evenodd" d="${ringPath(gapInnerPoly, roomPoly)}"></path>`
+    `<path class="plan-sub" fill-rule="evenodd" d="${ringPath(gapInnerPoly, subInnerPoly)}"></path>`,
+    hasFinishBand ? `<path class="plan-finish" fill-rule="evenodd" d="${ringPath(subInnerPoly, roomPoly)}"></path>` : ''
   ].join('');
   const outerBounds = {
     minX:Math.min(...outerPoly.map((point)=>point.x)),
@@ -6841,6 +6857,26 @@ function renderFinalRoomIso(summary){
   const usableWidthText = shape.isTrapezoid
     ? `A ${round2(summary.innerBottomWidthMm)} / C ${round2(summary.innerTopWidthMm)}mm`
     : `${round2(summary.innerWidthMm)}mm`;
+  const roomWidthPx = Math.max(roomBounds.maxX - roomBounds.minX, 0);
+  const roomHeightPx = Math.max(roomBounds.maxY - roomBounds.minY, 0);
+  const innerDimPadX = Math.min(28, Math.max(14, roomWidthPx * 0.07));
+  const innerDimPadY = Math.min(34, Math.max(18, roomHeightPx * 0.1));
+  const innerDimY = round2(roomBounds.minY + innerDimPadY);
+  const innerDimX1 = round2(roomBounds.minX + innerDimPadX);
+  const innerDimX2 = round2(roomBounds.maxX - innerDimPadX);
+  const innerDimX = round2(roomBounds.minX + innerDimPadX);
+  const innerDimY1 = round2(roomBounds.minY + innerDimPadY + 22);
+  const innerDimY2 = round2(roomBounds.maxY - innerDimPadY);
+  const innerDimensionMarkup = roomWidthPx > 120 && roomHeightPx > 120 ? `
+    <line class="plan-inner-dim-guide" x1="${innerDimX1}" y1="${roomBounds.minY}" x2="${innerDimX1}" y2="${innerDimY + 6}"></line>
+    <line class="plan-inner-dim-guide" x1="${innerDimX2}" y1="${roomBounds.minY}" x2="${innerDimX2}" y2="${innerDimY + 6}"></line>
+    <line class="plan-inner-dim" x1="${innerDimX1}" y1="${innerDimY}" x2="${innerDimX2}" y2="${innerDimY}" marker-start="url(#final-room-arrow)" marker-end="url(#final-room-arrow)"></line>
+    <text class="plan-inner-dim-text" x="${round2((innerDimX1 + innerDimX2) / 2)}" y="${innerDimY - 8}" text-anchor="middle">사용 가능 ${usableWidthText}</text>
+    <line class="plan-inner-dim-guide" x1="${roomBounds.minX}" y1="${innerDimY1}" x2="${innerDimX + 6}" y2="${innerDimY1}"></line>
+    <line class="plan-inner-dim-guide" x1="${roomBounds.minX}" y1="${innerDimY2}" x2="${innerDimX + 6}" y2="${innerDimY2}"></line>
+    <line class="plan-inner-dim" x1="${innerDimX}" y1="${innerDimY1}" x2="${innerDimX}" y2="${innerDimY2}" marker-start="url(#final-room-arrow)" marker-end="url(#final-room-arrow)"></line>
+    <text class="plan-inner-dim-text" x="${innerDimX - 10}" y="${round2((innerDimY1 + innerDimY2) / 2)}" text-anchor="middle" transform="rotate(-90 ${innerDimX - 10} ${round2((innerDimY1 + innerDimY2) / 2)})">사용 가능 ${round2(summary.innerDepthMm)}mm</text>
+  ` : '';
   const slotBadge = (code, x, y)=>`<g>
     <circle class="plan-badge" cx="${round2(x)}" cy="${round2(y)}" r="15"></circle>
     <text class="plan-badge-text" x="${round2(x)}" y="${round2(y + 5)}" text-anchor="middle">${code}</text>
@@ -6853,13 +6889,15 @@ function renderFinalRoomIso(summary){
     </defs>
     <text class="plan-title" x="22" y="30">평면 공간 검산</text>
     <text class="plan-subtitle" x="22" y="50">모서리에서 같은 차음층끼리 연속되도록 표시합니다</text>
-    <g transform="translate(570 22)">
+    <g transform="translate(458 22)">
       <rect class="plan-basic" x="0" y="0" width="14" height="14" rx="3"></rect>
       <text class="plan-legend-text" x="20" y="11">기본차음</text>
       <rect class="plan-gap" x="92" y="0" width="14" height="14" rx="3"></rect>
       <text class="plan-legend-text" x="112" y="11">공기층</text>
       <rect class="plan-sub" x="172" y="0" width="14" height="14" rx="3"></rect>
       <text class="plan-legend-text" x="192" y="11">부차음</text>
+      <rect class="plan-finish" x="252" y="0" width="14" height="14" rx="3"></rect>
+      <text class="plan-legend-text" x="272" y="11">마감</text>
     </g>
     <line class="plan-dim-guide" x1="${outerBounds.minX}" y1="${outerBounds.minY - 24}" x2="${outerBounds.minX}" y2="${outerBounds.minY - 4}"></line>
     <line class="plan-dim-guide" x1="${outerBounds.maxX}" y1="${outerBounds.minY - 24}" x2="${outerBounds.maxX}" y2="${outerBounds.minY - 4}"></line>
@@ -6872,13 +6910,14 @@ function renderFinalRoomIso(summary){
     ${continuousBands}
     <path class="plan-outline" d="${polygonPath(outerPoly)}"></path>
     <path class="plan-room" d="${polygonPath(roomPoly)}"></path>
+    ${innerDimensionMarkup}
     <text class="plan-center-label" x="${roomCenterX}" y="${roomCenterY - 22}" text-anchor="middle">사용 가능 공간</text>
     <text class="plan-center-value" x="${roomCenterX}" y="${roomCenterY}" text-anchor="middle">${usableWidthText} × ${round2(summary.innerDepthMm)}mm · ${usableArea}m²</text>
     <text class="plan-center-value" x="${roomCenterX}" y="${roomCenterY + 28}" text-anchor="middle">E 천장 기준면 · F 바닥 기준면</text>
     ${slotBadge('A', bottomMid.x, outerBounds.maxY + 28)}
     ${slotBadge('B', rightMid.x + 32, rightMid.y)}
     ${slotBadge('C', topMid.x, outerBounds.minY - 52)}
-    ${slotBadge('D', leftMid.x - 52, leftMid.y)}
+    ${slotBadge('D', Math.max(leftMid.x + 26, outerBounds.minX + 24), leftMid.y)}
     ${slotBadge('E', roomCenterX - 22, roomBounds.maxY - 34)}
     ${slotBadge('F', roomCenterX + 22, roomBounds.maxY - 34)}
     <text class="plan-subtitle" x="420" y="540" text-anchor="middle">치수 비율과 벽체별 두께를 반영한 검산용 평면도</text>
