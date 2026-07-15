@@ -824,6 +824,9 @@ td{ border-bottom:0.5px solid var(--border); }
 .final-room-svg .room-wall-1{ stroke:var(--fill-pro); stroke-width:5; stroke-linecap:round; }
 .final-room-svg .room-wall-3{ stroke:var(--fill-danger); stroke-width:5; stroke-linecap:round; }
 .final-room-svg .room-axis{ stroke:var(--fill-success); stroke-width:1.2; opacity:0.5; }
+.final-room-svg .room-slot-leader{ fill:none; stroke:var(--text-primary); stroke-width:1.35; stroke-linecap:round; opacity:0.85; }
+.final-room-svg .room-slot-dot{ fill:var(--surface-1); stroke:var(--text-primary); stroke-width:1.4; }
+.final-room-svg .room-slot-text{ fill:var(--text-primary); font-size:15px; font-weight:800; }
 .final-room-svg .room-dim,
 .final-room-svg .room-dim-guide{ fill:none; stroke:var(--text-muted); stroke-width:1.35; }
 .final-room-svg .room-dim-guide{ opacity:0.75; }
@@ -859,6 +862,14 @@ td{ border-bottom:0.5px solid var(--border); }
 .final-wall-minimap .plan-wall.w3{ stroke:var(--fill-danger); }
 .final-wall-minimap .plan-wall.w4{ stroke:var(--fill-accent); }
 .final-wall-minimap .plan-muted{ fill:var(--text-muted); }
+.final-wall-minimap text{
+  fill:var(--text-primary);
+  font-weight:800;
+}
+.final-wall-minimap .plan-muted{
+  fill:var(--text-muted);
+  font-weight:700;
+}
 .final-wall-minimap .plan-key{
   display:grid;
   gap:3px;
@@ -1105,9 +1116,11 @@ td{ border-bottom:0.5px solid var(--border); }
   display:flex;
   align-items:center;
   gap:5px;
+  min-width:0;
   font-size:13px;
   font-weight:700;
   line-height:1.25;
+  white-space:nowrap;
 }
 .capture-card-title i{
   font-size:14px;
@@ -1115,6 +1128,19 @@ td{ border-bottom:0.5px solid var(--border); }
   transition:transform 0.12s;
 }
 .capture-card.open .capture-card-title i{ transform:rotate(90deg); }
+.capture-card-name{
+  flex:1 1 auto;
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.capture-card-inline-meta{
+  flex:0 0 auto;
+  color:var(--text-muted);
+  font-size:11px;
+  font-weight:500;
+  white-space:nowrap;
+}
 .capture-mode-badge{
   display:inline-flex;
   align-items:center;
@@ -4918,6 +4944,7 @@ document.addEventListener('pointerdown', (e)=>{
 
 function performWallAdd(val){
   if(!val) return;
+  currentCaptureSource.wall = null;
   if(val.startsWith('COMPOSITE:')){
     const comp = COMPOSITES[val.slice('COMPOSITE:'.length)];
     const cat = MAT[comp.parts[0]].category;
@@ -5586,6 +5613,7 @@ function bomRowsSimpleHTML(agg, options={}){
 
 function performCeilAdd(val){
   if(!val) return;
+  currentCaptureSource.ceil = null;
   if(val.startsWith('COMPOSITE:')){
     const comp = COMPOSITES[val.slice('COMPOSITE:'.length)];
     comp.parts.forEach(pk=>ceilStack.push({key:pk, val:materialThicknessMm(MAT[pk])}));
@@ -5596,6 +5624,7 @@ function performCeilAdd(val){
 }
 function performFloorAdd(val){
   if(!val) return;
+  currentCaptureSource.floor = null;
   if(val.startsWith('COMPOSITE:')){
     const comp = COMPOSITES[val.slice('COMPOSITE:'.length)];
     comp.parts.forEach(pk=>floorStack.push({key:pk, val:materialThicknessMm(MAT[pk])}));
@@ -5608,6 +5637,12 @@ function performFloorAdd(val){
 function applyPlanLayerPreset(mode, id){
   const preset = findPlanLayerPreset(mode, id);
   if(!preset) return;
+  currentCaptureSource[mode] = {
+    name:presetStructureName(preset),
+    groupLabel:preset.groupLabel || '',
+    stageNo:preset.n,
+    stageName:preset.name || ''
+  };
   if(mode === 'ceil'){
     ceilStack = safePlanStackFromSeq(preset.seq);
     renderCeil();
@@ -5703,10 +5738,10 @@ function consolidateForFinal(agg){
 
 const CAPTURE_STORE_KEY = 'soundIsolationEstimatorCapturesV1';
 const ROOM_SIDES = [
-  {key:'wall1', code:'A', label:'A 벽체', desc:'전면', axis:'width'},
-  {key:'wall2', code:'B', label:'B 벽체', desc:'우측', axis:'depth'},
-  {key:'wall3', code:'C', label:'C 벽체', desc:'후면', axis:'width'},
-  {key:'wall4', code:'D', label:'D 벽체', desc:'좌측', axis:'depth'}
+  {key:'wall1', code:'A', label:'A 벽체', axis:'width'},
+  {key:'wall2', code:'B', label:'B 벽체', axis:'depth'},
+  {key:'wall3', code:'C', label:'C 벽체', axis:'width'},
+  {key:'wall4', code:'D', label:'D 벽체', axis:'depth'}
 ];
 const CEIL_SLOT = {code:'E', label:'E 천장'};
 const FLOOR_SLOT = {code:'F', label:'F 바닥'};
@@ -5733,6 +5768,7 @@ function loadCapturedSections(){
 let savedCaptures = loadCapturedSections();
 let openCaptureId = null;
 let roomPlan = defaultRoomPlan();
+let currentCaptureSource = {wall:null, ceil:null, floor:null};
 
 function saveCapturedSections(){
   localStorage.setItem(CAPTURE_STORE_KEY, JSON.stringify(savedCaptures));
@@ -5742,11 +5778,35 @@ function modeName(mode){
   if(mode==='ceil') return '천장';
   return '바닥';
 }
+function presetStructureName(preset){
+  if(!preset) return '';
+  return [preset.groupLabel, `${preset.n}단계`, preset.name].filter(Boolean).join(' · ');
+}
+function captureSeqSignatureFromLayers(layers){
+  return (Array.isArray(layers) ? layers : []).map((layer)=>layer.key).filter(Boolean).join('>');
+}
+function captureSeqSignatureFromItems(items){
+  return (Array.isArray(items) ? items : []).map((item)=>item.key).filter(Boolean).join('>');
+}
+function inferStructureSourceFromLayers(mode, layers){
+  const signature = captureSeqSignatureFromLayers(layers);
+  if(!signature) return null;
+  const match = allRefPresets(mode).find((preset)=>captureSeqSignatureFromItems(itemsFromPresetForMode(preset, mode)) === signature);
+  if(!match) return null;
+  return {
+    name:presetStructureName(match),
+    groupLabel:match.groupLabel || '',
+    stageNo:match.n,
+    stageName:match.name || ''
+  };
+}
 function captureDisplayName(capture){
   if(!capture) return '선택 안 함';
+  const sourceName = capture.source?.name || capture.meta?.sourceName || inferStructureSourceFromLayers(capture.mode, capture.layers)?.name;
+  if(sourceName) return sourceName;
   const raw = String(capture.name || '').trim();
   if(!raw || /^(벽체|천장|바닥)\s*\d+$/.test(raw)){
-    return `${modeName(capture.mode)} 구조`;
+    return `${modeName(capture.mode)} 직접 구성`;
   }
   return raw;
 }
@@ -5890,6 +5950,7 @@ function currentAggForMode(mode){
   return computePlanAgg(isCeil ? ceilStack : floorStack, widthM, depthM, gapM);
 }
 function currentMetaForMode(mode){
+  const source = currentCaptureSource[mode] || inferStructureSourceFromLayers(mode, currentLayersForMode(mode));
   if(mode==='wall'){
     const lenM = (parseFloat(document.getElementById('wallLen').value)||0)/1000;
     const htOuterM = (parseFloat(document.getElementById('htOuter').value)||0)/1000;
@@ -5900,7 +5961,8 @@ function currentMetaForMode(mode){
     return {
       size: `길이 ${round2(lenM)}m · 부차음 ${round2(outerArea)}m² · 기본차음 ${round2(innerArea)}m²`,
       thick: `${document.getElementById('totalThick').textContent}`,
-      summary: stackSummary(stack)
+      summary: stackSummary(stack),
+      sourceName: source?.name || ''
     };
   }
   const isCeil = mode==='ceil';
@@ -5910,7 +5972,8 @@ function currentMetaForMode(mode){
   return {
     size: `${round2(widthM)}m x ${round2(depthM)}m · ${round2(widthM*depthM)}m²`,
     thick: thickText,
-    summary: stackSummary(isCeil ? ceilStack : floorStack)
+    summary: stackSummary(isCeil ? ceilStack : floorStack),
+    sourceName: source?.name || ''
   };
 }
 function currentInputsForMode(mode){
@@ -5944,7 +6007,8 @@ function captureCurrentMode(mode){
     return;
   }
   const no = nextCaptureNo(mode);
-  const name = `${modeName(mode)} 구조`;
+  const source = currentCaptureSource[mode] || inferStructureSourceFromLayers(mode, currentLayersForMode(mode));
+  const name = source?.name || `${modeName(mode)} 직접 구성`;
   const saved = {
     id:`${Date.now()}-${Math.random().toString(16).slice(2)}`,
     mode,
@@ -5952,6 +6016,7 @@ function captureCurrentMode(mode){
     name,
     agg:copyAgg(agg),
     meta:currentMetaForMode(mode),
+    source:source || null,
     inputs:currentInputsForMode(mode),
     layers:currentLayersForMode(mode),
     createdAt:new Date().toISOString()
@@ -6032,8 +6097,7 @@ function renderCaptureLists(){
     return `
     <div class="capture-card ${isOpen ? 'open' : ''}" data-capture-id="${c.id}">
       <div class="capture-main" data-toggle-capture="${c.id}" role="button" tabindex="0" aria-expanded="${isOpen ? 'true' : 'false'}">
-        <div class="capture-card-title"><i class="ti ti-chevron-right" aria-hidden="true"></i><span class="capture-mode-badge">${escapeHTML(modeLabel)}</span>${escapeHTML(displayName)}</div>
-        <div class="capture-card-meta">${escapeHTML(metaText || '치수 정보 없음')}</div>
+        <div class="capture-card-title"><i class="ti ti-chevron-right" aria-hidden="true"></i><span class="capture-mode-badge">${escapeHTML(modeLabel)}</span><span class="capture-card-name">${escapeHTML(displayName)}</span><span class="capture-card-inline-meta">${escapeHTML(metaText || '치수 정보 없음')}</span></div>
       </div>
       <button class="capture-delete" type="button" data-del-capture="${c.id}" aria-label="${escapeHTML(displayName)} 삭제"><i class="ti ti-x" style="font-size:15px;" aria-hidden="true"></i></button>
       <div class="capture-detail">
@@ -6261,17 +6325,7 @@ function captureLayerListHTML(capture, emptyText='레이어 정보 없음'){
   </div>`;
 }
 function plannerChoiceDetailHTML(row){
-  const capture = row?.capture;
-  if(!capture){
-    return '<div class="planner-wall-meta">저장된 구조 후보를 선택하세요.</div>';
-  }
-  const thick = capture.meta?.thick || '-';
-  const size = rowCompactSizeText(row);
-  return `<div class="planner-choice-summary">
-    <span class="planner-choice-name">${escapeHTML(captureDisplayName(capture))}</span>
-    <span class="planner-choice-pill">${escapeHTML(size)}</span>
-    <span class="planner-choice-pill">${escapeHTML(thick)}</span>
-  </div>`;
+  return '';
 }
 function renderFinalRoomIso(summary){
   const wrap = document.getElementById('finalRoomIso');
@@ -6319,15 +6373,37 @@ function renderFinalRoomIso(summary){
     <line class="room-dim-guide" x1="192" y1="328" x2="116" y2="328"></line>
     <line class="room-dim" x1="116" y1="150" x2="116" y2="328" marker-start="url(#final-room-arrow)" marker-end="url(#final-room-arrow)"></line>
     <text class="room-muted" x="86" y="244" text-anchor="middle">${h || 0} mm</text>
-    <text x="422" y="150" text-anchor="middle">E 천장 · ${captureName(ceilRow, 14)}</text>
-    <text x="252" y="292" text-anchor="middle">D 벽체</text>
-    <text class="room-muted" x="252" y="313" text-anchor="middle">${captureName(wall4, 14)}</text>
-    <text x="500" y="298" text-anchor="middle">B 벽체</text>
-    <text class="room-muted" x="500" y="319" text-anchor="middle">${captureName(wall2, 14)}</text>
-    <text class="room-muted" x="432" y="418" text-anchor="middle">F 바닥 · ${captureName(floorRow, 14)}</text>
-    <text x="612" y="372" text-anchor="start">A 벽체</text>
-    <text x="210" y="130" text-anchor="middle">C 벽체</text>
-    <text class="room-muted" x="390" y="462" text-anchor="middle">A~F 위치는 오른쪽 평면 미니맵에서 확인</text>
+    <g class="room-slot">
+      <line class="room-slot-leader" x1="560" y1="360" x2="704" y2="390"></line>
+      <circle class="room-slot-dot" cx="724" cy="394" r="15"></circle>
+      <text class="room-slot-text" x="724" y="399" text-anchor="middle">A</text>
+    </g>
+    <g class="room-slot">
+      <line class="room-slot-leader" x1="520" y1="286" x2="664" y2="268"></line>
+      <circle class="room-slot-dot" cx="684" cy="266" r="15"></circle>
+      <text class="room-slot-text" x="684" y="271" text-anchor="middle">B</text>
+    </g>
+    <g class="room-slot">
+      <line class="room-slot-leader" x1="306" y1="112" x2="238" y2="84"></line>
+      <circle class="room-slot-dot" cx="218" cy="76" r="15"></circle>
+      <text class="room-slot-text" x="218" y="81" text-anchor="middle">C</text>
+    </g>
+    <g class="room-slot">
+      <line class="room-slot-leader" x1="236" y1="270" x2="150" y2="258"></line>
+      <circle class="room-slot-dot" cx="130" cy="255" r="15"></circle>
+      <text class="room-slot-text" x="130" y="260" text-anchor="middle">D</text>
+    </g>
+    <g class="room-slot">
+      <line class="room-slot-leader" x1="420" y1="148" x2="420" y2="100"></line>
+      <circle class="room-slot-dot" cx="420" cy="80" r="15"></circle>
+      <text class="room-slot-text" x="420" y="85" text-anchor="middle">E</text>
+    </g>
+    <g class="room-slot">
+      <line class="room-slot-leader" x1="420" y1="392" x2="420" y2="444"></line>
+      <circle class="room-slot-dot" cx="420" cy="464" r="15"></circle>
+      <text class="room-slot-text" x="420" y="469" text-anchor="middle">F</text>
+    </g>
+    <text class="room-muted" x="390" y="494" text-anchor="middle">A~F 위치는 리더선과 오른쪽 미니맵으로 확인</text>
   </svg>`;
   if(mini){
     const wallName = (row)=>captureName(row, 13);
@@ -6405,7 +6481,6 @@ function renderRoomPlanner(){
       <div class="planner-wall-side">
         <span><span class="slot-code">${side.code}</span></span>
         <span>벽체</span>
-        <small>${side.desc}</small>
       </div>
       <div class="planner-choice-body">
         <select data-room-wall="${side.key}">${roomCaptureOptionHTML('wall', roomPlan.walls?.[side.key] || '')}</select>
@@ -7311,16 +7386,19 @@ function toggleMaterialList(mode, key, checked){
 
 function resetWall(){
   stack = [];
+  currentCaptureSource.wall = null;
   render();
 }
 
 function resetCeil(){
   ceilStack = [];
+  currentCaptureSource.ceil = null;
   renderCeil();
 }
 
 function resetFloor(){
   floorStack = [];
+  currentCaptureSource.floor = null;
   renderFloor();
 }
 
@@ -7680,6 +7758,7 @@ document.getElementById('addBtn').addEventListener('click', ()=>{ performWallAdd
 document.getElementById('layerList').addEventListener('click', (e)=>{
   const btn = e.target.closest('button');
   if(!btn) return;
+  currentCaptureSource.wall = null;
   const i = parseInt(btn.dataset.i);
   const act = btn.dataset.act;
   if(act==='del') stack.splice(i,1);
@@ -7690,6 +7769,7 @@ document.getElementById('layerList').addEventListener('click', (e)=>{
 document.getElementById('layerList').addEventListener('input', (e)=>{
   const inp = e.target;
   if(inp.dataset.gapI!=null){
+    currentCaptureSource.wall = null;
     const i = parseInt(inp.dataset.gapI);
     stack[i].val = parseFloat(inp.value)||0;
     const row = inp.closest('div');
@@ -7704,6 +7784,7 @@ document.getElementById('layerList').addEventListener('change', (e)=>{
   if(!sel) return;
   const i = parseInt(sel.dataset.swapI);
   const newKey = sel.value;
+  currentCaptureSource.wall = null;
   stack[i].key = newKey;
   stack[i].val = materialThicknessMm(MAT[newKey]);
   render();
@@ -7736,6 +7817,7 @@ document.getElementById('floorAddBtn').addEventListener('click', ()=>{ performFl
     const act = btn.dataset.act;
     const t = btn.dataset.t;
     const arr = t==='ceil' ? ceilStack : floorStack;
+    currentCaptureSource[t] = null;
     if(act==='del') arr.splice(i,1);
     if(act==='up' && i>0) [arr[i-1],arr[i]] = [arr[i],arr[i-1]];
     if(act==='down' && i<arr.length-1) [arr[i+1],arr[i]] = [arr[i],arr[i+1]];
@@ -7748,6 +7830,7 @@ document.getElementById('floorAddBtn').addEventListener('click', ()=>{ performFl
     const t = sel.dataset.t;
     const arr = t==='ceil' ? ceilStack : floorStack;
     const newKey = sel.value;
+    currentCaptureSource[t] = null;
     arr[i] = {key:newKey, val:materialThicknessMm(MAT[newKey])};
     rerenderTab(t);
   });
@@ -8259,6 +8342,12 @@ document.querySelectorAll('[data-ref-mode]').forEach((btn)=>{
 document.getElementById('sendToModeBtn').addEventListener('click', ()=>{
   const preset = currentRefPreset(currentRefMode);
   if(!preset) return;
+  currentCaptureSource[currentRefMode] = {
+    name:presetStructureName(preset),
+    groupLabel:preset.groupLabel || '',
+    stageNo:preset.n,
+    stageName:preset.name || ''
+  };
   if(currentRefMode === 'wall'){
     stack = itemsFromPresetForMode(preset, 'wall');
     render();
