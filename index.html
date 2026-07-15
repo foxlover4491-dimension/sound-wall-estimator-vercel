@@ -6703,13 +6703,59 @@ function renderFinalRoomIso(summary){
     C: wall3?.planBreakdown || wallPlanBreakdown(wall3?.capture),
     D: wall4?.planBreakdown || wallPlanBreakdown(wall4?.capture)
   };
-  const pxX = (mm)=>round2(Math.max((parseFloat(mm) || 0) * scaleX, (parseFloat(mm) || 0) > 0 ? 2 : 0));
-  const pxY = (mm)=>round2(Math.max((parseFloat(mm) || 0) * scaleY, (parseFloat(mm) || 0) > 0 ? 2 : 0));
-  const leftTotal = pxX(side.D.total);
-  const rightTotal = pxX(side.B.total);
-  const topTotal = pxY(side.C.total);
-  const bottomTotal = pxY(side.A.total);
+  const offsetScale = (scaleX + scaleY) / 2;
+  const pxOffset = (mm)=>round2(Math.max((parseFloat(mm) || 0) * offsetScale, (parseFloat(mm) || 0) > 0 ? 2 : 0));
   const usableArea = round2(summary.innerAreaM2 ?? ((summary.innerWidthMm/1000) * (summary.innerDepthMm/1000)));
+  const polygonArea = (points)=>points.reduce((sum, point, index)=>{
+    const next = points[(index + 1) % points.length];
+    return sum + (point.x * next.y - next.x * point.y);
+  }, 0) / 2;
+  const offsetLine = (a, b, distance, inwardSign)=>{
+    const dx = b.x - a.x;
+    const dy = b.y - a.y;
+    const len = Math.hypot(dx, dy) || 1;
+    const normal = inwardSign < 0
+      ? {x:dy / len, y:-dx / len}
+      : {x:-dy / len, y:dx / len};
+    return {
+      a:{x:a.x + normal.x * distance, y:a.y + normal.y * distance},
+      b:{x:b.x + normal.x * distance, y:b.y + normal.y * distance}
+    };
+  };
+  const lineIntersection = (lineA, lineB)=>{
+    const x1 = lineA.a.x;
+    const y1 = lineA.a.y;
+    const x2 = lineA.b.x;
+    const y2 = lineA.b.y;
+    const x3 = lineB.a.x;
+    const y3 = lineB.a.y;
+    const x4 = lineB.b.x;
+    const y4 = lineB.b.y;
+    const denom = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+    if(Math.abs(denom) < 0.0001) return null;
+    return {
+      x:((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) / denom,
+      y:((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / denom
+    };
+  };
+  const insetPolygonBySideOffsets = (offsets)=>{
+    const inwardSign = polygonArea(outerPoly) < 0 ? -1 : 1;
+    const lines = [
+      offsetLine(outerPoly[0], outerPoly[1], offsets.A || 0, inwardSign),
+      offsetLine(outerPoly[1], outerPoly[2], offsets.B || 0, inwardSign),
+      offsetLine(outerPoly[2], outerPoly[3], offsets.C || 0, inwardSign),
+      offsetLine(outerPoly[3], outerPoly[0], offsets.D || 0, inwardSign)
+    ];
+    const poly = [
+      lineIntersection(lines[3], lines[0]),
+      lineIntersection(lines[0], lines[1]),
+      lineIntersection(lines[1], lines[2]),
+      lineIntersection(lines[2], lines[3])
+    ].filter(Boolean).map((point)=>({x:round2(point.x), y:round2(point.y)}));
+    if(poly.length !== 4 || !poly.every((point)=>Number.isFinite(point.x) && Number.isFinite(point.y))) return [];
+    const area = Math.abs(polygonArea(poly));
+    return area > 4 ? poly : [];
+  };
   const polygonPath = (points)=>{
     if(!points.length) return '';
     return points.map((point, index)=>`${index ? 'L' : 'M'}${round2(point.x)},${round2(point.y)}`).join(' ') + ' Z';
@@ -6719,24 +6765,19 @@ function renderFinalRoomIso(summary){
     return `${polygonPath(outer)} ${polygonPath(inner)}`;
   };
   const bandPolygon = ({includeGap=false, includeTotal=false}={})=>{
-    const left = pxX(side.D.basic + (includeGap ? side.D.gap : 0));
-    const right = pxX(side.B.basic + (includeGap ? side.B.gap : 0));
-    const top = pxY(side.C.basic + (includeGap ? side.C.gap : 0));
-    const bottom = pxY(side.A.basic + (includeGap ? side.A.gap : 0));
-    const totalLeft = includeTotal ? leftTotal : left;
-    const totalRight = includeTotal ? rightTotal : right;
-    const totalTop = includeTotal ? topTotal : top;
-    const totalBottom = includeTotal ? bottomTotal : bottom;
-    const poly = [
-      {x:round2(outerPoly[0].x + totalLeft), y:round2(outerPoly[0].y - totalBottom)},
-      {x:round2(outerPoly[1].x - totalRight), y:round2(outerPoly[1].y - totalBottom)},
-      {x:round2(outerPoly[2].x - totalRight), y:round2(outerPoly[2].y + totalTop)},
-      {x:round2(outerPoly[3].x + totalLeft), y:round2(outerPoly[3].y + totalTop)}
-    ];
-    const bottomSpan = Math.hypot(poly[1].x - poly[0].x, poly[1].y - poly[0].y);
-    const topSpan = Math.hypot(poly[2].x - poly[3].x, poly[2].y - poly[3].y);
-    const leftSpan = Math.hypot(poly[3].x - poly[0].x, poly[3].y - poly[0].y);
-    return bottomSpan > 2 && topSpan > 2 && leftSpan > 2 && poly.every((point)=>Number.isFinite(point.x) && Number.isFinite(point.y)) ? poly : [];
+    const offsets = {
+      A:pxOffset(side.A.basic + (includeGap ? side.A.gap : 0)),
+      B:pxOffset(side.B.basic + (includeGap ? side.B.gap : 0)),
+      C:pxOffset(side.C.basic + (includeGap ? side.C.gap : 0)),
+      D:pxOffset(side.D.basic + (includeGap ? side.D.gap : 0))
+    };
+    if(includeTotal){
+      offsets.A = pxOffset(side.A.total);
+      offsets.B = pxOffset(side.B.total);
+      offsets.C = pxOffset(side.C.total);
+      offsets.D = pxOffset(side.D.total);
+    }
+    return insetPolygonBySideOffsets(offsets);
   };
   const basicInnerPoly = bandPolygon({includeGap:false});
   const gapInnerPoly = bandPolygon({includeGap:true});
