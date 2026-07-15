@@ -857,14 +857,14 @@ td{ border-bottom:0.5px solid var(--border); }
 .final-room-svg .plan-inner-dim-guide{ fill:none; stroke:var(--text-secondary); stroke-width:1; }
 .final-room-svg .plan-inner-dim-guide{ opacity:0.7; }
 .final-room-svg .plan-badge{ fill:var(--surface-1); stroke:var(--border-strong); stroke-width:1; }
-.final-room-svg .plan-badge-text{ fill:var(--text-primary); font-size:13px; font-weight:800; }
-.final-room-svg .plan-title{ fill:var(--text-primary); font-size:13px; font-weight:800; }
-.final-room-svg .plan-subtitle{ fill:var(--text-muted); font-size:12px; font-weight:700; }
-.final-room-svg .plan-dim-text{ fill:var(--text-muted); font-size:12px; font-weight:700; }
-.final-room-svg .plan-inner-dim-text{ fill:var(--text-secondary); font-size:11px; font-weight:800; }
-.final-room-svg .plan-center-label{ fill:var(--text-primary); font-size:13px; font-weight:800; }
-.final-room-svg .plan-center-value{ fill:var(--text-muted); font-size:12px; font-weight:700; }
-.final-room-svg .plan-legend-text{ fill:var(--text-secondary); font-size:11px; font-weight:800; }
+.final-room-svg .plan-badge-text{ fill:var(--text-primary); font-size:14px; font-weight:800; }
+.final-room-svg .plan-title{ fill:var(--text-primary); font-size:15px; font-weight:800; }
+.final-room-svg .plan-subtitle{ fill:var(--text-muted); font-size:13px; font-weight:700; }
+.final-room-svg .plan-dim-text{ fill:var(--text-muted); font-size:13px; font-weight:700; }
+.final-room-svg .plan-inner-dim-text{ fill:var(--text-secondary); font-size:13px; font-weight:800; }
+.final-room-svg .plan-center-label{ fill:var(--text-primary); font-size:15px; font-weight:800; }
+.final-room-svg .plan-center-value{ fill:var(--text-muted); font-size:13px; font-weight:700; }
+.final-room-svg .plan-legend-text{ fill:var(--text-secondary); font-size:12px; font-weight:800; }
 .final-room-svg .plan-legend-note{ fill:var(--text-muted); font-size:10px; font-weight:700; }
 .final-wall-minimap{
   display:none;
@@ -974,16 +974,6 @@ td{ border-bottom:0.5px solid var(--border); }
 .final-plan-structure-thick{
   color:var(--text-muted);
   white-space:nowrap;
-}
-.final-room-metrics{
-  margin-top:8px;
-  margin-bottom:0;
-}
-.final-room-metrics.metric-grid.cols-2{
-  grid-template-columns:repeat(2, minmax(0, 1fr));
-}
-.final-room-metrics .metric-card{
-  padding:10px;
 }
 .planner-internal-fields{ display:none; }
 .final-section-grid{
@@ -1939,8 +1929,6 @@ td{ border-bottom:0.5px solid var(--border); }
   .final-wall-minimap{ padding:7px; }
   .final-wall-minimap .plan-key{ grid-template-columns:repeat(2, minmax(0, 1fr)); }
   .final-room-svg svg{ min-width:0; }
-  .final-room-metrics.metric-grid.cols-2{ grid-template-columns:repeat(2, minmax(0, 1fr)); }
-  .final-room-metrics .metric-card{ padding:8px; }
   .final-badge{ font-size:10px; padding:2px 6px; }
   .final-structure-title{ font-size:12px; }
   .final-layer-chip{ flex:1 1 118px; font-size:10px; }
@@ -2173,24 +2161,6 @@ td{ border-bottom:0.5px solid var(--border); }
       <div class="final-room-viz-grid">
         <div id="finalRoomIso" class="final-room-svg"></div>
         <div id="finalWallMiniMap" class="final-wall-minimap"></div>
-      </div>
-      <div class="metric-grid cols-2 final-room-metrics">
-        <div class="metric-card">
-          <div class="metric-label">유효 가로</div>
-          <div id="roomInnerWidthMetric" class="metric-value">0mm</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">유효 세로</div>
-          <div id="roomInnerDepthMetric" class="metric-value">0mm</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">천장 면적</div>
-          <div id="roomCeilAreaMetric" class="metric-value">0m²</div>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">바닥 면적</div>
-          <div id="roomFloorAreaMetric" class="metric-value">0m²</div>
-        </div>
       </div>
       <div id="roomPlanStatus" class="copy-status" aria-live="polite" style="margin-top:8px;"></div>
       <div id="roomPlanSummary" class="planner-summary" style="display:none;"></div>
@@ -7074,13 +7044,6 @@ function renderRoomPlanner(){
 
   renderFinalRoomIso(summary);
   renderFinalSelectedDetails(summary);
-  const shape = summary.planShape || {};
-  document.getElementById('roomInnerWidthMetric').textContent = shape.isTrapezoid
-    ? `A ${round2(summary.innerBottomWidthMm)} / C ${round2(summary.innerTopWidthMm)}mm`
-    : `${round2(summary.innerWidthMm)}mm`;
-  document.getElementById('roomInnerDepthMetric').textContent = `${round2(summary.innerDepthMm)}mm`;
-  document.getElementById('roomCeilAreaMetric').textContent = `${round2(summary.innerAreaM2 ?? ((summary.innerWidthMm/1000)*(summary.innerDepthMm/1000)))}m²`;
-  document.getElementById('roomFloorAreaMetric').textContent = `${round2(summary.innerAreaM2 ?? ((summary.innerWidthMm/1000)*(summary.innerDepthMm/1000)))}m²`;
 
   if(!roomPlanHasAnySelection()){
     statusEl.textContent = '저장 구조 후보를 A~F 위치에 배치하면 선택된 치수와 물량으로 산출표가 구성됩니다.';
