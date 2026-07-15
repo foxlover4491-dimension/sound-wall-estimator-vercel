@@ -596,6 +596,7 @@ td{ border-bottom:0.5px solid var(--border); }
   border:0.5px solid var(--border);
   border-radius:var(--radius);
   padding:12px;
+  min-width:0;
 }
 .planner-section + .planner-section{
   margin-top:12px;
@@ -792,6 +793,7 @@ td{ border-bottom:0.5px solid var(--border); }
   gap:12px;
   align-items:stretch;
   margin-bottom:12px;
+  min-width:0;
 }
 .final-panel-head{
   display:flex;
@@ -981,6 +983,7 @@ td{ border-bottom:0.5px solid var(--border); }
   grid-template-columns:minmax(0,0.95fr) minmax(0,1.05fr);
   gap:12px;
   align-items:start;
+  min-width:0;
 }
 .final-selected-list{
   display:flex;
@@ -1215,6 +1218,7 @@ td{ border-bottom:0.5px solid var(--border); }
   background:var(--surface-1);
   border:0.5px solid var(--border);
   border-radius:var(--radius);
+  min-width:0;
 }
 .capture-card.open{
   border-color:var(--border-accent);
@@ -1284,6 +1288,7 @@ td{ border-bottom:0.5px solid var(--border); }
   display:none;
   padding-top:8px;
   border-top:0.5px solid var(--border);
+  min-width:0;
 }
 .capture-card.open .capture-detail{ display:block; }
 .capture-detail-head{
@@ -1369,13 +1374,20 @@ td{ border-bottom:0.5px solid var(--border); }
   font-size:11px;
   color:var(--text-muted);
 }
-.capture-detail-table{
-  display:block;
+.capture-detail-scroll,
+.bom-scroll{
   width:100%;
+  max-width:100%;
+  min-width:0;
+  box-sizing:border-box;
   overflow-x:auto;
+  overflow-y:hidden;
   -webkit-overflow-scrolling:touch;
   border:0.5px solid var(--border);
   border-radius:var(--radius);
+}
+.capture-detail-table{
+  width:100%;
   font-size:11px;
   border-collapse:collapse;
   white-space:nowrap;
@@ -1595,13 +1607,45 @@ td{ border-bottom:0.5px solid var(--border); }
   .capture-head{ align-items:stretch; }
   .capture-save-btn{ min-height:34px !important; padding:6px 9px; font-size:12px; }
   .capture-card{ grid-template-columns:minmax(0, 1fr) 28px; padding:7px 8px; }
-  .capture-layer-row{ grid-template-columns:24px minmax(0, 1fr) auto; gap:5px; padding:4px 6px; }
+  .capture-layer-list{ gap:3px; }
+  .capture-layer-row{
+    grid-template-columns:20px minmax(0, 1fr) max-content;
+    gap:4px;
+    padding:3px 5px;
+    max-width:360px;
+  }
+  .final-layer-list .capture-layer-row,
+  .planner-choice-detail .capture-layer-row{
+    grid-template-columns:18px minmax(0, 1fr) max-content;
+    padding:3px 5px;
+  }
   .capture-layer-name{ font-size:11px; }
   .capture-layer-meta{ font-size:9px; }
-  .capture-layer-thick{ font-size:10px; }
-  .capture-detail-table{ font-size:10px; }
-  .capture-detail-table td{ padding:4px 6px !important; min-width:64px; }
-  .capture-detail-table td:first-child{ min-width:110px; }
+  .capture-layer-thick{ font-size:10px; justify-self:start; }
+  .capture-detail-table{
+    font-size:10px;
+    max-width:100%;
+    overflow-x:auto;
+    overflow-y:hidden;
+    table-layout:auto !important;
+  }
+  .capture-detail-table colgroup{ display:none; }
+  .capture-detail-table tbody{
+    display:table;
+    min-width:640px;
+    width:max-content;
+  }
+  .capture-detail-table td{
+    padding:4px 7px !important;
+    min-width:64px;
+    white-space:nowrap !important;
+    word-break:normal;
+    overflow-wrap:normal;
+  }
+  .capture-detail-table td:first-child{ min-width:122px; }
+  .capture-detail-table td:nth-child(4){ min-width:112px; }
+  .capture-detail-table td:nth-child(5){ min-width:96px; }
+  .capture-detail-table td:nth-child(6){ min-width:86px; }
   .capture-delete{
     width:28px !important;
     min-width:28px !important;
@@ -1718,20 +1762,27 @@ td{ border-bottom:0.5px solid var(--border); }
   #finalBomTable{
     display:block;
     width:100%;
+    max-width:100%;
     overflow-x:auto;
+    overflow-y:hidden;
     -webkit-overflow-scrolling:touch;
     border:0.5px solid var(--border);
     border-radius:var(--radius);
+    table-layout:auto !important;
     white-space:nowrap;
   }
   #bomTable colgroup,
   #ceilBomTable colgroup,
   #floorBomTable colgroup,
-  #finalBomTable colgroup{ display:table-column-group; }
+  #finalBomTable colgroup{ display:none; }
   #bomTable tbody,
   #ceilBomTable tbody,
   #floorBomTable tbody,
-  #finalBomTable tbody{ display:table-row-group; }
+  #finalBomTable tbody{
+    display:table;
+    min-width:680px;
+    width:max-content;
+  }
   #bomTable tr,
   #ceilBomTable tr,
   #floorBomTable tr,
@@ -1751,9 +1802,10 @@ td{ border-bottom:0.5px solid var(--border); }
     display:table-cell;
     padding:6px 8px !important;
     border-bottom:0.5px solid var(--border);
-    white-space:normal;
+    white-space:nowrap !important;
     min-width:76px;
     overflow-wrap:normal;
+    word-break:normal;
   }
   #bomTable tr.bom-section-row td,
   #ceilBomTable tr.bom-section-row td,
@@ -1762,15 +1814,48 @@ td{ border-bottom:0.5px solid var(--border); }
   #bomTable td:first-child,
   #ceilBomTable td:first-child,
   #floorBomTable td:first-child,
-  #finalBomTable td:first-child{ min-width:116px; }
+  #finalBomTable td:first-child{ min-width:124px; }
   #bomTable td:nth-child(4),
   #ceilBomTable td:nth-child(4),
   #floorBomTable td:nth-child(4),
-  #finalBomTable td:nth-child(4){ min-width:108px; }
+  #finalBomTable td:nth-child(4){ min-width:112px; }
+  #bomTable td:nth-child(5),
+  #ceilBomTable td:nth-child(5),
+  #floorBomTable td:nth-child(5),
+  #finalBomTable td:nth-child(5){ min-width:96px; }
+  #bomTable td:nth-child(6),
+  #ceilBomTable td:nth-child(6),
+  #floorBomTable td:nth-child(6),
+  #finalBomTable td:nth-child(6){ min-width:86px; }
   #bomTable td::before,
   #ceilBomTable td::before,
   #floorBomTable td::before,
   #finalBomTable td::before{ content:none !important; }
+  .final-bom-scroll,
+  .capture-detail-scroll{
+    max-width:100%;
+    overflow-x:auto;
+    overflow-y:hidden;
+    -webkit-overflow-scrolling:touch;
+  }
+  .final-bom-scroll #finalBomTable,
+  .capture-detail-scroll .capture-detail-table{
+    display:table !important;
+    width:max-content !important;
+    max-width:none;
+    overflow:visible;
+    border:0;
+    border-radius:0;
+    table-layout:auto !important;
+  }
+  .final-bom-scroll #finalBomTable{ min-width:680px; }
+  .capture-detail-scroll .capture-detail-table{ min-width:640px; }
+  .final-bom-scroll #finalBomTable tbody,
+  .capture-detail-scroll .capture-detail-table tbody{
+    display:table-row-group;
+    min-width:0;
+    width:auto;
+  }
   .materials-table{ min-width:980px; }
   .admin-stage-summary{ grid-template-columns:1fr; align-items:stretch; }
   .admin-stage-toggle{ width:100%; }
@@ -1933,12 +2018,32 @@ td{ border-bottom:0.5px solid var(--border); }
   .final-structure-title{ font-size:12px; }
   .final-layer-chip{ flex:1 1 118px; font-size:10px; }
   .final-saved-details{ padding:7px 8px; }
-  .planner-wall-row{ grid-template-columns:62px minmax(0, 1fr); gap:6px; padding:7px 8px; }
-  .planner-wall-side{ padding-top:0; gap:4px; font-size:11px; }
+  .planner-wall-list,
+  .planner-summary,
+  .planner-summary-list{ gap:4px; }
+  .planner-wall-row{ grid-template-columns:48px minmax(0, 1fr); gap:4px; padding:3px 5px; }
+  .planner-wall-side{ padding-top:0; gap:3px; font-size:10px; }
   .planner-wall-side .slot-code{
-    width:24px;
-    height:21px;
+    width:20px;
+    height:18px;
+    font-size:10px;
+  }
+  .planner-choice-body select{
+    min-height:28px;
+    height:28px;
+    padding:3px 24px 3px 7px;
     font-size:11px;
+    line-height:1.15;
+  }
+  .planner-choice-detail{ margin-top:4px; }
+  .planner-choice-detail summary{
+    padding:4px 6px;
+    gap:5px;
+  }
+  .planner-choice-title{ font-size:11px; }
+  .planner-choice-meta{ font-size:10px; }
+  .planner-choice-detail .capture-layer-list{
+    padding:0 5px 5px;
   }
 }
 #bomTable td:nth-child(5),
@@ -2025,7 +2130,7 @@ td{ border-bottom:0.5px solid var(--border); }
         <button id="addBtn"><i class="ti ti-plus" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 추가</button>
       </div>
       <div class="stc-action">
-        <button id="wallStcBtn" class="stc-button" type="button"><i class="ti ti-wave-sine" style="font-size:16px;" aria-hidden="true"></i> 차음 성능 측정</button>
+        <button id="wallStcBtn" class="stc-button" type="button"><i class="ti ti-wave-sine" style="font-size:16px;" aria-hidden="true"></i> 차음성능 예측</button>
         <div id="wallStcResult" class="stc-result" aria-live="polite"></div>
       </div>
     </div>
@@ -2078,7 +2183,7 @@ td{ border-bottom:0.5px solid var(--border); }
         <button id="ceilAddBtn"><i class="ti ti-plus" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 추가</button>
       </div>
       <div class="stc-action">
-        <button id="ceilStcBtn" class="stc-button" type="button"><i class="ti ti-wave-sine" style="font-size:16px;" aria-hidden="true"></i> 차음 성능 측정</button>
+        <button id="ceilStcBtn" class="stc-button" type="button"><i class="ti ti-wave-sine" style="font-size:16px;" aria-hidden="true"></i> 차음성능 예측</button>
         <div id="ceilStcResult" class="stc-result" aria-live="polite"></div>
       </div>
     </div>
@@ -2122,7 +2227,7 @@ td{ border-bottom:0.5px solid var(--border); }
         <button id="floorAddBtn"><i class="ti ti-plus" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 추가</button>
       </div>
       <div class="stc-action">
-        <button id="floorStcBtn" class="stc-button" type="button"><i class="ti ti-wave-sine" style="font-size:16px;" aria-hidden="true"></i> 차음 성능 측정</button>
+        <button id="floorStcBtn" class="stc-button" type="button"><i class="ti ti-wave-sine" style="font-size:16px;" aria-hidden="true"></i> 차음성능 예측</button>
         <div id="floorStcResult" class="stc-result" aria-live="polite"></div>
       </div>
     </div>
@@ -2226,9 +2331,11 @@ td{ border-bottom:0.5px solid var(--border); }
         <div class="planner-section-title" style="margin-bottom:0;">물량 산출표</div>
         <span class="final-badge">자동 합산</span>
       </div>
-      <table id="finalBomTable" style="width:100%; font-size:12px; border-collapse:collapse; table-layout:fixed;">
-        <colgroup><col style="width:24%"><col style="width:10%"><col style="width:6%"><col style="width:22%"><col style="width:20%"><col style="width:18%"></colgroup>
-      </table>
+      <div class="bom-scroll final-bom-scroll">
+        <table id="finalBomTable" style="width:100%; font-size:12px; border-collapse:collapse; table-layout:fixed;">
+          <colgroup><col style="width:24%"><col style="width:10%"><col style="width:6%"><col style="width:22%"><col style="width:20%"><col style="width:18%"></colgroup>
+        </table>
+      </div>
     </div>
   </div>
 </div>
@@ -5635,7 +5742,7 @@ function renderStcResult(mode){
   el.innerHTML = `
     <div class="stc-result-head">
       <div>
-        <div class="stc-kicker">${stcModeName(mode)} 예상 차음 성능</div>
+        <div class="stc-kicker">${stcModeName(mode)} 차음성능 예측</div>
         <div class="stc-level">${stcLevel(displayScore)}</div>
       </div>
       <div class="stc-score">${scoreText}</div>
@@ -6241,10 +6348,12 @@ function renderCaptureLists(){
           <span>${lossRate>0 ? `로스 ${lossRate}% 포함` : '로스 미적용'}</span>
         </div>
         ${renderLayerList(c)}
-        <table class="capture-detail-table">
-          <colgroup><col style="width:18%"><col style="width:12%"><col style="width:7%"><col style="width:17%"><col style="width:16%"><col style="width:30%"></colgroup>
-          ${bomRowsSimpleHTML(consolidateForFinal(c.agg || {}), {lossRate})}
-        </table>
+        <div class="capture-detail-scroll">
+          <table class="capture-detail-table">
+            <colgroup><col style="width:18%"><col style="width:12%"><col style="width:7%"><col style="width:17%"><col style="width:16%"><col style="width:30%"></colgroup>
+            ${bomRowsSimpleHTML(consolidateForFinal(c.agg || {}), {lossRate})}
+          </table>
+        </div>
       </div>
     </div>
   `;
