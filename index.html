@@ -820,10 +820,7 @@ td{ border-bottom:0.5px solid var(--border); }
   background:var(--surface-2);
 }
 .final-room-viz-grid{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) minmax(250px,0.44fr);
-  gap:10px;
-  align-items:stretch;
+  display:block;
 }
 .final-room-svg svg{
   display:block;
@@ -847,9 +844,9 @@ td{ border-bottom:0.5px solid var(--border); }
 .final-room-svg .room-dim-guide{ opacity:0.75; }
 .final-room-svg text{ fill:var(--text-primary); font-weight:400; }
 .final-room-svg .room-muted{ fill:var(--text-muted); }
-.final-room-svg .plan-basic{ fill:var(--fill-success); opacity:0.7; stroke:var(--fill-success); stroke-width:0.5; }
-.final-room-svg .plan-gap{ fill:var(--surface-1); stroke:var(--text-muted); stroke-width:1; stroke-dasharray:5 5; opacity:0.92; }
-.final-room-svg .plan-sub{ fill:#2563eb; opacity:0.72; stroke:#2563eb; stroke-width:0.5; }
+.final-room-svg .plan-basic{ fill:var(--fill-success); opacity:0.72; stroke:var(--fill-success); stroke-width:0.5; }
+.final-room-svg .plan-gap{ fill:var(--surface-1); stroke:var(--text-muted); stroke-width:1; stroke-dasharray:5 5; opacity:0.95; }
+.final-room-svg .plan-sub{ fill:#2563eb; opacity:0.74; stroke:#2563eb; stroke-width:0.5; }
 .final-room-svg .plan-room{ fill:var(--surface-0); stroke:var(--text-primary); stroke-width:1.5; }
 .final-room-svg .plan-outline{ fill:none; stroke:var(--text-primary); stroke-width:1.2; }
 .final-room-svg .plan-dim,
@@ -862,8 +859,10 @@ td{ border-bottom:0.5px solid var(--border); }
 .final-room-svg .plan-dim-text{ fill:var(--text-muted); font-size:12px; font-weight:700; }
 .final-room-svg .plan-center-label{ fill:var(--text-primary); font-size:13px; font-weight:800; }
 .final-room-svg .plan-center-value{ fill:var(--text-muted); font-size:12px; font-weight:700; }
+.final-room-svg .plan-legend-text{ fill:var(--text-secondary); font-size:11px; font-weight:800; }
+.final-room-svg .plan-legend-note{ fill:var(--text-muted); font-size:10px; font-weight:700; }
 .final-wall-minimap{
-  display:flex;
+  display:none;
   flex-direction:column;
   gap:10px;
   border:0.5px solid var(--border);
@@ -6554,8 +6553,8 @@ function renderFinalRoomIso(summary){
   if(badge) badge.textContent = dimText;
   const displayWidth = w || 4000;
   const displayDepth = d || 3000;
-  const maxPlanW = 500;
-  const maxPlanH = 330;
+  const maxPlanW = 620;
+  const maxPlanH = 400;
   const ratio = displayWidth / Math.max(displayDepth, 1);
   let planW = maxPlanW;
   let planH = planW / ratio;
@@ -6563,8 +6562,8 @@ function renderFinalRoomIso(summary){
     planH = maxPlanH;
     planW = planH * ratio;
   }
-  const planX = round2(136 + (maxPlanW - planW) / 2);
-  const planY = round2(98 + (maxPlanH - planH) / 2);
+  const planX = round2(110 + (maxPlanW - planW) / 2);
+  const planY = round2(90 + (maxPlanH - planH) / 2);
   planW = round2(planW);
   planH = round2(planH);
   const scaleX = planW / displayWidth;
@@ -6586,57 +6585,58 @@ function renderFinalRoomIso(summary){
   const roomW = round2(Math.max(planW - leftTotal - rightTotal, 24));
   const roomH = round2(Math.max(planH - topTotal - bottomTotal, 24));
   const usableArea = round2((summary.innerWidthMm/1000) * (summary.innerDepthMm/1000));
-  const bandRect = (cls, x, y, width, height)=>{
-    const bw = round2(Math.max(width, 0));
-    const bh = round2(Math.max(height, 0));
-    if(!bw || !bh) return '';
-    return `<rect class="${cls}" x="${round2(x)}" y="${round2(y)}" width="${bw}" height="${bh}"></rect>`;
+  const rectPath = (x, y, width, height)=>{
+    const rx = round2(x);
+    const ry = round2(y);
+    const rw = round2(Math.max(width, 0));
+    const rh = round2(Math.max(height, 0));
+    return `M${rx},${ry} H${round2(rx + rw)} V${round2(ry + rh)} H${rx} Z`;
   };
-  const topBands = [
-    bandRect('plan-basic', planX, planY, planW, pxY(side.C.basic)),
-    bandRect('plan-gap', planX, planY + pxY(side.C.basic), planW, pxY(side.C.gap)),
-    bandRect('plan-sub', planX, planY + pxY(side.C.basic) + pxY(side.C.gap), planW, pxY(side.C.sub))
-  ].join('');
-  const bottomBasic = pxY(side.A.basic);
-  const bottomGap = pxY(side.A.gap);
-  const bottomSub = pxY(side.A.sub);
-  const bottomBands = [
-    bandRect('plan-basic', planX, planY + planH - bottomBasic, planW, bottomBasic),
-    bandRect('plan-gap', planX, planY + planH - bottomBasic - bottomGap, planW, bottomGap),
-    bandRect('plan-sub', planX, planY + planH - bottomBasic - bottomGap - bottomSub, planW, bottomSub)
-  ].join('');
-  const leftBands = [
-    bandRect('plan-basic', planX, planY, pxX(side.D.basic), planH),
-    bandRect('plan-gap', planX + pxX(side.D.basic), planY, pxX(side.D.gap), planH),
-    bandRect('plan-sub', planX + pxX(side.D.basic) + pxX(side.D.gap), planY, pxX(side.D.sub), planH)
-  ].join('');
-  const rightBasic = pxX(side.B.basic);
-  const rightGap = pxX(side.B.gap);
-  const rightSub = pxX(side.B.sub);
-  const rightBands = [
-    bandRect('plan-basic', planX + planW - rightBasic, planY, rightBasic, planH),
-    bandRect('plan-gap', planX + planW - rightBasic - rightGap, planY, rightGap, planH),
-    bandRect('plan-sub', planX + planW - rightBasic - rightGap - rightSub, planY, rightSub, planH)
+  const ringPath = (outer, inner)=>{
+    if(inner.w <= 0 || inner.h <= 0) return rectPath(outer.x, outer.y, outer.w, outer.h);
+    return `${rectPath(outer.x, outer.y, outer.w, outer.h)} ${rectPath(inner.x, inner.y, inner.w, inner.h)}`;
+  };
+  const insetRect = (includeGap=false)=>{
+    const left = pxX(side.D.basic + (includeGap ? side.D.gap : 0));
+    const right = pxX(side.B.basic + (includeGap ? side.B.gap : 0));
+    const top = pxY(side.C.basic + (includeGap ? side.C.gap : 0));
+    const bottom = pxY(side.A.basic + (includeGap ? side.A.gap : 0));
+    return {
+      x: round2(planX + left),
+      y: round2(planY + top),
+      w: round2(Math.max(planW - left - right, 0)),
+      h: round2(Math.max(planH - top - bottom, 0))
+    };
+  };
+  const outerRect = {x:planX, y:planY, w:planW, h:planH};
+  const basicInnerRect = insetRect(false);
+  const gapInnerRect = insetRect(true);
+  const subInnerRect = {x:roomX, y:roomY, w:roomW, h:roomH};
+  const continuousBands = [
+    `<path class="plan-basic" fill-rule="evenodd" d="${ringPath(outerRect, basicInnerRect)}"></path>`,
+    `<path class="plan-gap" fill-rule="evenodd" d="${ringPath(basicInnerRect, gapInnerRect)}"></path>`,
+    `<path class="plan-sub" fill-rule="evenodd" d="${ringPath(gapInnerRect, subInnerRect)}"></path>`
   ].join('');
   const slotBadge = (code, x, y)=>`<g>
     <circle class="plan-badge" cx="${round2(x)}" cy="${round2(y)}" r="15"></circle>
     <text class="plan-badge-text" x="${round2(x)}" y="${round2(y + 5)}" text-anchor="middle">${code}</text>
   </g>`;
-  const structureName = (row)=>row?.capture ? captureDisplayName(row.capture) : '선택 안 함';
-  const structureThickness = (row)=>{
-    if(!row?.capture) return '-';
-    if(row.type === 'wall') return `${round2(row.planThicknessMm || row.baseThicknessMm || 0)}mm`;
-    return row.capture.meta?.thick || '-';
-  };
-  const svgLabelSafe = (text)=>escapeHTML(String(text || ''));
-  wrap.innerHTML = `<svg viewBox="0 0 780 520" role="img" aria-label="물량 산출 조합 공간 검산">
+  wrap.innerHTML = `<svg viewBox="0 0 840 560" role="img" aria-label="물량 산출 조합 공간 검산">
     <defs>
       <marker id="final-room-arrow" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
         <path d="M0,0 L8,4 L0,8 Z" fill="var(--text-muted)"></path>
       </marker>
     </defs>
     <text class="plan-title" x="22" y="30">평면 공간 검산</text>
-    <text class="plan-subtitle" x="22" y="50">색상은 벽체 구성 구분, A~F는 저장 구조 위치입니다</text>
+    <text class="plan-subtitle" x="22" y="50">모서리에서 같은 차음층끼리 연속되도록 표시합니다</text>
+    <g transform="translate(570 22)">
+      <rect class="plan-basic" x="0" y="0" width="14" height="14" rx="3"></rect>
+      <text class="plan-legend-text" x="20" y="11">기본차음</text>
+      <rect class="plan-gap" x="92" y="0" width="14" height="14" rx="3"></rect>
+      <text class="plan-legend-text" x="112" y="11">공기층</text>
+      <rect class="plan-sub" x="172" y="0" width="14" height="14" rx="3"></rect>
+      <text class="plan-legend-text" x="192" y="11">부차음</text>
+    </g>
     <line class="plan-dim-guide" x1="${planX}" y1="${planY - 24}" x2="${planX}" y2="${planY - 4}"></line>
     <line class="plan-dim-guide" x1="${planX + planW}" y1="${planY - 24}" x2="${planX + planW}" y2="${planY - 4}"></line>
     <line class="plan-dim" x1="${planX}" y1="${planY - 20}" x2="${planX + planW}" y2="${planY - 20}" marker-start="url(#final-room-arrow)" marker-end="url(#final-room-arrow)"></line>
@@ -6645,7 +6645,7 @@ function renderFinalRoomIso(summary){
     <line class="plan-dim-guide" x1="${planX - 24}" y1="${planY + planH}" x2="${planX - 4}" y2="${planY + planH}"></line>
     <line class="plan-dim" x1="${planX - 20}" y1="${planY}" x2="${planX - 20}" y2="${planY + planH}" marker-start="url(#final-room-arrow)" marker-end="url(#final-room-arrow)"></line>
     <text class="plan-dim-text" x="${planX - 44}" y="${planY + planH/2}" text-anchor="middle" transform="rotate(-90 ${planX - 44} ${planY + planH/2})">세로 ${d || 0}mm</text>
-    ${topBands}${bottomBands}${leftBands}${rightBands}
+    ${continuousBands}
     <rect class="plan-outline" x="${planX}" y="${planY}" width="${planW}" height="${planH}" rx="6"></rect>
     <rect class="plan-room" x="${roomX}" y="${roomY}" width="${roomW}" height="${roomH}" rx="6"></rect>
     <text class="plan-center-label" x="${roomX + roomW/2}" y="${roomY + roomH/2 - 22}" text-anchor="middle">사용 가능 공간</text>
@@ -6657,32 +6657,10 @@ function renderFinalRoomIso(summary){
     ${slotBadge('D', planX - 52, planY + planH/2)}
     ${slotBadge('E', roomX + roomW/2 - 22, roomY + roomH - 34)}
     ${slotBadge('F', roomX + roomW/2 + 22, roomY + roomH - 34)}
-    <text class="plan-subtitle" x="390" y="500" text-anchor="middle">치수 비율과 벽체별 두께를 반영한 검산용 평면도</text>
+    <text class="plan-subtitle" x="420" y="540" text-anchor="middle">치수 비율과 벽체별 두께를 반영한 검산용 평면도</text>
   </svg>`;
   if(mini){
-    const structureRows = [
-      {code:'A', row:wall1},
-      {code:'B', row:wall2},
-      {code:'C', row:wall3},
-      {code:'D', row:wall4},
-      {code:'E', row:ceilRow},
-      {code:'F', row:floorRow}
-    ];
-    mini.innerHTML = `<div class="final-plan-legend">
-        <div class="final-plan-legend-title">표현 기준</div>
-        <div class="final-plan-legend-row"><span class="final-plan-swatch basic"></span><span>기본차음</span><strong>${round2((side.A.basic + side.B.basic + side.C.basic + side.D.basic) / 4)}mm 평균</strong></div>
-        <div class="final-plan-legend-row"><span class="final-plan-swatch gap"></span><span>공기층</span><strong>${round2((side.A.gap + side.B.gap + side.C.gap + side.D.gap) / 4)}mm 평균</strong></div>
-        <div class="final-plan-legend-row"><span class="final-plan-swatch sub"></span><span>부차음</span><strong>${round2((side.A.sub + side.B.sub + side.C.sub + side.D.sub) / 4)}mm 평균</strong></div>
-        <div class="final-plan-legend-row"><span class="final-plan-swatch room"></span><span>사용 가능 공간</span><strong>${round2(summary.innerWidthMm)} × ${round2(summary.innerDepthMm)}mm</strong></div>
-      </div>
-      <div class="final-plan-structures">
-        <div class="final-plan-structures-title">A~F 저장 구조</div>
-        ${structureRows.map((item)=>`<div class="final-plan-structure-row">
-          <span class="slot-code">${item.code}</span>
-          <span class="final-plan-structure-name">${svgLabelSafe(structureName(item.row))}</span>
-          <span class="final-plan-structure-thick">${svgLabelSafe(structureThickness(item.row))}</span>
-        </div>`).join('')}
-      </div>`;
+    mini.innerHTML = '';
   }
 }
 function renderFinalSelectedDetails(summary){
