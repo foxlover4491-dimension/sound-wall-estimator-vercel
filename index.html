@@ -1856,6 +1856,149 @@ td{ border-bottom:0.5px solid var(--border); }
     min-width:0;
     width:auto;
   }
+  .final-bom-scroll,
+  .capture-detail-scroll{
+    border:none;
+    border-radius:0;
+  }
+  .final-bom-scroll #finalBomTable,
+  .capture-detail-scroll .capture-detail-table{
+    display:block !important;
+    width:100% !important;
+    min-width:0 !important;
+    max-width:100%;
+    border:none;
+    border-radius:0;
+  }
+  .final-bom-scroll #finalBomTable tbody,
+  .capture-detail-scroll .capture-detail-table tbody{
+    display:block;
+    width:100%;
+  }
+  .final-bom-scroll #finalBomTable tr.bom-head-row,
+  .capture-detail-scroll .capture-detail-table tr.bom-head-row{
+    display:none;
+  }
+  .final-bom-scroll #finalBomTable tr.bom-section-row,
+  .capture-detail-scroll .capture-detail-table tr.bom-section-row{
+    display:block;
+    margin:8px 0 3px;
+    padding:0;
+    border:none;
+  }
+  .final-bom-scroll #finalBomTable tr.bom-section-row td,
+  .capture-detail-scroll .capture-detail-table tr.bom-section-row td{
+    display:block !important;
+    padding:3px 0 !important;
+    border:none;
+    color:var(--text-danger);
+    font-size:11px;
+  }
+  .final-bom-scroll #finalBomTable tr.bom-data-row,
+  .capture-detail-scroll .capture-detail-table tr.bom-data-row{
+    display:grid;
+    grid-template-columns:minmax(0, 1fr) max-content;
+    gap:2px 8px;
+    align-items:center;
+    width:100%;
+    box-sizing:border-box;
+    margin:0 0 4px;
+    padding:6px 7px;
+    border:0.5px solid var(--border);
+    border-radius:7px;
+    background:var(--surface-1);
+    cursor:pointer;
+  }
+  .final-bom-scroll #finalBomTable tr.bom-finish-row,
+  .capture-detail-scroll .capture-detail-table tr.bom-finish-row{
+    background:var(--bg-danger);
+    border-color:rgba(255, 153, 140, 0.25);
+  }
+  .final-bom-scroll #finalBomTable tr.bom-data-row td,
+  .capture-detail-scroll .capture-detail-table tr.bom-data-row td{
+    display:block;
+    min-width:0;
+    padding:0 !important;
+    border:none;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap !important;
+    line-height:1.2;
+  }
+  .final-bom-scroll #finalBomTable tr.bom-data-row td[data-field="material"],
+  .capture-detail-scroll .capture-detail-table tr.bom-data-row td[data-field="material"]{
+    grid-column:1;
+    grid-row:1;
+    font-size:11px !important;
+    font-weight:700;
+    color:var(--text-primary);
+  }
+  .final-bom-scroll #finalBomTable tr.bom-data-row td[data-field="material"]::after,
+  .capture-detail-scroll .capture-detail-table tr.bom-data-row td[data-field="material"]::after{
+    content:" 탭";
+    color:var(--text-muted);
+    font-size:9px;
+    font-weight:500;
+  }
+  .final-bom-scroll #finalBomTable tr.bom-data-row.mobile-expanded td[data-field="material"]::after,
+  .capture-detail-scroll .capture-detail-table tr.bom-data-row.mobile-expanded td[data-field="material"]::after{
+    content:" 닫기";
+  }
+  .final-bom-scroll #finalBomTable tr.bom-data-row td[data-field="qty"],
+  .capture-detail-scroll .capture-detail-table tr.bom-data-row td[data-field="qty"]{
+    grid-column:2;
+    grid-row:1;
+    font-size:11px !important;
+    font-weight:700;
+    color:var(--text-primary);
+    text-align:right;
+  }
+  .final-bom-scroll #finalBomTable tr.bom-data-row td[data-field="spec"],
+  .capture-detail-scroll .capture-detail-table tr.bom-data-row td[data-field="spec"]{
+    grid-column:1;
+    grid-row:2;
+    font-size:10px !important;
+    color:var(--text-secondary);
+  }
+  .final-bom-scroll #finalBomTable tr.bom-data-row td[data-field="supplier"],
+  .capture-detail-scroll .capture-detail-table tr.bom-data-row td[data-field="supplier"]{
+    grid-column:2;
+    grid-row:2;
+    max-width:82px;
+    font-size:10px !important;
+    color:var(--text-secondary);
+    text-align:right;
+  }
+  .final-bom-scroll #finalBomTable tr.bom-data-row td[data-field="count"],
+  .final-bom-scroll #finalBomTable tr.bom-data-row td[data-field="measure"],
+  .capture-detail-scroll .capture-detail-table tr.bom-data-row td[data-field="count"],
+  .capture-detail-scroll .capture-detail-table tr.bom-data-row td[data-field="measure"]{
+    display:none;
+  }
+  .final-bom-scroll #finalBomTable tr.bom-data-row.mobile-expanded td[data-field="count"],
+  .final-bom-scroll #finalBomTable tr.bom-data-row.mobile-expanded td[data-field="measure"],
+  .capture-detail-scroll .capture-detail-table tr.bom-data-row.mobile-expanded td[data-field="count"],
+  .capture-detail-scroll .capture-detail-table tr.bom-data-row.mobile-expanded td[data-field="measure"]{
+    display:grid;
+    grid-column:1 / -1;
+    grid-template-columns:58px minmax(0, 1fr);
+    gap:5px;
+    padding-top:4px !important;
+    border-top:0.5px solid var(--border);
+    font-size:10px !important;
+    color:var(--text-secondary);
+    text-align:left !important;
+  }
+  .final-bom-scroll #finalBomTable tr.bom-data-row.mobile-expanded td[data-field="count"]::before,
+  .capture-detail-scroll .capture-detail-table tr.bom-data-row.mobile-expanded td[data-field="count"]::before{
+    content:"겹수" !important;
+    color:var(--text-muted);
+  }
+  .final-bom-scroll #finalBomTable tr.bom-data-row.mobile-expanded td[data-field="measure"]::before,
+  .capture-detail-scroll .capture-detail-table tr.bom-data-row.mobile-expanded td[data-field="measure"]::before{
+    content:"면적/길이" !important;
+    color:var(--text-muted);
+  }
   .materials-table{ min-width:980px; }
   .admin-stage-summary{ grid-template-columns:1fr; align-items:stretch; }
   .admin-stage-toggle{ width:100%; }
@@ -4923,7 +5066,9 @@ function finishSectionRowHTML(colspan){
   return `<tr class="bom-section-row"><td colspan="${colspan}">마감</td></tr>`;
 }
 function bomRowClass(bk){
-  return isFinishBomKey(bk) ? ' class="bom-finish-row"' : '';
+  const classes = ['bom-data-row'];
+  if(isFinishBomKey(bk)) classes.push('bom-finish-row');
+  return ` class="${classes.join(' ')}" tabindex="0" aria-expanded="false"`;
 }
 
 function computeAggGeneric(items, lenM, htFn, gapM, areaDeductFn=()=>0){
@@ -5773,7 +5918,7 @@ function bomRowsSimpleHTML(agg, options={}){
     '면적/길이',
     '물량'
   ];
-  const rows = [`<tr>
+  const rows = [`<tr class="bom-head-row">
     ${headCols.map((label, index)=>{
       const isNumeric = label === '겹수' || label === '면적/길이' || label === '물량';
       const padStyle = index===0 ? 'padding:5px 6px 5px 0;' : (index===headCols.length-1 ? 'padding:5px 0;' : 'padding:5px 6px;');
@@ -5831,12 +5976,12 @@ function bomRowsSimpleHTML(agg, options={}){
       qty = `${ceilValue(withLoss(a.hangerCount, lossRate))}개${suffix}`;
     }
     const cells = [
-      `<td style="padding:5px 6px 5px 0; font-size:${compact ? '11px' : '12px'};">${m.label}</td>`,
-      ...(showSupplier ? [`<td style="padding:5px 6px; font-size:${compact ? '11px' : '12px'};">${supplier}</td>`] : []),
-      `<td style="padding:5px 6px; text-align:right; font-size:${compact ? '11px' : '12px'};">${a.count}</td>`,
-      `<td style="padding:5px 6px; font-size:${compact ? '11px' : '12px'};">${sizeCell}</td>`,
-      `<td style="padding:5px 6px; text-align:right; white-space:nowrap; font-size:${compact ? '11px' : '12px'};">${measureCell}</td>`,
-      `<td style="padding:5px 0; text-align:right; white-space:nowrap; font-size:${compact ? '11px' : '12px'};">${qty}</td>`
+      `<td data-field="material" style="padding:5px 6px 5px 0; font-size:${compact ? '11px' : '12px'};">${m.label}</td>`,
+      ...(showSupplier ? [`<td data-field="supplier" style="padding:5px 6px; font-size:${compact ? '11px' : '12px'};">${supplier}</td>`] : []),
+      `<td data-field="count" style="padding:5px 6px; text-align:right; font-size:${compact ? '11px' : '12px'};">${a.count}</td>`,
+      `<td data-field="spec" style="padding:5px 6px; font-size:${compact ? '11px' : '12px'};">${sizeCell}</td>`,
+      `<td data-field="measure" style="padding:5px 6px; text-align:right; white-space:nowrap; font-size:${compact ? '11px' : '12px'};">${measureCell}</td>`,
+      `<td data-field="qty" style="padding:5px 0; text-align:right; white-space:nowrap; font-size:${compact ? '11px' : '12px'};">${qty}</td>`
     ];
     rows.push(`<tr${bomRowClass(bk)}>${cells.join('')}</tr>`);
   });
@@ -8119,6 +8264,24 @@ function copyFinalTable(){
     fail();
   }
 }
+
+function toggleMobileBomRow(row){
+  if(!row || !window.matchMedia('(max-width: 760px)').matches) return;
+  const nextOpen = !row.classList.contains('mobile-expanded');
+  row.classList.toggle('mobile-expanded', nextOpen);
+  row.setAttribute('aria-expanded', nextOpen ? 'true' : 'false');
+}
+document.addEventListener('click', (event)=>{
+  const row = event.target.closest('.final-bom-scroll tr.bom-data-row, .capture-detail-scroll tr.bom-data-row');
+  if(row) toggleMobileBomRow(row);
+});
+document.addEventListener('keydown', (event)=>{
+  if(event.key !== 'Enter' && event.key !== ' ') return;
+  const row = event.target.closest('.final-bom-scroll tr.bom-data-row, .capture-detail-scroll tr.bom-data-row');
+  if(!row) return;
+  event.preventDefault();
+  toggleMobileBomRow(row);
+});
 
 const STORE_KEY = 'soundIsolationEstimatorStateV2';
 function serializeState(){
