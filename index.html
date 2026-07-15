@@ -5966,7 +5966,7 @@ function captureDisplayName(capture){
 function captureSizeText(capture){
   if(!capture) return '-';
   if(capture.mode === 'wall'){
-    const lenMm = captureInputMm(capture, 'wallLen');
+    const lenMm = captureWallLengthMm(capture);
     return lenMm ? `길이 ${round2(lenMm/1000)}m` : (capture.meta?.size || '-').split(' · ')[0];
   }
   const widthKey = capture.mode === 'ceil' ? 'ceilWidth' : 'floorWidth';
@@ -6431,7 +6431,7 @@ function summarizeRoomPlan(){
   const floorCapture = findCaptureById(roomPlan.floor);
   const rows = ROOM_SIDES.map((side)=>{
     const capture = wallCaptures[side.key];
-    const lengthMm = captureInputMm(capture, 'wallLen') || (side.axis === 'width' ? widthMm : depthMm);
+    const lengthMm = captureWallLengthMm(capture) || (side.axis === 'width' ? widthMm : depthMm);
     const rowOuterHeightMm = captureInputMm(capture, 'htOuter') || outerHeightMm;
     const rowInnerHeightMm = captureInputMm(capture, 'htInner') || innerHeightMm;
     return {
@@ -6485,6 +6485,21 @@ function roomPlanHasAnySelection(){
 function captureInputMm(capture, key){
   const value = parseFloat(capture?.inputs?.[key]);
   return Number.isFinite(value) && value > 0 ? value : 0;
+}
+function parseLengthMmFromText(text){
+  const value = String(text || '');
+  const match = value.match(/길이\s*([0-9.,]+)\s*(mm|m)?/i) || value.match(/([0-9.,]+)\s*(mm|m)\b/i);
+  if(!match) return 0;
+  const number = parseFloat(String(match[1]).replace(/,/g, ''));
+  if(!Number.isFinite(number) || number <= 0) return 0;
+  const unit = String(match[2] || 'm').toLowerCase();
+  return unit === 'mm' ? number : number * 1000;
+}
+function captureWallLengthMm(capture){
+  return captureInputMm(capture, 'wallLen') ||
+    parseLengthMmFromText(capture?.meta?.size) ||
+    parseLengthMmFromText(capture?.meta?.sourceName) ||
+    parseLengthMmFromText(capture?.name);
 }
 function firstPositiveNumber(values, fallback=0){
   const found = values.find((value)=>Number.isFinite(value) && value > 0);
@@ -6553,10 +6568,10 @@ function deriveRoomDimensionsFromSelections(){
   const ceilCapture = rows.find((row)=>row.type==='ceil')?.capture || null;
   const floorCapture = rows.find((row)=>row.type==='floor')?.capture || null;
   const sideLengths = {
-    A:captureInputMm(bySide.wall1, 'wallLen'),
-    B:captureInputMm(bySide.wall2, 'wallLen'),
-    C:captureInputMm(bySide.wall3, 'wallLen'),
-    D:captureInputMm(bySide.wall4, 'wallLen')
+    A:captureWallLengthMm(bySide.wall1),
+    B:captureWallLengthMm(bySide.wall2),
+    C:captureWallLengthMm(bySide.wall3),
+    D:captureWallLengthMm(bySide.wall4)
   };
   const widthMm = firstPositiveNumber([
     captureInputMm(ceilCapture, 'ceilWidth'),
