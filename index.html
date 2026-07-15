@@ -5980,7 +5980,7 @@ function captureOptionLabel(capture){
   const parts = [
     captureDisplayName(capture),
     captureSizeText(capture),
-    capture.meta?.thick || ''
+    captureThicknessText(capture)
   ].filter(Boolean);
   return parts.join(' · ');
 }
@@ -5988,7 +5988,7 @@ function captureCardMeta(capture){
   const layerCount = Array.isArray(capture?.layers) ? capture.layers.length : 0;
   const parts = [
     captureSizeText(capture),
-    capture?.meta?.thick || '',
+    captureThicknessText(capture),
     layerCount ? `레이어 ${layerCount}개` : ''
   ].filter(Boolean);
   return parts.join(' · ');
@@ -6309,33 +6309,44 @@ function captureLayersToItems(capture){
     groupId:layer.groupId ?? null
   })).filter((item)=>MAT[item.key]);
 }
+function layerIsStructuralBase(layer){
+  if(!layer) return false;
+  const m = MAT[layer.key];
+  const groupLabel = String(layer.groupLabel || '');
+  const zone = String(layer.zone || '');
+  return !!layer.structuralBase || !!m?.structuralBase || groupLabel === '건물골조' || zone === 'structural';
+}
+function wallLayerCalcThickness(layer){
+  return layerIsStructuralBase(layer) ? 0 : (parseFloat(layer.val) || 0);
+}
 function wallBaseThicknessMm(capture){
   if(!capture || !Array.isArray(capture.layers)) return 0;
   const baseOnly = capture.layers
-    .filter((layer)=>layer.groupLabel === '기본차음')
-    .reduce((sum, layer)=>sum + (parseFloat(layer.val) || 0), 0);
+    .filter((layer)=>layer.groupLabel === '기본차음' && !layerIsStructuralBase(layer))
+    .reduce((sum, layer)=>sum + wallLayerCalcThickness(layer), 0);
   if(baseOnly > 0) return baseOnly;
   const firstGapIndex = capture.layers.findIndex((layer)=>layer.kind === 'gap');
   if(firstGapIndex >= 0){
     const baseAfterGap = capture.layers
       .slice(firstGapIndex + 1)
-      .filter((layer)=>layer.kind !== 'gap' && layer.category !== 'finish')
-      .reduce((sum, layer)=>sum + (parseFloat(layer.val) || 0), 0);
+      .filter((layer)=>layer.kind !== 'gap' && layer.category !== 'finish' && !layerIsStructuralBase(layer))
+      .reduce((sum, layer)=>sum + wallLayerCalcThickness(layer), 0);
     if(baseAfterGap > 0) return baseAfterGap;
   }
   return capture.layers
-    .filter((layer)=>layer.kind !== 'gap' && layer.category !== 'finish')
-    .reduce((sum, layer)=>sum + (parseFloat(layer.val) || 0), 0);
+    .filter((layer)=>layer.kind !== 'gap' && layer.category !== 'finish' && !layerIsStructuralBase(layer))
+    .reduce((sum, layer)=>sum + wallLayerCalcThickness(layer), 0);
 }
 function wallPlanBreakdown(capture){
   const result = {basic:0, gap:0, sub:0, total:0};
   if(!capture || !Array.isArray(capture.layers)) return result;
   capture.layers.forEach((layer)=>{
-    const amount = parseFloat(layer.val) || 0;
-    if(!amount) return;
     const groupLabel = String(layer.groupLabel || '');
     const zone = String(layer.zone || '');
     const role = String(layer.role || '');
+    if(layerIsStructuralBase(layer)) return;
+    const amount = wallLayerCalcThickness(layer);
+    if(!amount) return;
     const isGap = layer.kind === 'gap' || groupLabel === '공기층' || zone === 'gap' || role === 'gap';
     const isBasic = groupLabel === '기본차음' || zone === 'inner' || role === 'success';
     const isSub = groupLabel === '부차음' || zone === 'outer' || role === 'accent';
@@ -6347,8 +6358,6 @@ function wallPlanBreakdown(capture){
       result.sub += amount;
     }else if(groupLabel === '마감' || zone === 'finish'){
       result.sub += amount;
-    }else if(groupLabel === '건물골조' || zone === 'structural' || layer.structuralBase){
-      result.basic += amount;
     }else{
       result.sub += amount;
     }
@@ -6358,6 +6367,15 @@ function wallPlanBreakdown(capture){
   result.sub = round2(result.sub);
   result.total = round2(result.basic + result.gap + result.sub);
   return result;
+}
+function captureThicknessText(capture){
+  if(!capture) return '';
+  if(capture.mode === 'wall'){
+    const breakdown = wallPlanBreakdown(capture);
+    const thickness = breakdown.total || wallBaseThicknessMm(capture);
+    return thickness ? `${round2(thickness)}mm` : '';
+  }
+  return capture.meta?.thick || '';
 }
 function summarizeRoomPlan(){
   const derived = deriveRoomDimensionsFromSelections();
@@ -6679,9 +6697,9 @@ function renderFinalSelectedDetails(summary){
       <summary class="final-structure-head">
         <div>
           <div class="final-structure-title">${escapeHTML(row.label)} · ${escapeHTML(captureDisplayName(capture))}</div>
-          <div class="final-structure-meta">${escapeHTML(rowCompactSizeText(row))} · ${escapeHTML(capture.meta?.thick || '-')} · 전체 ${layers.length}개 레이어</div>
+          <div class="final-structure-meta">${escapeHTML(rowCompactSizeText(row))} · ${escapeHTML(captureThicknessText(capture) || '-')} · 전체 ${layers.length}개 레이어</div>
         </div>
-        <span class="final-badge">${escapeHTML(capture.meta?.thick || '-')}</span>
+        <span class="final-badge">${escapeHTML(captureThicknessText(capture) || '-')}</span>
       </summary>
       ${layerHTML}
     </details>`;
@@ -7101,6 +7119,9 @@ function planLayerMaterialOptionsHTML(mode, selectedKey, query=''){
   const keys = list.includes(selectedKey) ? list : [selectedKey, ...list].filter(Boolean);
   return layerAdminMaterialOptionsHTML(keys, selectedKey, query);
 }
+function planLayerRowClassForKey(key){
+  return materialDraft.MAT?.[key]?.structuralBase ? ' zone-structural' : '';
+}
 
 let planLayerGroupKey = {ceil:'', floor:''};
 let openPresetAdminIndex = null;
@@ -7212,7 +7233,7 @@ function renderPlanLayerAdmin(){
       <div class="admin-stage-detail">
         <div class="material-chip-list">
           ${preset.seq.map((key, seqIndex)=>`
-            <div class="material-chip-row" data-layer-drag-scope="plan" data-plan-layer-index="${index}" data-layer-index="${seqIndex}">
+            <div class="material-chip-row${planLayerRowClassForKey(key)}" data-layer-drag-scope="plan" data-plan-layer-index="${index}" data-layer-index="${seqIndex}">
               <i class="ti ti-grip-vertical layer-drag-handle" data-layer-drag-scope="plan" data-plan-layer-index="${index}" data-layer-index="${seqIndex}" title="끌어서 순서 변경" aria-label="끌어서 순서 변경"></i>
               <div class="material-chip-main">
                 <div class="material-chip-no">${seqIndex+1}</div>
