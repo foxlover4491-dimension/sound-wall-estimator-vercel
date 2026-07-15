@@ -399,7 +399,7 @@ td{ border-bottom:0.5px solid var(--border); }
 }
 .admin-stage-summary{
   display:grid;
-  grid-template-columns:auto minmax(180px, 1fr) auto;
+  grid-template-columns:auto 96px minmax(180px, 1fr) auto;
   gap:8px;
   align-items:end;
 }
@@ -407,9 +407,10 @@ td{ border-bottom:0.5px solid var(--border); }
   display:inline-flex;
   align-items:center;
   gap:6px;
-  min-width:112px;
+  min-width:36px;
+  width:36px;
   min-height:34px;
-  justify-content:flex-start;
+  justify-content:center;
   font-weight:700;
 }
 .admin-stage-toggle i{
@@ -430,9 +431,16 @@ td{ border-bottom:0.5px solid var(--border); }
   border-radius:6px;
 }
 #tabLayersAdmin .admin-stage-summary{
-  grid-template-columns:96px minmax(150px, 1fr) auto;
+  grid-template-columns:34px 86px minmax(150px, 1fr) auto;
   gap:6px;
   align-items:end;
+}
+#tabLayersAdmin .admin-stage-label-field{
+  min-width:0;
+}
+#tabLayersAdmin .admin-stage-label-field input{
+  width:100%;
+  font-weight:700;
 }
 #tabLayersAdmin .admin-stage-name-field{
   display:grid;
@@ -442,7 +450,8 @@ td{ border-bottom:0.5px solid var(--border); }
   min-width:0;
 }
 #tabLayersAdmin .admin-stage-toggle{
-  min-width:88px;
+  min-width:30px;
+  width:30px;
   min-height:28px;
   gap:4px;
   font-size:12px;
@@ -1165,6 +1174,43 @@ td{ border-bottom:0.5px solid var(--border); }
   gap:6px;
   margin-bottom:12px;
 }
+.capture-group{
+  border:0.5px solid var(--border);
+  border-radius:var(--radius);
+  background:var(--surface-2);
+  padding:8px;
+}
+.capture-group + .capture-group{
+  margin-top:6px;
+}
+.capture-group.wall{
+  border-color:color-mix(in srgb, var(--fill-accent) 28%, var(--border));
+}
+.capture-group.plan{
+  border-color:color-mix(in srgb, var(--fill-success) 28%, var(--border));
+}
+.capture-group-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-bottom:6px;
+  font-size:12px;
+  font-weight:800;
+  color:var(--text-secondary);
+}
+.capture-group.wall .capture-group-title{ color:var(--text-accent); }
+.capture-group.plan .capture-group-title{ color:var(--text-success); }
+.capture-group-count{
+  font-size:10px;
+  color:var(--text-muted);
+  font-weight:700;
+}
+.capture-group-items{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
 .capture-card{
   display:grid;
   grid-template-columns:minmax(0, 1fr) auto;
@@ -1740,13 +1786,13 @@ td{ border-bottom:0.5px solid var(--border); }
   #tabLayersAdmin .admin-stage-card{ padding:5px; }
   #tabLayersAdmin .admin-stage-detail{ margin-left:0; }
   #tabLayersAdmin .admin-stage-summary{
-    grid-template-columns:62px minmax(0, 1fr) auto;
+    grid-template-columns:28px 68px minmax(0, 1fr) auto;
     align-items:center;
     gap:4px;
   }
   #tabLayersAdmin .admin-stage-toggle{
     width:auto;
-    min-width:62px;
+    min-width:28px;
     min-height:30px;
     height:30px;
     padding:3px 5px;
@@ -1754,6 +1800,12 @@ td{ border-bottom:0.5px solid var(--border); }
     justify-content:center;
     white-space:nowrap;
     line-height:1.1;
+  }
+  #tabLayersAdmin .admin-stage-label-field input{
+    min-height:30px;
+    height:30px;
+    font-size:11px;
+    padding:3px 5px;
   }
   #tabLayersAdmin .admin-stage-summary .planner-field{
     min-width:0;
@@ -3687,6 +3739,17 @@ function allPresets(groups=PRESET_GROUPS){
   );
 }
 
+function defaultStageLabel(index){
+  return `${index + 1}단계`;
+}
+
+function presetStageLabel(preset){
+  const label = String(preset?.stageLabel || '').trim();
+  if(label) return label;
+  const n = parseInt(preset?.n, 10);
+  return Number.isFinite(n) && n > 0 ? `${n}단계` : '단계';
+}
+
 function normalizeKey(text){
   const raw = String(text || '').toUpperCase().replace(/[^A-Z0-9_]/g, '');
   return raw || `USR${Date.now().toString(36).toUpperCase()}`;
@@ -3807,6 +3870,7 @@ function normalizePlanLayerConfig(config){
         const seq = (Array.isArray(preset.seq) ? preset.seq : []).filter((key)=>MAT[key]);
         return {
           n:presetIndex + 1,
+          stageLabel:String(preset.stageLabel || defaultStageLabel(presetIndex)),
           name:String(preset.name || `${mode === 'ceil' ? '천장' : '바닥'} 레이어 ${presetIndex+1}`),
           seq:seq.length ? seq : [...(mode === 'ceil' ? BASE_CEIL_DEFAULT : BASE_FLOOR_DEFAULT)].filter((key)=>MAT[key]),
           m:Array.isArray(preset.m) ? preset.m : ['', '', '', '', '', '', '']
@@ -3824,6 +3888,7 @@ function normalizePlanLayerConfig(config){
         presets:(group.presets || []).map((preset, index)=>({
           ...preset,
           n:index+1,
+          stageLabel:String(preset.stageLabel || defaultStageLabel(index)),
           seq:(preset.seq || []).filter((key)=>MAT[key])
         })).filter((preset)=>preset.seq.length)
       })).filter((group)=>group.presets.length);
@@ -4311,6 +4376,7 @@ function normalizePresetGroups(groups){
       });
       return {
         n: presetIndex + 1,
+        stageLabel: String(preset.stageLabel || defaultStageLabel(presetIndex)),
         name: String(preset.name || `레이어 ${presetIndex+1}`),
         seq,
         zones: inferredWallZonesFromSeq(seq, sourceZones),
@@ -4456,7 +4522,7 @@ function renderRef(){
   const items = preset.seq.filter((k)=>MAT[k]).map((k,i)=>({key:k, val:materialThicknessMm(MAT[k]), zone:zones[i], role:infos[i].role, label:infos[i].label, groupId:infos[i].groupId}));
   document.getElementById('refLayerList').innerHTML = groupedRowsHTML(items, (it)=>`<span style="font-size:12px; min-width:40px; text-align:right;">${layerValueText(it)}</span>`);
   document.getElementById('refTotalThick').textContent = presetThickness(preset) + 'mm';
-  document.getElementById('refName').textContent = `${preset.groupLabel || ''} · ${preset.n}단계 · ${preset.name}`;
+  document.getElementById('refName').textContent = `${preset.groupLabel || ''} · ${presetStageLabel(preset)} · ${preset.name}`;
   document.getElementById('refMetricsTable').innerHTML = metricsForPreset(preset, mode).map((v,i)=>`<tr><td style="padding:3px 0; color:var(--text-secondary);">${METRIC_LABELS[i]}</td><td style="padding:3px 0; text-align:right;">${v}</td></tr>`).join('');
 }
 
@@ -4474,9 +4540,9 @@ function renderPresetButtons(){
   wrap.innerHTML = '';
   groupPresets.forEach((preset)=>{
     const b = document.createElement('button');
-    b.textContent = preset.n;
+    b.textContent = presetStageLabel(preset);
     b.title = preset.name;
-    b.style.cssText = 'min-width:32px; padding:6px 0;';
+    b.style.cssText = 'min-width:42px; padding:6px 8px;';
     if(current && current.groupKey === preset.groupKey && current.n === preset.n){
       b.style.border = '2px solid var(--border-accent)';
       b.style.fontWeight = '600';
@@ -5722,8 +5788,10 @@ function applyPlanLayerPreset(mode, id){
   if(!preset) return;
   currentCaptureSource[mode] = {
     name:presetStructureName(preset),
+    groupKey:preset.groupKey || '',
     groupLabel:preset.groupLabel || '',
     stageNo:preset.n,
+    stageLabel:presetStageLabel(preset),
     stageName:preset.name || ''
   };
   if(mode === 'ceil'){
@@ -5863,7 +5931,7 @@ function modeName(mode){
 }
 function presetStructureName(preset){
   if(!preset) return '';
-  return [preset.groupLabel, `${preset.n}단계`, preset.name].filter(Boolean).join(' · ');
+  return [preset.groupLabel, presetStageLabel(preset), preset.name].filter(Boolean).join(' · ');
 }
 function captureSeqSignatureFromLayers(layers){
   return (Array.isArray(layers) ? layers : []).map((layer)=>layer.key).filter(Boolean).join('>');
@@ -5878,14 +5946,17 @@ function inferStructureSourceFromLayers(mode, layers){
   if(!match) return null;
   return {
     name:presetStructureName(match),
+    groupKey:match.groupKey || '',
     groupLabel:match.groupLabel || '',
     stageNo:match.n,
+    stageLabel:presetStageLabel(match),
     stageName:match.name || ''
   };
 }
 function captureDisplayName(capture){
   if(!capture) return '선택 안 함';
-  const sourceName = capture.source?.name || capture.meta?.sourceName || inferStructureSourceFromLayers(capture.mode, capture.layers)?.name;
+  const inferred = inferStructureSourceFromLayers(capture.mode, capture.layers);
+  const sourceName = inferred?.name || capture.source?.name || capture.meta?.sourceName;
   if(sourceName) return sourceName;
   const raw = String(capture.name || '').trim();
   if(!raw || /^(벽체|천장|바닥)\s*\d+$/.test(raw)){
@@ -5978,7 +6049,7 @@ function captureLayerInfo(layer, mode){
 
   if(isGap) return {rowClass:' gap', meta:'공기층'};
   if(!isWall){
-    if(layer.structuralBase) return {rowClass:'', meta:'기존 구조체'};
+    if(layer.structuralBase) return {rowClass:' pro', meta:'기존 구조체'};
     if(layer.key === 'SH') return {rowClass:'', meta:'차음시트'};
     if(layer.kind === 'wool') return {rowClass:'', meta:'흡음재'};
     if(layer.kind === 'gridpad') return {rowClass:'', meta:'방진'};
@@ -6172,7 +6243,7 @@ function renderCaptureLists(){
       }).join('')}
     </div>`;
   };
-  list.innerHTML = savedCaptures.map(c=>{
+  const renderCaptureCard = (c)=>{
     const isOpen = c.id===openCaptureId;
     const displayName = captureDisplayName(c);
     const modeLabel = modeName(c.mode);
@@ -6196,7 +6267,24 @@ function renderCaptureLists(){
       </div>
     </div>
   `;
-  }).join('');
+  };
+  const wallItems = savedCaptures.filter(c=>c.mode === 'wall');
+  const planItems = savedCaptures.filter(c=>c.mode === 'ceil' || c.mode === 'floor');
+  const groups = [
+    {key:'wall', title:'벽체 후보', items:wallItems, className:'wall'},
+    {key:'plan', title:'천장·바닥 후보', items:planItems, className:'plan'}
+  ].filter(group=>group.items.length);
+  list.innerHTML = groups.map(group=>`
+    <div class="capture-group ${group.className}">
+      <div class="capture-group-title">
+        <span>${group.title}</span>
+        <span class="capture-group-count">${group.items.length}개</span>
+      </div>
+      <div class="capture-group-items">
+        ${group.items.map(renderCaptureCard).join('')}
+      </div>
+    </div>
+  `).join('');
 }
 
 function findCaptureById(id){
@@ -6802,11 +6890,14 @@ function renderPresetAdmin(){
     return `
     <div class="admin-stage-card ${isOpen ? 'open' : ''}">
       <div class="admin-stage-summary">
-        <button type="button" class="admin-stage-toggle" data-preset-toggle="${index}" aria-expanded="${isOpen ? 'true' : 'false'}">
-          <i class="ti ti-chevron-right" aria-hidden="true"></i>${index+1}단계
+        <button type="button" class="admin-stage-toggle" data-preset-toggle="${index}" aria-label="${escapeHTML(presetStageLabel(preset))} 세부 열기" aria-expanded="${isOpen ? 'true' : 'false'}">
+          <i class="ti ti-chevron-right" aria-hidden="true"></i>
         </button>
+        <div class="planner-field admin-stage-label-field">
+          <input type="text" data-preset-stage-label="${index}" value="${escapeHTML(presetStageLabel(preset))}" aria-label="${index+1}단계 표시명">
+        </div>
         <div class="planner-field admin-stage-name-field">
-          <input type="text" data-preset-name="${index}" value="${preset.name}" aria-label="${index+1}단계 이름">
+          <input type="text" data-preset-name="${index}" value="${escapeHTML(preset.name)}" aria-label="${index+1}단계 이름">
           <span class="admin-stage-total">총 ${totalThickness}mm</span>
         </div>
         <div class="materials-actions">
@@ -6873,7 +6964,7 @@ function addPresetGroup(){
   presetDraftGroups.push({
     key,
     label:`새 구조 유형 ${presetDraftGroups.length + 1}`,
-    presets:[{n:1, name:'새 단계 1', seq:[materialDraft.defaults.wall?.[0] || 'G1'].filter(Boolean), zones:[defaultWallZoneForKey(materialDraft.defaults.wall?.[0] || 'G1')], m:['', '', '', '', '', '', '']}]
+    presets:[{n:1, stageLabel:defaultStageLabel(0), name:'새 단계 1', seq:[materialDraft.defaults.wall?.[0] || 'G1'].filter(Boolean), zones:[defaultWallZoneForKey(materialDraft.defaults.wall?.[0] || 'G1')], m:['', '', '', '', '', '', '']}]
   });
   presetAdminGroupKey = key;
   openPresetAdminIndex = 0;
@@ -6907,6 +6998,7 @@ function addPresetDraft(){
   if(!group) return;
   group.presets.push({
     n:group.presets.length + 1,
+    stageLabel:defaultStageLabel(group.presets.length),
     name:`새 단계 ${group.presets.length + 1}`,
     seq:[materialDraft.defaults.wall?.[0] || 'G1'].filter(Boolean),
     zones:[defaultWallZoneForKey(materialDraft.defaults.wall?.[0] || 'G1')],
@@ -6937,7 +7029,7 @@ function deletePresetDraft(index){
   if(!group) return;
   group.presets.splice(index, 1);
   if(!group.presets.length){
-    group.presets.push({n:1, name:'새 단계 1', seq:[materialDraft.defaults.wall?.[0] || 'G1'].filter(Boolean), zones:[defaultWallZoneForKey(materialDraft.defaults.wall?.[0] || 'G1')], m:['', '', '', '', '', '', '']});
+    group.presets.push({n:1, stageLabel:defaultStageLabel(0), name:'새 단계 1', seq:[materialDraft.defaults.wall?.[0] || 'G1'].filter(Boolean), zones:[defaultWallZoneForKey(materialDraft.defaults.wall?.[0] || 'G1')], m:['', '', '', '', '', '', '']});
   }
   openPresetAdminIndex = null;
   renumberPresetDrafts(group);
@@ -7123,11 +7215,14 @@ function renderPlanLayerAdmin(){
     return `
     <div class="admin-stage-card ${isOpen ? 'open' : ''}">
       <div class="admin-stage-summary">
-        <button type="button" class="admin-stage-toggle" data-plan-layer-toggle="${index}" aria-expanded="${isOpen ? 'true' : 'false'}">
-          <i class="ti ti-chevron-right" aria-hidden="true"></i>${index+1}단계
+        <button type="button" class="admin-stage-toggle" data-plan-layer-toggle="${index}" aria-label="${escapeHTML(presetStageLabel(preset))} 세부 열기" aria-expanded="${isOpen ? 'true' : 'false'}">
+          <i class="ti ti-chevron-right" aria-hidden="true"></i>
         </button>
+        <div class="planner-field admin-stage-label-field">
+          <input type="text" data-plan-layer-stage-label="${index}" value="${escapeHTML(presetStageLabel(preset))}" aria-label="${index+1}단계 표시명">
+        </div>
         <div class="planner-field admin-stage-name-field">
-          <input type="text" data-plan-layer-name="${index}" value="${preset.name}" aria-label="${index+1}단계 이름">
+          <input type="text" data-plan-layer-name="${index}" value="${escapeHTML(preset.name)}" aria-label="${index+1}단계 이름">
           <span class="admin-stage-total">총 ${totalThickness}mm</span>
         </div>
         <div class="materials-actions">
@@ -7194,7 +7289,7 @@ function addPlanLayerGroup(){
   planLayerDrafts[mode].push({
     key:groupKey,
     label:`새 ${label} 구조 유형 ${planLayerDrafts[mode].length + 1}`,
-    presets:[{n:1, name:'새 단계 1', seq:[key], m:['', '', '', '', '', '', '']}]
+    presets:[{n:1, stageLabel:defaultStageLabel(0), name:'새 단계 1', seq:[key], m:['', '', '', '', '', '', '']}]
   });
   planLayerGroupKey[mode] = groupKey;
   openPlanLayerAdminIndex[mode] = 0;
@@ -7233,6 +7328,7 @@ function addPlanLayerPreset(){
   if(!group) return addPlanLayerGroup();
   group.presets.push({
     n:group.presets.length + 1,
+    stageLabel:defaultStageLabel(group.presets.length),
     name:`${label} 새 단계 ${group.presets.length + 1}`,
     seq:[key],
     m:['', '', '', '', '', '', '']
@@ -8283,11 +8379,20 @@ document.getElementById('planLayerAdminList').addEventListener('input', (e)=>{
     return;
   }
   const nameInput = e.target.closest('input[data-plan-layer-name]');
-  if(!nameInput) return;
-  const preset = currentPlanLayerGroup()?.presets[parseInt(nameInput.dataset.planLayerName)];
-  if(!preset) return;
-  preset.name = nameInput.value;
-  commitPlanLayerDrafts({renderAdmin:false, status:false});
+  if(nameInput){
+    const preset = currentPlanLayerGroup()?.presets[parseInt(nameInput.dataset.planLayerName)];
+    if(!preset) return;
+    preset.name = nameInput.value;
+    commitPlanLayerDrafts({renderAdmin:false, status:false});
+    return;
+  }
+  const stageLabelInput = e.target.closest('input[data-plan-layer-stage-label]');
+  if(stageLabelInput){
+    const preset = currentPlanLayerGroup()?.presets[parseInt(stageLabelInput.dataset.planLayerStageLabel)];
+    if(!preset) return;
+    preset.stageLabel = stageLabelInput.value;
+    commitPlanLayerDrafts({renderAdmin:false, status:false});
+  }
 });
 document.getElementById('planLayerAdminList').addEventListener('change', (e)=>{
   const seqSelect = e.target.closest('select[data-plan-layer-seq]');
@@ -8367,6 +8472,16 @@ document.getElementById('presetAdminList').addEventListener('input', (e)=>{
     const preset = group?.presets[parseInt(nameInput.dataset.presetName)];
     if(preset){
       preset.name = nameInput.value;
+      commitPresetDrafts({renderAdmin:false, status:false});
+    }
+    return;
+  }
+  const stageLabelInput = e.target.closest('input[data-preset-stage-label]');
+  if(stageLabelInput){
+    const group = currentPresetDraftGroup();
+    const preset = group?.presets[parseInt(stageLabelInput.dataset.presetStageLabel)];
+    if(preset){
+      preset.stageLabel = stageLabelInput.value;
       commitPresetDrafts({renderAdmin:false, status:false});
     }
   }
@@ -8510,8 +8625,10 @@ document.getElementById('sendToModeBtn').addEventListener('click', ()=>{
   if(!preset) return;
   currentCaptureSource[currentRefMode] = {
     name:presetStructureName(preset),
+    groupKey:preset.groupKey || '',
     groupLabel:preset.groupLabel || '',
     stageNo:preset.n,
+    stageLabel:presetStageLabel(preset),
     stageName:preset.name || ''
   };
   if(currentRefMode === 'wall'){
