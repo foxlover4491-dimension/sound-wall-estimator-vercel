@@ -633,7 +633,7 @@ td{ border-bottom:0.5px solid var(--border); }
   border-radius:var(--radius);
   background:var(--surface-2);
 }
-.planner-wall-row{ grid-template-columns:72px minmax(0, 1fr); }
+.planner-wall-row{ grid-template-columns:86px minmax(0, 1fr); }
 .planner-summary-row{ grid-template-columns:minmax(0, 1fr) auto; }
 .structure-mode-tabs{
   margin-bottom:12px;
@@ -694,10 +694,53 @@ td{ border-bottom:0.5px solid var(--border); }
   padding:4px 7px;
 }
 .planner-wall-side{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
   font-size:12px;
   font-weight:700;
   color:var(--text-secondary);
-  padding-top:7px;
+  padding-top:3px;
+}
+.planner-wall-side .slot-code{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:26px;
+  height:22px;
+  border-radius:999px;
+  background:var(--surface-1);
+  border:0.5px solid var(--border-strong);
+  color:var(--text-primary);
+  font-size:12px;
+  font-weight:800;
+}
+.planner-wall-side small{
+  color:var(--text-muted);
+  font-size:10px;
+  font-weight:500;
+}
+.planner-choice-summary{
+  margin-top:5px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px;
+  align-items:center;
+  font-size:11px;
+  color:var(--text-muted);
+}
+.planner-choice-name{
+  color:var(--text-secondary);
+  font-weight:700;
+}
+.planner-choice-pill{
+  display:inline-flex;
+  align-items:center;
+  padding:1px 6px;
+  border-radius:999px;
+  background:var(--surface-1);
+  border:0.5px solid var(--border);
+  white-space:nowrap;
 }
 .planner-wall-meta,
 .planner-summary-sub{
@@ -824,7 +867,7 @@ td{ border-bottom:0.5px solid var(--border); }
 }
 .final-wall-minimap .plan-key-row{
   display:grid;
-  grid-template-columns:38px minmax(0,1fr);
+  grid-template-columns:24px minmax(0,1fr);
   gap:4px;
   min-width:0;
 }
@@ -1072,6 +1115,19 @@ td{ border-bottom:0.5px solid var(--border); }
   transition:transform 0.12s;
 }
 .capture-card.open .capture-card-title i{ transform:rotate(90deg); }
+.capture-mode-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:34px;
+  padding:1px 6px;
+  border-radius:999px;
+  background:var(--surface-2);
+  border:0.5px solid var(--border);
+  color:var(--text-muted);
+  font-size:10px;
+  font-weight:700;
+}
 .capture-card-meta{
   margin-top:2px;
   font-size:11px;
@@ -1961,19 +2017,19 @@ td{ border-bottom:0.5px solid var(--border); }
       </div>
       <div class="metric-grid cols-2 final-room-metrics">
         <div class="metric-card">
-          <div class="metric-label">가로 기준</div>
+          <div class="metric-label">유효 가로</div>
           <div id="roomInnerWidthMetric" class="metric-value">0mm</div>
         </div>
         <div class="metric-card">
-          <div class="metric-label">세로 기준</div>
+          <div class="metric-label">유효 세로</div>
           <div id="roomInnerDepthMetric" class="metric-value">0mm</div>
         </div>
         <div class="metric-card">
-          <div class="metric-label">천장 기준 면적</div>
+          <div class="metric-label">천장 면적</div>
           <div id="roomCeilAreaMetric" class="metric-value">0m²</div>
         </div>
         <div class="metric-card">
-          <div class="metric-label">바닥 기준 면적</div>
+          <div class="metric-label">바닥 면적</div>
           <div id="roomFloorAreaMetric" class="metric-value">0m²</div>
         </div>
       </div>
@@ -1983,7 +2039,7 @@ td{ border-bottom:0.5px solid var(--border); }
     <div class="planner-panel">
       <div class="final-panel-head">
         <div class="planner-section-title" style="margin-bottom:0;">구조 선택</div>
-        <span class="final-badge">저장구간</span>
+        <span class="final-badge">A~F 배치</span>
       </div>
       <div class="planner-internal-fields" aria-hidden="true">
         <input type="number" id="roomWidth" value="4000" min="0" step="1">
@@ -1992,19 +2048,19 @@ td{ border-bottom:0.5px solid var(--border); }
         <input type="number" id="roomInnerHeight" value="3000" min="0" step="1">
       </div>
       <div class="planner-section">
-        <div class="planner-section-title">벽체 4면 배치</div>
+        <div class="planner-section-title">A~D 벽체 배치</div>
         <div id="roomWallAssignments" class="planner-wall-list"></div>
       </div>
       <div class="planner-section">
         <div class="planner-section-title">천장 · 바닥 배치</div>
         <div class="planner-assign-grid">
           <div class="planner-field">
-            <label for="roomCeilCapture">천장 구조</label>
+            <label for="roomCeilCapture">E 천장</label>
             <select id="roomCeilCapture"></select>
             <div id="roomCeilSelectionDetail"></div>
           </div>
           <div class="planner-field">
-            <label for="roomFloorCapture">바닥 구조</label>
+            <label for="roomFloorCapture">F 바닥</label>
             <select id="roomFloorCapture"></select>
             <div id="roomFloorSelectionDetail"></div>
           </div>
@@ -2015,7 +2071,7 @@ td{ border-bottom:0.5px solid var(--border); }
   <div class="action-row">
     <label style="font-size:13px; display:flex; align-items:center; gap:6px;">물량 산출 로스율(%) <input type="number" id="lossRate" value="0" min="0" step="1" style="width:70px;"></label>
     <button id="copyFinalBtn" type="button"><i class="ti ti-copy" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 산출표 복사</button>
-    <button id="clearCapturesBtn" type="button"><i class="ti ti-trash" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 저장구간 비우기</button>
+    <button id="clearCapturesBtn" type="button"><i class="ti ti-trash" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 저장 구조 비우기</button>
     <button id="resetAllBtn" type="button"><i class="ti ti-refresh" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 현재 입력 비우기</button>
   </div>
   <div id="copyStatus" class="copy-status" aria-live="polite"></div>
@@ -2024,10 +2080,10 @@ td{ border-bottom:0.5px solid var(--border); }
   <div class="final-section-grid">
     <div class="planner-panel">
       <div class="final-panel-head">
-        <div class="planner-section-title" style="margin-bottom:0;">선택 구조 상세</div>
-        <span class="final-badge">레이어</span>
+        <div class="planner-section-title" style="margin-bottom:0;">저장 구조 목록</div>
+        <span class="final-badge">후보</span>
       </div>
-      <div id="finalSelectedDetails" class="final-selected-list"></div>
+      <div id="capturedList" class="capture-list"></div>
     </div>
     <div class="planner-panel final-bom-panel">
       <div class="final-panel-head">
@@ -2039,10 +2095,6 @@ td{ border-bottom:0.5px solid var(--border); }
       </table>
     </div>
   </div>
-  <details class="final-saved-details">
-    <summary>저장구간 전체 목록</summary>
-    <div id="capturedList" class="capture-list"></div>
-  </details>
 </div>
 
 <div id="tabMaterials" style="display:none;">
@@ -5651,11 +5703,13 @@ function consolidateForFinal(agg){
 
 const CAPTURE_STORE_KEY = 'soundIsolationEstimatorCapturesV1';
 const ROOM_SIDES = [
-  {key:'wall1', label:'벽체 1', axis:'width'},
-  {key:'wall2', label:'벽체 2', axis:'depth'},
-  {key:'wall3', label:'벽체 3', axis:'width'},
-  {key:'wall4', label:'벽체 4', axis:'depth'}
+  {key:'wall1', code:'A', label:'A 벽체', desc:'전면', axis:'width'},
+  {key:'wall2', code:'B', label:'B 벽체', desc:'우측', axis:'depth'},
+  {key:'wall3', code:'C', label:'C 벽체', desc:'후면', axis:'width'},
+  {key:'wall4', code:'D', label:'D 벽체', desc:'좌측', axis:'depth'}
 ];
+const CEIL_SLOT = {code:'E', label:'E 천장'};
+const FLOOR_SLOT = {code:'F', label:'F 바닥'};
 function defaultRoomPlan(){
   return {
     width:4000,
@@ -5687,6 +5741,44 @@ function modeName(mode){
   if(mode==='wall') return '벽체';
   if(mode==='ceil') return '천장';
   return '바닥';
+}
+function captureDisplayName(capture){
+  if(!capture) return '선택 안 함';
+  const raw = String(capture.name || '').trim();
+  if(!raw || /^(벽체|천장|바닥)\s*\d+$/.test(raw)){
+    return `${modeName(capture.mode)} 구조`;
+  }
+  return raw;
+}
+function captureSizeText(capture){
+  if(!capture) return '-';
+  if(capture.mode === 'wall'){
+    const lenMm = captureInputMm(capture, 'wallLen');
+    return lenMm ? `길이 ${round2(lenMm/1000)}m` : (capture.meta?.size || '-').split(' · ')[0];
+  }
+  const widthKey = capture.mode === 'ceil' ? 'ceilWidth' : 'floorWidth';
+  const depthKey = capture.mode === 'ceil' ? 'ceilDepth' : 'floorDepth';
+  const widthMm = captureInputMm(capture, widthKey);
+  const depthMm = captureInputMm(capture, depthKey);
+  if(widthMm && depthMm) return `${round2(widthMm/1000)}m x ${round2(depthMm/1000)}m`;
+  return (capture.meta?.size || '-').split(' · ')[0];
+}
+function captureOptionLabel(capture){
+  const parts = [
+    captureDisplayName(capture),
+    captureSizeText(capture),
+    capture.meta?.thick || ''
+  ].filter(Boolean);
+  return parts.join(' · ');
+}
+function captureCardMeta(capture){
+  const layerCount = Array.isArray(capture?.layers) ? capture.layers.length : 0;
+  const parts = [
+    captureSizeText(capture),
+    capture?.meta?.thick || '',
+    layerCount ? `레이어 ${layerCount}개` : ''
+  ].filter(Boolean);
+  return parts.join(' · ');
 }
 function modeStatusEl(mode){
   return document.getElementById(`${mode}CaptureStatus`);
@@ -5852,8 +5944,8 @@ function captureCurrentMode(mode){
     return;
   }
   const no = nextCaptureNo(mode);
-  const name = `${modeName(mode)} ${no}`;
-  savedCaptures.push({
+  const name = `${modeName(mode)} 구조`;
+  const saved = {
     id:`${Date.now()}-${Math.random().toString(16).slice(2)}`,
     mode,
     no,
@@ -5863,9 +5955,10 @@ function captureCurrentMode(mode){
     inputs:currentInputsForMode(mode),
     layers:currentLayersForMode(mode),
     createdAt:new Date().toISOString()
-  });
+  };
+  savedCaptures.push(saved);
   saveCapturedSections();
-  captureStatus(mode, `${name} 저장됨. 물량 산출에 합산됩니다.`);
+  captureStatus(mode, `${captureDisplayName(saved)} 저장됨. 물량 산출 후보에 추가됐습니다.`);
   renderCaptureLists();
   renderRoomPlanner();
   renderFinal();
@@ -5875,14 +5968,14 @@ function deleteCapture(id){
   savedCaptures = savedCaptures.filter(c=>c.id!==id);
   if(openCaptureId===id) openCaptureId = null;
   saveCapturedSections();
-  if(item) captureStatus(item.mode, `${item.name} 삭제됨.`);
+  if(item) captureStatus(item.mode, `${captureDisplayName(item)} 삭제됨.`);
   renderCaptureLists();
   renderRoomPlanner();
   renderFinal();
 }
 function clearCapturedSections(){
   if(!savedCaptures.length){
-    document.getElementById('copyStatus').textContent = '비울 저장구간이 없습니다.';
+    document.getElementById('copyStatus').textContent = '비울 저장 구조가 없습니다.';
     return;
   }
   if(!confirm('저장된 벽체/천장/바닥 구간을 모두 비울까요?')){
@@ -5891,8 +5984,8 @@ function clearCapturedSections(){
   savedCaptures = [];
   openCaptureId = null;
   saveCapturedSections();
-  ['wall','ceil','floor'].forEach(mode=>captureStatus(mode, '저장구간을 모두 비웠습니다.'));
-  document.getElementById('copyStatus').textContent = '저장구간을 모두 비웠습니다.';
+  ['wall','ceil','floor'].forEach(mode=>captureStatus(mode, '저장 구조를 모두 비웠습니다.'));
+  document.getElementById('copyStatus').textContent = '저장 구조를 모두 비웠습니다.';
   renderCaptureLists();
   renderRoomPlanner();
   renderFinal();
@@ -5907,7 +6000,7 @@ function renderCaptureLists(){
   if(!list) return;
   if(!savedCaptures.length){
     openCaptureId = null;
-    list.innerHTML = '<div class="empty-captures">아직 저장된 구간이 없습니다. 구조 산출에서 “물량 산출에 추가”를 눌러 구간을 쌓아주세요.</div>';
+    list.innerHTML = '<div class="empty-captures">아직 저장된 구조가 없습니다. 구조 산출에서 “물량 산출에 추가”를 눌러 후보를 쌓아주세요.</div>';
     return;
   }
   if(openCaptureId && !savedCaptures.some(c=>c.id===openCaptureId)) openCaptureId = null;
@@ -5933,16 +6026,19 @@ function renderCaptureLists(){
   };
   list.innerHTML = savedCaptures.map(c=>{
     const isOpen = c.id===openCaptureId;
+    const displayName = captureDisplayName(c);
+    const modeLabel = modeName(c.mode);
+    const metaText = captureCardMeta(c);
     return `
     <div class="capture-card ${isOpen ? 'open' : ''}" data-capture-id="${c.id}">
       <div class="capture-main" data-toggle-capture="${c.id}" role="button" tabindex="0" aria-expanded="${isOpen ? 'true' : 'false'}">
-        <div class="capture-card-title"><i class="ti ti-chevron-right" aria-hidden="true"></i>${c.name}</div>
-        <div class="capture-card-meta">${c.meta?.size || ''} · ${c.meta?.thick || ''}<br>${c.meta?.summary || ''}</div>
+        <div class="capture-card-title"><i class="ti ti-chevron-right" aria-hidden="true"></i><span class="capture-mode-badge">${escapeHTML(modeLabel)}</span>${escapeHTML(displayName)}</div>
+        <div class="capture-card-meta">${escapeHTML(metaText || '치수 정보 없음')}</div>
       </div>
-      <button class="capture-delete" type="button" data-del-capture="${c.id}" aria-label="${c.name} 삭제"><i class="ti ti-x" style="font-size:15px;" aria-hidden="true"></i></button>
+      <button class="capture-delete" type="button" data-del-capture="${c.id}" aria-label="${escapeHTML(displayName)} 삭제"><i class="ti ti-x" style="font-size:15px;" aria-hidden="true"></i></button>
       <div class="capture-detail">
         <div class="capture-detail-head">
-          <span>${c.name} 레이어 및 세부 산출</span>
+          <span>${escapeHTML(displayName)} 레이어 및 세부 산출</span>
           <span>${lossRate>0 ? `로스 ${lossRate}% 포함` : '로스 미적용'}</span>
         </div>
         ${renderLayerList(c)}
@@ -6030,7 +6126,7 @@ function summarizeRoomPlan(){
   });
   rows.push({
     type:'ceil',
-    label:'천장',
+    label:CEIL_SLOT.label,
     capture:ceilCapture,
     widthMm:innerWidthMm,
     depthMm:innerDepthMm,
@@ -6038,7 +6134,7 @@ function summarizeRoomPlan(){
   });
   rows.push({
     type:'floor',
-    label:'바닥',
+    label:FLOOR_SLOT.label,
     capture:floorCapture,
     widthMm:innerWidthMm,
     depthMm:innerDepthMm,
@@ -6073,8 +6169,8 @@ function selectedRoomCaptures(){
     label:side.label,
     capture:findCaptureById(roomPlan.walls?.[side.key])
   }));
-  rows.push({type:'ceil', label:'천장', capture:findCaptureById(roomPlan.ceil)});
-  rows.push({type:'floor', label:'바닥', capture:findCaptureById(roomPlan.floor)});
+  rows.push({type:'ceil', label:CEIL_SLOT.label, capture:findCaptureById(roomPlan.ceil)});
+  rows.push({type:'floor', label:FLOOR_SLOT.label, capture:findCaptureById(roomPlan.floor)});
   return rows;
 }
 function deriveRoomDimensionsFromSelections(){
@@ -6123,11 +6219,9 @@ function computeRoomPlanAgg(){
 }
 function roomCaptureOptionHTML(mode, selectedId){
   const options = captureOptionsForMode(mode);
-  const emptyLabel = options.length ? '선택 안 함' : `${modeName(mode)} 저장구간 없음`;
+  const emptyLabel = options.length ? '선택 안 함' : `${modeName(mode)} 후보 없음`;
   return [`<option value="">${emptyLabel}</option>`].concat(options.map((capture)=>{
-    const thick = capture.meta?.thick ? ` · ${capture.meta.thick}` : '';
-    const size = capture.meta?.size ? ` · ${capture.meta.size}` : '';
-    return `<option value="${capture.id}" ${capture.id===selectedId ? 'selected' : ''}>${capture.name}${thick}${size}</option>`;
+    return `<option value="${capture.id}" ${capture.id===selectedId ? 'selected' : ''}>${escapeHTML(captureOptionLabel(capture))}</option>`;
   })).join('');
 }
 function roomRowSummary(row){
@@ -6138,8 +6232,7 @@ function roomRowSummary(row){
 }
 function compactCaptureName(capture){
   if(!capture) return '선택 안 함';
-  const summary = capture.meta?.summary || '';
-  return summary && summary !== '레이어 없음' ? summary : capture.name;
+  return captureDisplayName(capture);
 }
 function shortLabel(text, limit=18){
   const value = String(text || '');
@@ -6170,18 +6263,15 @@ function captureLayerListHTML(capture, emptyText='레이어 정보 없음'){
 function plannerChoiceDetailHTML(row){
   const capture = row?.capture;
   if(!capture){
-    return '<div class="planner-wall-meta">저장된 구조를 선택하세요.</div>';
+    return '<div class="planner-wall-meta">저장된 구조 후보를 선택하세요.</div>';
   }
   const thick = capture.meta?.thick || '-';
   const size = rowCompactSizeText(row);
-  const layerCount = Array.isArray(capture.layers) ? capture.layers.length : 0;
-  return `<details class="planner-choice-detail">
-    <summary>
-      <span class="planner-choice-title">${escapeHTML(row.label)} · ${escapeHTML(capture.name)}</span>
-      <span class="planner-choice-meta">${escapeHTML(size)} · ${escapeHTML(thick)} · ${layerCount}개</span>
-    </summary>
-    ${captureLayerListHTML(capture)}
-  </details>`;
+  return `<div class="planner-choice-summary">
+    <span class="planner-choice-name">${escapeHTML(captureDisplayName(capture))}</span>
+    <span class="planner-choice-pill">${escapeHTML(size)}</span>
+    <span class="planner-choice-pill">${escapeHTML(thick)}</span>
+  </div>`;
 }
 function renderFinalRoomIso(summary){
   const wrap = document.getElementById('finalRoomIso');
@@ -6201,6 +6291,7 @@ function renderFinalRoomIso(summary){
   const dimText = w && d && h ? `${w} × ${d} × ${h}mm` : '선택 대기';
   if(badge) badge.textContent = dimText;
   const label = (text, limit=18)=>escapeHTML(shortLabel(text || '선택 안 함', limit));
+  const captureName = (row, limit=14)=>label(row?.capture ? captureDisplayName(row.capture) : '선택 안 함', limit);
   wrap.innerHTML = `<svg viewBox="0 0 780 500" role="img" aria-label="물량 산출 조합 공간 검산">
     <defs>
       <marker id="final-room-arrow" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
@@ -6228,37 +6319,39 @@ function renderFinalRoomIso(summary){
     <line class="room-dim-guide" x1="192" y1="328" x2="116" y2="328"></line>
     <line class="room-dim" x1="116" y1="150" x2="116" y2="328" marker-start="url(#final-room-arrow)" marker-end="url(#final-room-arrow)"></line>
     <text class="room-muted" x="86" y="244" text-anchor="middle">${h || 0} mm</text>
-    <text x="422" y="150" text-anchor="middle">천장 · ${label(ceilRow?.capture?.name, 14)}</text>
-    <text x="252" y="292" text-anchor="middle">${label(wall4?.label || '벽체 4')}</text>
-    <text class="room-muted" x="252" y="313" text-anchor="middle">${label(wall4?.capture?.name, 14)}</text>
-    <text x="500" y="298" text-anchor="middle">${label(wall2?.label || '벽체 2')}</text>
-    <text class="room-muted" x="500" y="319" text-anchor="middle">${label(wall2?.capture?.name, 14)}</text>
-    <text class="room-muted" x="432" y="418" text-anchor="middle">바닥 · ${label(floorRow?.capture?.name, 14)}</text>
-    <text x="612" y="372" text-anchor="start">벽체 1</text>
-    <text x="210" y="130" text-anchor="middle">벽체 3</text>
-    <text class="room-muted" x="390" y="462" text-anchor="middle">벽체 1·3은 선으로, 전체 방향은 평면 미니맵에서 확인</text>
+    <text x="422" y="150" text-anchor="middle">E 천장 · ${captureName(ceilRow, 14)}</text>
+    <text x="252" y="292" text-anchor="middle">D 벽체</text>
+    <text class="room-muted" x="252" y="313" text-anchor="middle">${captureName(wall4, 14)}</text>
+    <text x="500" y="298" text-anchor="middle">B 벽체</text>
+    <text class="room-muted" x="500" y="319" text-anchor="middle">${captureName(wall2, 14)}</text>
+    <text class="room-muted" x="432" y="418" text-anchor="middle">F 바닥 · ${captureName(floorRow, 14)}</text>
+    <text x="612" y="372" text-anchor="start">A 벽체</text>
+    <text x="210" y="130" text-anchor="middle">C 벽체</text>
+    <text class="room-muted" x="390" y="462" text-anchor="middle">A~F 위치는 오른쪽 평면 미니맵에서 확인</text>
   </svg>`;
   if(mini){
-    const wallName = (row)=>label(row?.capture?.name, 13);
-    mini.innerHTML = `<div class="final-wall-minimap-title">벽체 번호 미니맵</div>
-      <svg viewBox="0 0 360 330" role="img" aria-label="벽체 1부터 벽체 4까지 번호를 확인하는 평면 미니맵">
+    const wallName = (row)=>captureName(row, 13);
+    mini.innerHTML = `<div class="final-wall-minimap-title">A~F 위치 미니맵</div>
+      <svg viewBox="0 0 360 330" role="img" aria-label="A부터 F까지 위치를 확인하는 평면 미니맵">
         <rect class="plan-outline" x="72" y="66" width="216" height="196" rx="8"></rect>
         <line class="plan-wall w3" x1="82" y1="66" x2="278" y2="66"></line>
         <line class="plan-wall w2" x1="288" y1="76" x2="288" y2="252"></line>
         <line class="plan-wall w1" x1="82" y1="262" x2="278" y2="262"></line>
         <line class="plan-wall w4" x1="72" y1="76" x2="72" y2="252"></line>
-        <text x="180" y="42" text-anchor="middle">벽체 3</text>
-        <text x="320" y="168" text-anchor="middle" transform="rotate(90 320 168)">벽체 2</text>
-        <text x="180" y="306" text-anchor="middle">벽체 1</text>
-        <text x="40" y="168" text-anchor="middle" transform="rotate(-90 40 168)">벽체 4</text>
-        <text class="plan-muted" x="180" y="156" text-anchor="middle">평면</text>
-        <text class="plan-muted" x="180" y="179" text-anchor="middle">번호 확인</text>
+        <text x="180" y="42" text-anchor="middle">C</text>
+        <text x="320" y="168" text-anchor="middle" transform="rotate(90 320 168)">B</text>
+        <text x="180" y="306" text-anchor="middle">A</text>
+        <text x="40" y="168" text-anchor="middle" transform="rotate(-90 40 168)">D</text>
+        <text class="plan-muted" x="180" y="156" text-anchor="middle">E 천장</text>
+        <text class="plan-muted" x="180" y="179" text-anchor="middle">F 바닥</text>
       </svg>
       <div class="plan-key">
-        <div class="plan-key-row"><strong>벽체1</strong><span>${wallName(wall1)}</span></div>
-        <div class="plan-key-row"><strong>벽체2</strong><span>${wallName(wall2)}</span></div>
-        <div class="plan-key-row"><strong>벽체3</strong><span>${wallName(wall3)}</span></div>
-        <div class="plan-key-row"><strong>벽체4</strong><span>${wallName(wall4)}</span></div>
+        <div class="plan-key-row"><strong>A</strong><span>${wallName(wall1)}</span></div>
+        <div class="plan-key-row"><strong>B</strong><span>${wallName(wall2)}</span></div>
+        <div class="plan-key-row"><strong>C</strong><span>${wallName(wall3)}</span></div>
+        <div class="plan-key-row"><strong>D</strong><span>${wallName(wall4)}</span></div>
+        <div class="plan-key-row"><strong>E</strong><span>${captureName(ceilRow, 13)}</span></div>
+        <div class="plan-key-row"><strong>F</strong><span>${captureName(floorRow, 13)}</span></div>
       </div>`;
   }
 }
@@ -6267,7 +6360,7 @@ function renderFinalSelectedDetails(summary){
   if(!el) return;
   const rows = summary.rows.filter((row)=>row.capture);
   if(!rows.length){
-    el.innerHTML = '<div class="planner-empty">아직 선택된 구조가 없습니다. 오른쪽 구조 선택에서 벽체·천장·바닥 저장구간을 골라주세요.</div>';
+    el.innerHTML = '<div class="planner-empty">아직 선택된 구조가 없습니다. 구조 선택에서 A~F 위치에 저장 구조를 배치해주세요.</div>';
     return;
   }
   el.innerHTML = rows.map((row)=>{
@@ -6277,7 +6370,7 @@ function renderFinalSelectedDetails(summary){
     return `<details class="final-structure-card">
       <summary class="final-structure-head">
         <div>
-          <div class="final-structure-title">${escapeHTML(row.label)} · ${escapeHTML(capture.name)}</div>
+          <div class="final-structure-title">${escapeHTML(row.label)} · ${escapeHTML(captureDisplayName(capture))}</div>
           <div class="final-structure-meta">${escapeHTML(rowCompactSizeText(row))} · ${escapeHTML(capture.meta?.thick || '-')} · 전체 ${layers.length}개 레이어</div>
         </div>
         <span class="final-badge">${escapeHTML(capture.meta?.thick || '-')}</span>
@@ -6309,7 +6402,11 @@ function renderRoomPlanner(){
   wallWrap.innerHTML = ROOM_SIDES.map((side)=>{
     const row = rowsByKey[side.key];
     return `<div class="planner-wall-row">
-      <div class="planner-wall-side">${side.label}</div>
+      <div class="planner-wall-side">
+        <span><span class="slot-code">${side.code}</span></span>
+        <span>벽체</span>
+        <small>${side.desc}</small>
+      </div>
       <div class="planner-choice-body">
         <select data-room-wall="${side.key}">${roomCaptureOptionHTML('wall', roomPlan.walls?.[side.key] || '')}</select>
         ${plannerChoiceDetailHTML(row)}
@@ -6329,15 +6426,15 @@ function renderRoomPlanner(){
   document.getElementById('roomFloorAreaMetric').textContent = `${round2((summary.innerWidthMm/1000)*(summary.innerDepthMm/1000))}m²`;
 
   if(!roomPlanHasAnySelection()){
-    statusEl.textContent = '벽체·천장·바닥 저장구간을 선택하면 선택된 구간 치수와 물량으로 산출표가 구성됩니다.';
-    summaryEl.innerHTML = '<div class="planner-empty">아직 배치된 구조가 없습니다. 각 탭에서 구조를 저장한 뒤 여기서 벽체 1~4, 천장, 바닥을 골라주세요.</div>';
+    statusEl.textContent = '저장 구조 후보를 A~F 위치에 배치하면 선택된 치수와 물량으로 산출표가 구성됩니다.';
+    summaryEl.innerHTML = '<div class="planner-empty">아직 배치된 구조가 없습니다. 구조 산출에서 후보를 저장한 뒤 여기서 A~D 벽체, E 천장, F 바닥을 골라주세요.</div>';
     return;
   }
 
-  statusEl.textContent = '선택된 저장구간의 실제 치수와 물량을 기준으로 산출표를 구성합니다.';
+  statusEl.textContent = 'A~F에 배치된 저장 구조의 실제 치수와 물량을 기준으로 산출표를 구성합니다.';
   summaryEl.innerHTML = `<div class="planner-summary-list">
     ${summary.rows.map((row)=>{
-      const captureName = row.capture ? row.capture.name : '선택 안 함';
+      const captureName = row.capture ? captureDisplayName(row.capture) : '선택 안 함';
       return `<div class="planner-summary-row">
         <div>
           <div class="planner-summary-title">${row.label} · ${captureName}</div>
@@ -6356,13 +6453,13 @@ function renderFinal(){
   let finalAgg = {};
   if(roomAgg){
     finalAgg = roomAgg.agg;
-    if(planStatusEl) planStatusEl.textContent = '선택된 벽체·천장·바닥 저장구간의 실제 물량을 합산합니다. 상세 레이어는 왼쪽 카드에서 확인할 수 있습니다.';
+    if(planStatusEl) planStatusEl.textContent = 'A~F에 배치한 저장 구조의 실제 물량을 합산합니다. 상세 레이어는 저장 구조 목록에서 펼쳐 확인할 수 있습니다.';
     if(planSummaryEl) planSummaryEl.innerHTML = '';
   } else {
     const merged = {};
     savedCaptures.forEach(c=>mergeAggInto(merged, c.agg || {}));
     finalAgg = consolidateForFinal(merged);
-    if(planStatusEl) planStatusEl.textContent = '구조 선택이 없어서 저장구간 전체 합산 방식으로 표시합니다.';
+    if(planStatusEl) planStatusEl.textContent = 'A~F 배치가 없어서 저장 구조 전체 합산 방식으로 표시합니다.';
     if(planSummaryEl) planSummaryEl.innerHTML = '';
   }
   const lossRate = parseFloat(document.getElementById('lossRate').value)||0;
@@ -7245,7 +7342,7 @@ function resetAll(){
   resetCeil();
   resetFloor();
   document.getElementById('lossRate').value = 0;
-  document.getElementById('copyStatus').textContent = '현재 입력과 레이어를 비웠습니다. 저장구간은 유지됩니다.';
+  document.getElementById('copyStatus').textContent = '현재 입력과 레이어를 비웠습니다. 저장 구조는 유지됩니다.';
   renderCaptureLists();
   renderFinal();
 }
