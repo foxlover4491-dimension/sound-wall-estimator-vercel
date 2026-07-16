@@ -1169,17 +1169,17 @@ td{ border-bottom:0.5px solid var(--border); }
 .capture-list{
   display:flex;
   flex-direction:column;
-  gap:6px;
+  gap:5px;
   margin-bottom:12px;
 }
 .capture-group{
   border:0.5px solid var(--border);
   border-radius:var(--radius);
   background:var(--surface-2);
-  padding:8px;
+  padding:7px;
 }
 .capture-group + .capture-group{
-  margin-top:6px;
+  margin-top:5px;
 }
 .capture-group.wall{
   border-color:color-mix(in srgb, var(--fill-accent) 28%, var(--border));
@@ -1192,9 +1192,9 @@ td{ border-bottom:0.5px solid var(--border); }
   align-items:center;
   justify-content:space-between;
   gap:8px;
-  margin-bottom:6px;
-  font-size:12px;
-  font-weight:800;
+  margin-bottom:5px;
+  font-size:11px;
+  font-weight:700;
   color:var(--text-secondary);
 }
 .capture-group.wall .capture-group-title{ color:var(--text-accent); }
@@ -1213,11 +1213,11 @@ td{ border-bottom:0.5px solid var(--border); }
   display:grid;
   grid-template-columns:minmax(0, 1fr) auto;
   align-items:center;
-  gap:8px;
-  padding:8px 10px;
+  gap:6px;
+  padding:6px 8px;
   background:var(--surface-1);
   border:0.5px solid var(--border);
-  border-radius:var(--radius);
+  border-radius:8px;
   min-width:0;
 }
 .capture-card.open{
@@ -1231,15 +1231,15 @@ td{ border-bottom:0.5px solid var(--border); }
 .capture-card-title{
   display:flex;
   align-items:center;
-  gap:5px;
+  gap:4px;
   min-width:0;
-  font-size:13px;
-  font-weight:700;
-  line-height:1.25;
+  font-size:12px;
+  font-weight:600;
+  line-height:1.18;
   white-space:nowrap;
 }
 .capture-card-title i{
-  font-size:14px;
+  font-size:12px;
   color:var(--text-accent);
   transition:transform 0.12s;
 }
@@ -1249,11 +1249,13 @@ td{ border-bottom:0.5px solid var(--border); }
   min-width:0;
   overflow:hidden;
   text-overflow:ellipsis;
+  font-size:12px;
+  font-weight:600;
 }
 .capture-card-inline-meta{
   flex:0 0 auto;
   color:var(--text-muted);
-  font-size:11px;
+  font-size:10.5px;
   font-weight:500;
   white-space:nowrap;
 }
@@ -1261,13 +1263,13 @@ td{ border-bottom:0.5px solid var(--border); }
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  min-width:34px;
-  padding:1px 6px;
+  min-width:30px;
+  padding:1px 5px;
   border-radius:999px;
   background:var(--surface-2);
   border:0.5px solid var(--border);
   color:var(--text-muted);
-  font-size:10px;
+  font-size:9.5px;
   font-weight:700;
 }
 .capture-card-meta{
@@ -1277,12 +1279,13 @@ td{ border-bottom:0.5px solid var(--border); }
   line-height:1.35;
 }
 .capture-delete{
-  width:30px;
-  min-width:30px;
-  height:30px;
-  min-height:30px;
+  width:28px;
+  min-width:28px;
+  height:28px;
+  min-height:28px;
   padding:0;
 }
+.capture-delete i{ font-size:13px !important; }
 .capture-detail{
   grid-column:1 / -1;
   display:none;
@@ -1621,7 +1624,11 @@ td{ border-bottom:0.5px solid var(--border); }
   .action-row button{ flex:1 1 calc(50% - 6px); padding:8px 6px; }
   .capture-head{ align-items:stretch; }
   .capture-save-btn{ min-height:34px !important; padding:6px 9px; font-size:12px; }
-  .capture-card{ grid-template-columns:minmax(0, 1fr) 28px; padding:7px 8px; }
+  .capture-card{ grid-template-columns:minmax(0, 1fr) 26px; padding:5px 6px; }
+  .capture-card-title{ font-size:11px; gap:3px; }
+  .capture-card-name{ font-size:11px; }
+  .capture-card-inline-meta{ font-size:9.5px; }
+  .capture-mode-badge{ min-width:28px; padding:1px 4px; font-size:9px; }
   .capture-layer-list{ gap:3px; }
   .capture-layer-row{
     grid-template-columns:20px minmax(0, 1fr) max-content;
@@ -1662,10 +1669,10 @@ td{ border-bottom:0.5px solid var(--border); }
   .capture-detail-table td:nth-child(5){ min-width:96px; }
   .capture-detail-table td:nth-child(6){ min-width:86px; }
   .capture-delete{
-    width:28px !important;
-    min-width:28px !important;
-    height:28px !important;
-    min-height:28px !important;
+    width:26px !important;
+    min-width:26px !important;
+    height:26px !important;
+    min-height:26px !important;
   }
   .mobile-picker{ max-height:68vh; }
   .mobile-picker-header{ padding:7px 9px; }
@@ -2435,7 +2442,7 @@ td{ border-bottom:0.5px solid var(--border); }
       </div>
       <div class="bom-scroll final-bom-scroll">
         <table id="finalBomTable" style="width:100%; font-size:12px; border-collapse:collapse; table-layout:fixed;">
-          <colgroup><col style="width:32%"><col style="width:20%"><col style="width:17%"><col style="width:16%"><col style="width:15%"></colgroup>
+          <colgroup><col style="width:30%"><col style="width:23%"><col style="width:17%"><col style="width:16%"><col style="width:14%"></colgroup>
         </table>
       </div>
     </div>
@@ -4872,17 +4879,11 @@ function specForMaterial(m, options={}){
     ? `${m.loadKg || 0}kg`
     : `${m.loadKg || 0}kg / A=${round2(materialThicknessMm(m))} / ${m.sw || 0}x${m.sh || 0}`;
   if(m.kind==='board') return m.areaOnly ? (m.unitLabel || '면적') : `${m.sw || 0}x${m.sh || 0}`;
-  if(m.kind==='stud') return mode === 'final'
-    ? `${compactSpecPart(m.sw)}x${compactSpecPart(m.sd)}`
-    : `${compactSpecPart(m.sw)}x${compactSpecPart(m.sd)}x${compactSpecPart(m.sh)}`;
+  if(m.kind==='stud') return `${compactSpecPart(m.sw)}x${compactSpecPart(m.sd)}x${compactSpecPart(m.sh)}`;
   if(m.kind==='fabricFrame') return `${m.sw || 0}x${m.sd || 0}x${m.sh || 0}`;
-  if(m.kind==='line') return mode === 'final'
-    ? `${compactSpecPart(m.csw)}x${compactSpecPart(m.csh)}`
-    : `${compactSpecPart(m.csw)}x${compactSpecPart(m.csh)}x${compactSpecPart(m.stick)}`;
+  if(m.kind==='line') return `${compactSpecPart(m.csw)}x${compactSpecPart(m.csh)}x${compactSpecPart(m.stick)}`;
   if(m.kind==='wool') return `${m.sw || 0}x${m.sh || 0}`;
-  if(m.kind==='grid') return mode === 'final'
-    ? `${compactSpecPart(m.csw)}x${compactSpecPart(m.csh)}`
-    : `${compactSpecPart(m.csw)}x${compactSpecPart(m.csh)}x${compactSpecPart(m.stick)}`;
+  if(m.kind==='grid') return `${compactSpecPart(m.csw)}x${compactSpecPart(m.csh)}x${compactSpecPart(m.stick)}`;
   if(m.kind==='gridpad') return mode === 'final'
     ? `${compactSpecPart(m.sw)}x${compactSpecPart(m.sh)}`
     : `${compactSpecPart(m.sw)}x${compactSpecPart(m.sh)} 격자`;
