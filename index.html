@@ -1352,16 +1352,28 @@ td{ border-bottom:0.5px solid var(--border); }
   font-size:12px;
   font-weight:600;
   line-height:1.2;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  white-space:nowrap;
+  overflow:hidden;
 }
 .capture-layer-meta{
-  margin-top:2px;
+  margin-top:0;
   font-size:10px;
   font-weight:400;
   color:currentColor;
-  opacity:0.75;
+  opacity:0.82;
+  flex:0 0 auto;
+}
+.capture-layer-title{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
 }
 .capture-layer-thick{
-  font-size:11px;
+  font-size:12px;
   color:currentColor;
   opacity:0.9;
   white-space:nowrap;
@@ -1391,6 +1403,7 @@ td{ border-bottom:0.5px solid var(--border); }
   font-size:11px;
   border-collapse:collapse;
   white-space:nowrap;
+  table-layout:fixed;
 }
 .capture-detail-table colgroup{ display:table-column-group; }
 .capture-detail-table tbody{ display:table-row-group; }
@@ -1398,8 +1411,10 @@ td{ border-bottom:0.5px solid var(--border); }
 .capture-detail-table td{
   display:table-cell;
   padding:5px 7px !important;
-  white-space:normal;
+  white-space:nowrap;
   min-width:70px;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 .capture-detail-table td:first-child{ min-width:120px; }
 .empty-captures{
@@ -1612,14 +1627,14 @@ td{ border-bottom:0.5px solid var(--border); }
     grid-template-columns:20px minmax(0, 1fr) max-content;
     gap:4px;
     padding:3px 5px;
-    max-width:360px;
+    max-width:100%;
   }
   .final-layer-list .capture-layer-row,
   .planner-choice-detail .capture-layer-row{
     grid-template-columns:18px minmax(0, 1fr) max-content;
     padding:3px 5px;
   }
-  .capture-layer-name{ font-size:11px; }
+  .capture-layer-name{ font-size:10px; gap:4px; }
   .capture-layer-meta{ font-size:9px; }
   .capture-layer-thick{ font-size:10px; justify-self:start; }
   .capture-detail-table{
@@ -1837,167 +1852,107 @@ td{ border-bottom:0.5px solid var(--border); }
     overflow-x:auto;
     overflow-y:hidden;
     -webkit-overflow-scrolling:touch;
+    border:0.5px solid var(--border);
+    border-radius:var(--radius);
   }
   .final-bom-scroll #finalBomTable,
   .capture-detail-scroll .capture-detail-table{
     display:table !important;
-    width:max-content !important;
+    width:100% !important;
+    min-width:100% !important;
     max-width:none;
-    overflow:visible;
-    border:0;
+    border:none;
     border-radius:0;
-    table-layout:auto !important;
+    table-layout:fixed !important;
+    font-size:9.5px !important;
+    white-space:nowrap;
   }
-  .final-bom-scroll #finalBomTable{ min-width:680px; }
-  .capture-detail-scroll .capture-detail-table{ min-width:640px; }
+  .final-bom-scroll #finalBomTable colgroup,
+  .capture-detail-scroll .capture-detail-table colgroup{
+    display:table-column-group !important;
+  }
   .final-bom-scroll #finalBomTable tbody,
   .capture-detail-scroll .capture-detail-table tbody{
     display:table-row-group;
     min-width:0;
     width:auto;
   }
-  .final-bom-scroll,
-  .capture-detail-scroll{
-    border:none;
-    border-radius:0;
-  }
-  .final-bom-scroll #finalBomTable,
-  .capture-detail-scroll .capture-detail-table{
-    display:block !important;
-    width:100% !important;
-    min-width:0 !important;
-    max-width:100%;
-    border:none;
-    border-radius:0;
-  }
-  .final-bom-scroll #finalBomTable tbody,
-  .capture-detail-scroll .capture-detail-table tbody{
-    display:block;
-    width:100%;
-  }
   .final-bom-scroll #finalBomTable tr.bom-head-row,
   .capture-detail-scroll .capture-detail-table tr.bom-head-row{
-    display:none;
+    display:table-row;
   }
   .final-bom-scroll #finalBomTable tr.bom-section-row,
   .capture-detail-scroll .capture-detail-table tr.bom-section-row{
-    display:block;
-    margin:8px 0 3px;
-    padding:0;
-    border:none;
+    display:table-row;
   }
   .final-bom-scroll #finalBomTable tr.bom-section-row td,
   .capture-detail-scroll .capture-detail-table tr.bom-section-row td{
-    display:block !important;
-    padding:3px 0 !important;
+    display:table-cell !important;
+    padding:5px 6px !important;
     border:none;
     color:var(--text-danger);
-    font-size:11px;
+    font-size:9.5px !important;
   }
   .final-bom-scroll #finalBomTable tr.bom-data-row,
   .capture-detail-scroll .capture-detail-table tr.bom-data-row{
-    display:grid;
-    grid-template-columns:minmax(0, 1fr) max-content;
-    gap:2px 8px;
-    align-items:center;
-    width:100%;
-    box-sizing:border-box;
-    margin:0 0 4px;
-    padding:6px 7px;
-    border:0.5px solid var(--border);
-    border-radius:7px;
-    background:var(--surface-1);
-    cursor:pointer;
+    display:table-row;
+    width:auto;
+    margin:0;
+    padding:0;
+    border:none;
+    border-radius:0;
+    background:transparent;
+    cursor:default;
   }
   .final-bom-scroll #finalBomTable tr.bom-finish-row,
   .capture-detail-scroll .capture-detail-table tr.bom-finish-row{
     background:var(--bg-danger);
-    border-color:rgba(255, 153, 140, 0.25);
   }
   .final-bom-scroll #finalBomTable tr.bom-data-row td,
   .capture-detail-scroll .capture-detail-table tr.bom-data-row td{
-    display:block;
+    display:table-cell;
     min-width:0;
-    padding:0 !important;
-    border:none;
+    padding:5px 4px !important;
+    border-bottom:0.5px solid var(--border);
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap !important;
-    line-height:1.2;
+    line-height:1.18;
+    font-size:9.5px !important;
   }
   .final-bom-scroll #finalBomTable tr.bom-data-row td[data-field="material"],
   .capture-detail-scroll .capture-detail-table tr.bom-data-row td[data-field="material"]{
-    grid-column:1;
-    grid-row:1;
-    font-size:11px !important;
+    font-size:9.5px !important;
     font-weight:700;
     color:var(--text-primary);
   }
   .final-bom-scroll #finalBomTable tr.bom-data-row td[data-field="material"]::after,
   .capture-detail-scroll .capture-detail-table tr.bom-data-row td[data-field="material"]::after{
-    content:" 탭";
-    color:var(--text-muted);
-    font-size:9px;
-    font-weight:500;
-  }
-  .final-bom-scroll #finalBomTable tr.bom-data-row.mobile-expanded td[data-field="material"]::after,
-  .capture-detail-scroll .capture-detail-table tr.bom-data-row.mobile-expanded td[data-field="material"]::after{
-    content:" 닫기";
+    content:none;
   }
   .final-bom-scroll #finalBomTable tr.bom-data-row td[data-field="qty"],
   .capture-detail-scroll .capture-detail-table tr.bom-data-row td[data-field="qty"]{
-    grid-column:2;
-    grid-row:1;
-    font-size:11px !important;
+    font-size:9.5px !important;
     font-weight:700;
     color:var(--text-primary);
     text-align:right;
   }
   .final-bom-scroll #finalBomTable tr.bom-data-row td[data-field="spec"],
   .capture-detail-scroll .capture-detail-table tr.bom-data-row td[data-field="spec"]{
-    grid-column:1;
-    grid-row:2;
-    font-size:10px !important;
-    color:var(--text-secondary);
+    font-size:9.5px !important;
+    color:var(--text-primary);
   }
   .final-bom-scroll #finalBomTable tr.bom-data-row td[data-field="supplier"],
   .capture-detail-scroll .capture-detail-table tr.bom-data-row td[data-field="supplier"]{
-    grid-column:2;
-    grid-row:2;
-    max-width:82px;
-    font-size:10px !important;
+    font-size:9.5px !important;
     color:var(--text-secondary);
-    text-align:right;
   }
   .final-bom-scroll #finalBomTable tr.bom-data-row td[data-field="count"],
   .final-bom-scroll #finalBomTable tr.bom-data-row td[data-field="measure"],
   .capture-detail-scroll .capture-detail-table tr.bom-data-row td[data-field="count"],
   .capture-detail-scroll .capture-detail-table tr.bom-data-row td[data-field="measure"]{
-    display:none;
-  }
-  .final-bom-scroll #finalBomTable tr.bom-data-row.mobile-expanded td[data-field="count"],
-  .final-bom-scroll #finalBomTable tr.bom-data-row.mobile-expanded td[data-field="measure"],
-  .capture-detail-scroll .capture-detail-table tr.bom-data-row.mobile-expanded td[data-field="count"],
-  .capture-detail-scroll .capture-detail-table tr.bom-data-row.mobile-expanded td[data-field="measure"]{
-    display:grid;
-    grid-column:1 / -1;
-    grid-template-columns:58px minmax(0, 1fr);
-    gap:5px;
-    padding-top:4px !important;
-    border-top:0.5px solid var(--border);
-    font-size:10px !important;
-    color:var(--text-secondary);
-    text-align:left !important;
-  }
-  .final-bom-scroll #finalBomTable tr.bom-data-row.mobile-expanded td[data-field="count"]::before,
-  .capture-detail-scroll .capture-detail-table tr.bom-data-row.mobile-expanded td[data-field="count"]::before{
-    content:"겹수" !important;
-    color:var(--text-muted);
-  }
-  .final-bom-scroll #finalBomTable tr.bom-data-row.mobile-expanded td[data-field="measure"]::before,
-  .capture-detail-scroll .capture-detail-table tr.bom-data-row.mobile-expanded td[data-field="measure"]::before{
-    content:"면적/길이" !important;
-    color:var(--text-muted);
+    font-size:9.5px !important;
+    text-align:right;
   }
   .materials-table{ min-width:980px; }
   .admin-stage-summary{ grid-template-columns:1fr; align-items:stretch; }
@@ -2304,7 +2259,7 @@ td{ border-bottom:0.5px solid var(--border); }
       </div>
       <div id="wallCaptureStatus" class="capture-status" aria-live="polite"></div>
       <table id="bomTable" style="width:100%; font-size:12px; border-collapse:collapse; table-layout:fixed;">
-        <colgroup><col style="width:26%"><col style="width:9%"><col style="width:23%"><col style="width:16%"><col style="width:26%"></colgroup>
+        <colgroup><col style="width:30%"><col style="width:24%"><col style="width:7%"><col style="width:17%"><col style="width:22%"></colgroup>
       </table>
     </div>
   </div>
@@ -2351,7 +2306,7 @@ td{ border-bottom:0.5px solid var(--border); }
       </div>
       <div id="ceilCaptureStatus" class="capture-status" aria-live="polite"></div>
       <table id="ceilBomTable" style="width:100%; font-size:12px; border-collapse:collapse; table-layout:fixed;">
-        <colgroup><col style="width:26%"><col style="width:9%"><col style="width:23%"><col style="width:16%"><col style="width:26%"></colgroup>
+        <colgroup><col style="width:30%"><col style="width:24%"><col style="width:7%"><col style="width:17%"><col style="width:22%"></colgroup>
       </table>
     </div>
   </div>
@@ -2395,7 +2350,7 @@ td{ border-bottom:0.5px solid var(--border); }
       </div>
       <div id="floorCaptureStatus" class="capture-status" aria-live="polite"></div>
       <table id="floorBomTable" style="width:100%; font-size:12px; border-collapse:collapse; table-layout:fixed;">
-        <colgroup><col style="width:26%"><col style="width:9%"><col style="width:23%"><col style="width:16%"><col style="width:26%"></colgroup>
+        <colgroup><col style="width:30%"><col style="width:24%"><col style="width:7%"><col style="width:17%"><col style="width:22%"></colgroup>
       </table>
     </div>
   </div>
@@ -2480,7 +2435,7 @@ td{ border-bottom:0.5px solid var(--border); }
       </div>
       <div class="bom-scroll final-bom-scroll">
         <table id="finalBomTable" style="width:100%; font-size:12px; border-collapse:collapse; table-layout:fixed;">
-          <colgroup><col style="width:24%"><col style="width:10%"><col style="width:6%"><col style="width:22%"><col style="width:20%"><col style="width:18%"></colgroup>
+          <colgroup><col style="width:32%"><col style="width:20%"><col style="width:17%"><col style="width:16%"><col style="width:15%"></colgroup>
         </table>
       </div>
     </div>
@@ -4905,17 +4860,32 @@ function surfaceMassText(m, key){
   const mass = surfaceMassForMaterial(m, key);
   return mass>0 ? `${round2(mass)}` : '-';
 }
-function specForMaterial(m){
+function compactSpecPart(value){
+  const n = parseFloat(value);
+  return Number.isFinite(n) ? round2(n) : '0';
+}
+function specForMaterial(m, options={}){
   if(!m) return '-';
+  const mode = options.mode || 'detail';
   if(m.structuralBase) return m.displaySpec || '기존 구조체';
-  if(m.kind==='hanger') return `${m.loadKg || 0}kg / A=${round2(materialThicknessMm(m))} / ${m.sw || 0}x${m.sh || 0}`;
+  if(m.kind==='hanger') return mode === 'final'
+    ? `${m.loadKg || 0}kg`
+    : `${m.loadKg || 0}kg / A=${round2(materialThicknessMm(m))} / ${m.sw || 0}x${m.sh || 0}`;
   if(m.kind==='board') return m.areaOnly ? (m.unitLabel || '면적') : `${m.sw || 0}x${m.sh || 0}`;
-  if(m.kind==='stud') return `${m.sw || 0}x${m.sd || 0}x${m.sh || 0} @${m.spacing || 450}`;
+  if(m.kind==='stud') return mode === 'final'
+    ? `${compactSpecPart(m.sw)}x${compactSpecPart(m.sd)}`
+    : `${compactSpecPart(m.sw)}x${compactSpecPart(m.sd)}x${compactSpecPart(m.sh)}`;
   if(m.kind==='fabricFrame') return `${m.sw || 0}x${m.sd || 0}x${m.sh || 0}`;
-  if(m.kind==='line') return `${m.csw || 0}x${m.csh || 0}x${m.stick || 0} @${m.sw || 0}`;
+  if(m.kind==='line') return mode === 'final'
+    ? `${compactSpecPart(m.csw)}x${compactSpecPart(m.csh)}`
+    : `${compactSpecPart(m.csw)}x${compactSpecPart(m.csh)}x${compactSpecPart(m.stick)}`;
   if(m.kind==='wool') return `${m.sw || 0}x${m.sh || 0}`;
-  if(m.kind==='grid') return `${m.csw || 0}x${m.csh || 0} / ${m.sw || 0}x${m.sh || 0}격자 / ${m.stick || 0}`;
-  if(m.kind==='gridpad') return `${m.sw || 0}x${m.sh || 0} 격자`;
+  if(m.kind==='grid') return mode === 'final'
+    ? `${compactSpecPart(m.csw)}x${compactSpecPart(m.csh)}`
+    : `${compactSpecPart(m.csw)}x${compactSpecPart(m.csh)}x${compactSpecPart(m.stick)}`;
+  if(m.kind==='gridpad') return mode === 'final'
+    ? `${compactSpecPart(m.sw)}x${compactSpecPart(m.sh)}`
+    : `${compactSpecPart(m.sw)}x${compactSpecPart(m.sh)} 격자`;
   return '-';
 }
 function layerOptionMeta(m){
@@ -5074,7 +5044,7 @@ function finishSectionRowHTML(colspan){
 function bomRowClass(bk){
   const classes = ['bom-data-row'];
   if(isFinishBomKey(bk)) classes.push('bom-finish-row');
-  return ` class="${classes.join(' ')}" tabindex="0" aria-expanded="false"`;
+  return ` class="${classes.join(' ')}"`;
 }
 
 function computeAggGeneric(items, lenM, htFn, gapM, areaDeductFn=()=>0){
@@ -5195,7 +5165,7 @@ function render(){
 
   const agg = computeAggGeneric(stack, lenM, (item)=>heightForItem(item, htOuterM, htInnerM), studGapM, ()=>openingM2);
 
-  document.getElementById('bomTable').innerHTML = document.getElementById('bomTable').querySelector('colgroup').outerHTML + bomRowsSimpleHTML(agg, {showSupplier:false, compact:true});
+  document.getElementById('bomTable').innerHTML = document.getElementById('bomTable').querySelector('colgroup').outerHTML + bomRowsSimpleHTML(agg, {layout:'detail', showSupplier:false, compact:true});
 
   renderFinal();
   updateStcIfVisible('wall');
@@ -5935,34 +5905,42 @@ function resetRefStcResult(){
 function bomRowsSimpleHTML(agg, options={}){
   const lossRate = Math.max(parseFloat(options.lossRate)||0, 0);
   const suffix = lossRate>0 ? ` · 로스 ${lossRate}% 포함` : '';
-  const showSupplier = options.showSupplier !== false;
-  const compact = options.compact === true;
-  const headCols = [
-    '자재',
-    ...(showSupplier ? ['거래처'] : []),
-    '겹수',
-    '규격',
-    '면적/길이',
-    '물량'
-  ];
+  const layout = options.layout || (options.showSupplier === false ? 'detail' : 'final');
+  const showSupplier = layout === 'final' || options.showSupplier === true;
+  const cellFontSize = '12px';
+  const fields = layout === 'final'
+    ? [
+      {key:'material', label:'자재', numeric:false},
+      {key:'spec', label:'규격', numeric:false},
+      {key:'measure', label:'면적/길이', numeric:true},
+      {key:'qty', label:'물량', numeric:true},
+      {key:'supplier', label:'거래처', numeric:false}
+    ]
+    : [
+      {key:'material', label:'자재', numeric:false},
+      {key:'spec', label:'규격', numeric:false},
+      {key:'count', label:'겹수', numeric:true},
+      {key:'measure', label:'면적/길이', numeric:true},
+      {key:'qty', label:'물량', numeric:true}
+    ];
   const rows = [`<tr class="bom-head-row">
-    ${headCols.map((label, index)=>{
-      const isNumeric = label === '겹수' || label === '면적/길이' || label === '물량';
-      const padStyle = index===0 ? 'padding:5px 6px 5px 0;' : (index===headCols.length-1 ? 'padding:5px 0;' : 'padding:5px 6px;');
-      return `<td style="${padStyle} color:var(--text-secondary); ${isNumeric ? 'text-align:right;' : ''}">${label}</td>`;
+    ${fields.map((field, index)=>{
+      const padStyle = index===0 ? 'padding:5px 6px 5px 0;' : (index===fields.length-1 ? 'padding:5px 0;' : 'padding:5px 6px;');
+      return `<td data-field="${field.key}" style="${padStyle} color:var(--text-secondary); ${field.numeric ? 'text-align:right;' : ''}">${field.label}</td>`;
     }).join('')}
   </tr>`];
   let finishSectionShown = false;
   sortedAggEntries(agg).forEach(([bk,a])=>{
     if(isFinishBomKey(bk) && !finishSectionShown){
-      rows.push(finishSectionRowHTML(showSupplier ? 6 : 5));
+      rows.push(finishSectionRowHTML(fields.length));
       finishSectionShown = true;
     }
     const m = infoFor(bk);
     const supplier = supplierFor(bk);
+    const specMode = layout === 'final' ? 'final' : 'detail';
     let sizeCell='-', measureCell='', qty='-';
     if(m.kind==='board'){
-      sizeCell = specForMaterial(m);
+      sizeCell = specForMaterial(m, {mode:specMode});
       const adjustedArea = withLoss(a.boardArea, lossRate);
       measureCell = `${round2(adjustedArea)}m²`;
       if((a.fabricLength || 0)>0){
@@ -5979,37 +5957,43 @@ function bomRowsSimpleHTML(agg, options={}){
         qty = `약 ${sheets}장${suffix}`;
       }
     } else if(m.kind==='stud'){
-      sizeCell = specForMaterial(m);
+      sizeCell = specForMaterial(m, {mode:specMode});
       measureCell = `${round2(withLoss(a.studLength||0, lossRate))}m`;
       qty = `${ceilValue(withLoss(a.studPieces, lossRate))}본${suffix}`;
     } else if(m.kind==='wool'){
-      sizeCell = specForMaterial(m);
+      sizeCell = specForMaterial(m, {mode:specMode});
       const packArea=(m.sw/1000)*(m.sh/1000);
       const adjustedArea = withLoss(a.woolArea, lossRate);
       const packs = packArea>0 ? ceilValue(adjustedArea/packArea) : 0;
       measureCell = `${round2(adjustedArea)}m²`;
       qty = `약 ${packs}장${suffix}`;
     } else if(m.kind==='line' || m.kind==='grid'){
-      sizeCell = specForMaterial(m);
+      sizeCell = specForMaterial(m, {mode:specMode});
       const adjustedLength = withLoss(a.gridLength, lossRate);
       const adjustedPieces = ceilValue(withLoss(a.gridPieces, lossRate));
       measureCell = `${round2(adjustedLength)}m`;
       qty = `약 ${adjustedPieces}본${suffix}`;
     } else if(m.kind==='gridpad'){
-      sizeCell = specForMaterial(m);
+      sizeCell = specForMaterial(m, {mode:specMode});
       qty = `${ceilValue(withLoss(a.gridCount, lossRate))}개${suffix}`;
     } else if(m.kind==='hanger'){
-      sizeCell = specForMaterial(m);
+      sizeCell = specForMaterial(m, {mode:specMode});
       qty = `${ceilValue(withLoss(a.hangerCount, lossRate))}개${suffix}`;
     }
-    const cells = [
-      `<td data-field="material" style="padding:5px 6px 5px 0; font-size:${compact ? '11px' : '12px'};">${m.label}</td>`,
-      ...(showSupplier ? [`<td data-field="supplier" style="padding:5px 6px; font-size:${compact ? '11px' : '12px'};">${supplier}</td>`] : []),
-      `<td data-field="count" style="padding:5px 6px; text-align:right; font-size:${compact ? '11px' : '12px'};">${a.count}</td>`,
-      `<td data-field="spec" style="padding:5px 6px; font-size:${compact ? '11px' : '12px'};">${sizeCell}</td>`,
-      `<td data-field="measure" style="padding:5px 6px; text-align:right; white-space:nowrap; font-size:${compact ? '11px' : '12px'};">${measureCell}</td>`,
-      `<td data-field="qty" style="padding:5px 0; text-align:right; white-space:nowrap; font-size:${compact ? '11px' : '12px'};">${qty}</td>`
-    ];
+    const values = {
+      material: escapeHTML(m.label),
+      supplier: escapeHTML(showSupplier ? supplier : ''),
+      count: escapeHTML(String(a.count)),
+      spec: escapeHTML(sizeCell),
+      measure: escapeHTML(measureCell),
+      qty: escapeHTML(qty)
+    };
+    const cells = fields.map((field, index)=>{
+      const align = field.numeric ? 'text-align:right;' : '';
+      const nowrap = field.key === 'measure' || field.key === 'qty' || field.key === 'spec' ? 'white-space:nowrap;' : '';
+      const padStyle = index===0 ? 'padding:5px 6px 5px 0;' : (index===fields.length-1 ? 'padding:5px 0;' : 'padding:5px 6px;');
+      return `<td data-field="${field.key}" style="${padStyle} ${align} ${nowrap} font-size:${cellFontSize};">${values[field.key]}</td>`;
+    });
     rows.push(`<tr${bomRowClass(bk)}>${cells.join('')}</tr>`);
   });
   return rows.join('');
@@ -6075,7 +6059,7 @@ function renderCeil(){
   document.getElementById('ceilArea').textContent = Math.round(area*100)/100 + 'm²';
 
   const ceilAgg = computePlanAgg(ceilStack, wM, dM, gapM);
-  document.getElementById('ceilBomTable').innerHTML = document.getElementById('ceilBomTable').querySelector('colgroup').outerHTML + bomRowsSimpleHTML(ceilAgg, {showSupplier:false, compact:true});
+  document.getElementById('ceilBomTable').innerHTML = document.getElementById('ceilBomTable').querySelector('colgroup').outerHTML + bomRowsSimpleHTML(ceilAgg, {layout:'detail', showSupplier:false, compact:true});
 
   renderFinal();
   updateStcIfVisible('ceil');
@@ -6095,7 +6079,7 @@ function renderFloor(){
   document.getElementById('floorArea').textContent = Math.round(area*100)/100 + 'm²';
 
   const floorAgg = computePlanAgg(floorStack, wM, dM, gapM);
-  document.getElementById('floorBomTable').innerHTML = document.getElementById('floorBomTable').querySelector('colgroup').outerHTML + bomRowsSimpleHTML(floorAgg, {showSupplier:false, compact:true});
+  document.getElementById('floorBomTable').innerHTML = document.getElementById('floorBomTable').querySelector('colgroup').outerHTML + bomRowsSimpleHTML(floorAgg, {layout:'detail', showSupplier:false, compact:true});
 
   renderFinal();
   updateStcIfVisible('floor');
@@ -6299,8 +6283,7 @@ function captureLayerInfo(layer, mode){
   const validRole = ['accent','success','pro','warning'].includes(layer.role) ? layer.role : '';
   const isWall = mode === 'wall';
   const isGap = layer.kind === 'gap';
-  const finishAsStructure = ['POLY25','POLY25_ADD','POLY50_ADD'].includes(layer.key);
-  const isFinish = !finishAsStructure && (
+  const isFinish = (
     layer.category === 'finish' ||
     layer.zone === 'finish' ||
     layer.groupLabel === '마감' ||
@@ -6347,6 +6330,32 @@ function captureLayerInfo(layer, mode){
     return {rowClass:' pro', meta:'판재'};
   }
   return {rowClass:' accent', meta:'구조'};
+}
+function captureLayerInlineMeta(meta){
+  const first = String(meta || '').split('·')[0].trim();
+  return first ? `<${first}>` : '';
+}
+function constructionSpacingLabel(m){
+  if(!m) return '';
+  if(m.kind === 'stud'){
+    const spacing = parseFloat(m.spacing);
+    return Number.isFinite(spacing) && spacing>0 ? ` @${round2(spacing)}` : '';
+  }
+  if(m.kind === 'line' || m.kind === 'grid'){
+    const spacing = parseFloat(m.sw);
+    return Number.isFinite(spacing) && spacing>0 ? ` @${round2(spacing)}` : '';
+  }
+  return '';
+}
+function captureLayerDisplayLabel(layer, mode){
+  const m = MAT[layer.key] || {};
+  const label = String(layer.label || m.label || layer.key || '');
+  const spacing = mode === 'wall' ? constructionSpacingLabel(m) : '';
+  if(spacing && !label.includes('@')) return `${label}${spacing}`;
+  return label;
+}
+function captureLayerThicknessText(layer){
+  return layerValueText(layer);
 }
 function currentAggForMode(mode){
   if(mode==='wall'){
@@ -6492,13 +6501,15 @@ function renderCaptureLists(){
     return `<div class="capture-layer-list">
       ${layers.map(layer=>{
         const display = captureLayerInfo(layer, c.mode);
+        const label = captureLayerDisplayLabel(layer, c.mode);
+        const meta = captureLayerInlineMeta(display.meta);
         return `<div class="capture-layer-row${display.rowClass}">
           <div class="capture-layer-no">${layer.index}</div>
           <div class="capture-layer-name">
-            ${layer.label}
-            <div class="capture-layer-meta">${display.meta || '-'}</div>
+            <span class="capture-layer-meta">${escapeHTML(meta || '-')}</span>
+            <span class="capture-layer-title">${escapeHTML(label)}</span>
           </div>
-          <div class="capture-layer-thick">${layerValueText(layer)}</div>
+          <div class="capture-layer-thick">${escapeHTML(captureLayerThicknessText(layer))}</div>
         </div>`;
       }).join('')}
     </div>`;
@@ -6522,8 +6533,8 @@ function renderCaptureLists(){
         ${renderLayerList(c)}
         <div class="capture-detail-scroll">
           <table class="capture-detail-table">
-            <colgroup><col style="width:18%"><col style="width:12%"><col style="width:7%"><col style="width:17%"><col style="width:16%"><col style="width:30%"></colgroup>
-            ${bomRowsSimpleHTML(consolidateForFinal(c.agg || {}), {lossRate})}
+            <colgroup><col style="width:30%"><col style="width:24%"><col style="width:7%"><col style="width:17%"><col style="width:22%"></colgroup>
+            ${bomRowsSimpleHTML(consolidateForFinal(c.agg || {}), {lossRate, layout:'detail', showSupplier:false})}
           </table>
         </div>
       </div>
@@ -6994,13 +7005,15 @@ function captureLayerListHTML(capture, emptyText='레이어 정보 없음'){
   return `<div class="capture-layer-list final-layer-list">
     ${layers.map((layer)=>{
       const display = captureLayerInfo(layer, capture.mode);
+      const label = captureLayerDisplayLabel(layer, capture.mode);
+      const meta = captureLayerInlineMeta(display.meta);
       return `<div class="capture-layer-row${display.rowClass}">
         <div class="capture-layer-no">${layer.index}</div>
         <div class="capture-layer-name">
-          ${escapeHTML(layer.label)}
-          <div class="capture-layer-meta">${escapeHTML(display.meta || '-')}</div>
+          <span class="capture-layer-meta">${escapeHTML(meta || '-')}</span>
+          <span class="capture-layer-title">${escapeHTML(label)}</span>
         </div>
-        <div class="capture-layer-thick">${escapeHTML(layerValueText(layer))}</div>
+        <div class="capture-layer-thick">${escapeHTML(captureLayerThicknessText(layer))}</div>
       </div>`;
     }).join('')}
   </div>`;
@@ -7368,7 +7381,7 @@ function renderFinal(){
   }
   const lossRate = parseFloat(document.getElementById('lossRate').value)||0;
   renderCaptureLists();
-  document.getElementById('finalBomTable').innerHTML = document.getElementById('finalBomTable').querySelector('colgroup').outerHTML + bomRowsSimpleHTML(finalAgg, {lossRate});
+  document.getElementById('finalBomTable').innerHTML = document.getElementById('finalBomTable').querySelector('colgroup').outerHTML + bomRowsSimpleHTML(finalAgg, {lossRate, layout:'final', showSupplier:true});
 }
 
 function materialsStatus(text){
@@ -8291,24 +8304,6 @@ function copyFinalTable(){
     fail();
   }
 }
-
-function toggleMobileBomRow(row){
-  if(!row || !window.matchMedia('(max-width: 760px)').matches) return;
-  const nextOpen = !row.classList.contains('mobile-expanded');
-  row.classList.toggle('mobile-expanded', nextOpen);
-  row.setAttribute('aria-expanded', nextOpen ? 'true' : 'false');
-}
-document.addEventListener('click', (event)=>{
-  const row = event.target.closest('.final-bom-scroll tr.bom-data-row, .capture-detail-scroll tr.bom-data-row');
-  if(row) toggleMobileBomRow(row);
-});
-document.addEventListener('keydown', (event)=>{
-  if(event.key !== 'Enter' && event.key !== ' ') return;
-  const row = event.target.closest('.final-bom-scroll tr.bom-data-row, .capture-detail-scroll tr.bom-data-row');
-  if(!row) return;
-  event.preventDefault();
-  toggleMobileBomRow(row);
-});
 
 const STORE_KEY = 'soundIsolationEstimatorStateV2';
 function serializeState(){
