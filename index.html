@@ -110,6 +110,73 @@ td{ border-bottom:0.5px solid var(--border); }
   line-height:1.35;
 }
 .input-panel{ display:flex; flex-wrap:wrap; gap:12px; background:var(--surface-1); border-radius:var(--radius); padding:0.75rem 1rem; margin-bottom:1rem; }
+.structure-input-panel{
+  display:grid;
+  grid-template-columns:repeat(4, minmax(130px, 1fr)) auto;
+  gap:8px;
+  align-items:end;
+  padding:9px 10px;
+}
+.structure-input-panel label{
+  display:flex !important;
+  flex-direction:column;
+  align-items:stretch !important;
+  justify-content:flex-start !important;
+  gap:3px !important;
+  font-size:12px !important;
+  color:var(--text-secondary);
+}
+.structure-input-panel input[type="number"]{
+  width:100% !important;
+  min-height:30px;
+  padding:4px 7px;
+  font-size:12px;
+}
+.structure-reset-field{ min-height:30px; padding:5px 9px; font-size:12px; }
+.structure-topbar,
+.ref-action-bar{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:8px;
+  flex-wrap:wrap;
+  background:var(--surface-1);
+  border:0.5px solid var(--border);
+  border-radius:var(--radius);
+  padding:8px 10px;
+  margin-bottom:10px;
+}
+.structure-load-fields{
+  display:flex;
+  align-items:flex-end;
+  gap:6px;
+  flex-wrap:wrap;
+  min-width:0;
+}
+.structure-load-fields label{
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+  font-size:11px;
+  color:var(--text-secondary);
+}
+.structure-load-fields select{
+  min-width:150px;
+  max-width:230px;
+  min-height:30px;
+  padding:4px 8px;
+  font-size:12px;
+}
+.structure-topbar .capture-save-btn,
+.ref-action-bar button{
+  min-height:30px;
+  padding:5px 9px;
+  font-size:12px;
+}
+.structure-capture-status{
+  flex:1 1 100%;
+  margin-top:-2px;
+}
 .action-row{ display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin-bottom:10px; }
 .tab-bar{ display:flex; gap:6px; margin-bottom:1rem; border-bottom:0.5px solid var(--border); padding-bottom:10px; flex-wrap:wrap; }
 .copy-status{ font-size:12px; color:var(--text-muted); min-height:18px; }
@@ -1621,6 +1688,49 @@ td{ border-bottom:0.5px solid var(--border); }
   .metric-grid{ grid-template-columns:1fr !important; }
   .input-panel label{ width:100%; justify-content:space-between; }
   .input-panel input[type="number"]{ width:110px !important; }
+  .structure-input-panel{
+    grid-template-columns:repeat(2, minmax(0, 1fr)) !important;
+    gap:6px;
+    padding:8px;
+  }
+  .structure-input-panel label{
+    width:auto !important;
+    min-width:0;
+    font-size:11px !important;
+  }
+  .structure-input-panel input[type="number"]{
+    width:100% !important;
+    min-height:28px;
+    font-size:11px;
+  }
+  .structure-reset-field{
+    grid-column:1 / -1;
+    min-height:30px;
+    padding:5px 8px;
+    font-size:11px;
+  }
+  .structure-topbar,
+  .ref-action-bar{
+    align-items:stretch;
+    padding:7px;
+  }
+  .structure-load-fields{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    width:100%;
+  }
+  .structure-load-fields label{ min-width:0; }
+  .structure-load-fields select{
+    min-width:0;
+    max-width:none;
+    width:100%;
+    font-size:11px;
+  }
+  .structure-topbar .capture-save-btn,
+  .ref-action-bar button{
+    width:100%;
+    justify-content:center;
+  }
   .action-row button{ flex:1 1 calc(50% - 6px); padding:8px 6px; }
   .capture-head{ align-items:stretch; }
   .capture-save-btn{ min-height:34px !important; padding:6px 9px; font-size:12px; }
@@ -2169,7 +2279,6 @@ td{ border-bottom:0.5px solid var(--border); }
 <h2 class="sr-only">벽체 차음 구성, 참조표, 벽체·천장·바닥 개별 설계 및 물량 합산 산출 도구</h2>
 
 <div class="tab-bar">
-  <button id="tabLayersAdminBtn" style="border:2px solid var(--border-accent); font-weight:500;">레이어관리</button>
   <button id="tabRefBtn">레이어 참조</button>
   <button id="tabStructureBtn">구조 산출</button>
   <button id="tabFinalBtn">물량 산출</button>
@@ -2189,6 +2298,10 @@ td{ border-bottom:0.5px solid var(--border); }
     <span style="font-size:13px; color:var(--text-secondary); align-self:center; margin-right:4px;">단계 선택:</span>
     <div id="presetBtns" style="display:flex; flex-wrap:wrap; gap:6px;"></div>
   </div>
+  <div class="ref-action-bar">
+    <div style="font-size:12px; color:var(--text-secondary);">선택한 레이어를 구조 산출 탭으로 바로 보냅니다.</div>
+    <button id="sendToModeBtn" type="button" style="font-weight:600;"><i class="ti ti-arrow-right" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 이 레이어를 벽체 물량 산출로 보내기</button>
+  </div>
   <div id="refGuideText" style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">부차음(바깥쪽)·기본차음(안쪽) 그룹별로 색과 라벨 표시, 점선 = 공기층</div>
   <div class="responsive-grid ref-wall">
     <div>
@@ -2207,7 +2320,6 @@ td{ border-bottom:0.5px solid var(--border); }
         <button id="refStcBtn" class="stc-button" type="button"><i class="ti ti-wave-sine" style="font-size:16px;" aria-hidden="true"></i> 차음성능 예측</button>
         <div id="refStcResult" class="stc-result" aria-live="polite"></div>
       </div>
-      <button id="sendToModeBtn" style="width:100%; padding:10px; font-weight:500;"><i class="ti ti-arrow-right" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 이 레이어를 벽체 물량 산출로 보내기</button>
     </div>
   </div>
 </div>
@@ -2220,13 +2332,25 @@ td{ border-bottom:0.5px solid var(--border); }
   </div>
 
 <div id="tabWall" class="structure-work-panel">
-  <div class="input-panel">
-    <label style="font-size:13px; display:flex; align-items:center; gap:6px;">벽체 길이(mm) <input type="number" id="wallLen" value="4000" style="width:90px;"></label>
-    <label style="font-size:13px; display:flex; align-items:center; gap:6px;">부차음/마감 높이(mm) <input type="number" id="htOuter" value="2400" style="width:90px;"></label>
-    <label style="font-size:13px; display:flex; align-items:center; gap:6px;">기본차음 높이(mm) <input type="number" id="htInner" value="3000" style="width:90px;"></label>
-    <label style="font-size:13px; display:flex; align-items:center; gap:6px;">스터드/각재 간격(mm) <input type="number" id="studGap" value="450" style="width:70px;"></label>
-    <label style="font-size:13px; display:flex; align-items:center; gap:6px;">문·창 제외 면적(m²) <input type="number" id="wallOpeningArea" value="0" min="0" step="0.01" style="width:80px;"></label>
-    <button id="wallResetBtn" type="button"><i class="ti ti-trash" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 벽체 레이어 비우기</button>
+  <div class="structure-topbar">
+    <div class="structure-load-fields">
+      <label>레이어 유형
+        <select id="wallLoadGroupSelect"></select>
+      </label>
+      <label>단계
+        <select id="wallLoadPresetSelect"></select>
+      </label>
+      <button id="wallLoadPresetBtn" type="button"><i class="ti ti-download" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 불러오기</button>
+    </div>
+    <button id="wallCaptureBtn" class="capture-save-btn" type="button"><i class="ti ti-stack-push" style="font-size:16px;" aria-hidden="true"></i> 벽체 물량 산출에 추가</button>
+    <div id="wallCaptureStatus" class="capture-status structure-capture-status" aria-live="polite"></div>
+  </div>
+  <div class="input-panel structure-input-panel">
+    <label>벽체 길이(mm) <input type="number" id="wallLen" value="4000"></label>
+    <label>부차음 높이(mm) <input type="number" id="htOuter" value="2400"></label>
+    <label>기본차음 높이(mm) <input type="number" id="htInner" value="3000"></label>
+    <label>문·창 제외 면적(m²) <input type="number" id="wallOpeningArea" value="0" min="0" step="0.01"></label>
+    <button id="wallResetBtn" class="structure-reset-field" type="button"><i class="ti ti-trash" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 벽체 레이어 비우기</button>
   </div>
 
   <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">레이어 참조에서 벽체 단계를 골라 "벽체 물량 산출로 보내기"를 누르면 이 탭에 반영됩니다. 자재명을 클릭하면 다른 자재로 바로 바꿀 수 있어요</div>
@@ -2262,9 +2386,7 @@ td{ border-bottom:0.5px solid var(--border); }
 
       <div class="capture-head">
         <div class="capture-head-title">자재 물량 산출</div>
-        <button id="wallCaptureBtn" class="capture-save-btn" type="button"><i class="ti ti-stack-push" style="font-size:16px;" aria-hidden="true"></i> 벽체 물량 산출에 추가</button>
       </div>
-      <div id="wallCaptureStatus" class="capture-status" aria-live="polite"></div>
       <table id="bomTable" style="width:100%; font-size:12px; border-collapse:collapse; table-layout:fixed;">
         <colgroup><col style="width:30%"><col style="width:24%"><col style="width:7%"><col style="width:17%"><col style="width:22%"></colgroup>
       </table>
@@ -2273,14 +2395,27 @@ td{ border-bottom:0.5px solid var(--border); }
 </div>
 
 <div id="tabCeil" class="structure-work-panel">
-  <div class="input-panel">
-    <label style="font-size:13px; display:flex; align-items:center; gap:6px;">가로(mm) <input type="number" id="ceilWidth" value="4000" style="width:90px;"></label>
-    <label style="font-size:13px; display:flex; align-items:center; gap:6px;">세로(mm) <input type="number" id="ceilDepth" value="3000" style="width:90px;"></label>
-    <label style="font-size:13px; display:flex; align-items:center; gap:6px;">틀/격자 간격(mm) <input type="number" id="ceilGap" value="450" style="width:70px;"></label>
-    <label style="font-size:13px; display:flex; align-items:center; gap:6px;">
-      <input type="checkbox" id="ceilIncludeHangerHeight" style="width:auto;"> 방진행거를 천장내리기 높이에 포함
+  <div class="structure-topbar">
+    <div class="structure-load-fields">
+      <label>레이어 유형
+        <select id="ceilLoadGroupSelect"></select>
+      </label>
+      <label>단계
+        <select id="ceilLoadPresetSelect"></select>
+      </label>
+      <button id="ceilLoadPresetBtn" type="button"><i class="ti ti-download" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 불러오기</button>
+    </div>
+    <button id="ceilCaptureBtn" class="capture-save-btn" type="button"><i class="ti ti-stack-push" style="font-size:16px;" aria-hidden="true"></i> 천장 물량 산출에 추가</button>
+    <div id="ceilCaptureStatus" class="capture-status structure-capture-status" aria-live="polite"></div>
+  </div>
+  <div class="input-panel structure-input-panel">
+    <label>가로(mm) <input type="number" id="ceilWidth" value="4000"></label>
+    <label>세로(mm) <input type="number" id="ceilDepth" value="3000"></label>
+    <label>틀/격자 간격(mm) <input type="number" id="ceilGap" value="450"></label>
+    <label style="justify-content:center !important;">
+      <span style="display:flex; align-items:center; gap:6px;"><input type="checkbox" id="ceilIncludeHangerHeight" style="width:auto;"> 방진행거 높이 포함</span>
     </label>
-    <button id="ceilResetBtn" type="button"><i class="ti ti-trash" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 천장 레이어 비우기</button>
+    <button id="ceilResetBtn" class="structure-reset-field" type="button"><i class="ti ti-trash" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 천장 레이어 비우기</button>
   </div>
   <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">레이어 참조에서 천장 단계를 골라 "천장 물량 산출로 보내기"를 누르면 이 탭에 반영됩니다. 자재명을 클릭하면 다른 자재로 바로 바꿀 수 있어요</div>
   <div class="responsive-grid room">
@@ -2309,9 +2444,7 @@ td{ border-bottom:0.5px solid var(--border); }
       </div>
       <div class="capture-head">
         <div class="capture-head-title">자재 물량 산출</div>
-        <button id="ceilCaptureBtn" class="capture-save-btn" type="button"><i class="ti ti-stack-push" style="font-size:16px;" aria-hidden="true"></i> 천장 물량 산출에 추가</button>
       </div>
-      <div id="ceilCaptureStatus" class="capture-status" aria-live="polite"></div>
       <table id="ceilBomTable" style="width:100%; font-size:12px; border-collapse:collapse; table-layout:fixed;">
         <colgroup><col style="width:30%"><col style="width:24%"><col style="width:7%"><col style="width:17%"><col style="width:22%"></colgroup>
       </table>
@@ -2320,11 +2453,24 @@ td{ border-bottom:0.5px solid var(--border); }
 </div>
 
 <div id="tabFloor" class="structure-work-panel">
-  <div class="input-panel">
-    <label style="font-size:13px; display:flex; align-items:center; gap:6px;">가로(mm) <input type="number" id="floorWidth" value="4000" style="width:90px;"></label>
-    <label style="font-size:13px; display:flex; align-items:center; gap:6px;">세로(mm) <input type="number" id="floorDepth" value="3000" style="width:90px;"></label>
-    <label style="font-size:13px; display:flex; align-items:center; gap:6px;">틀/격자 간격(mm) <input type="number" id="floorGap" value="450" style="width:70px;"></label>
-    <button id="floorResetBtn" type="button"><i class="ti ti-trash" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 바닥 레이어 비우기</button>
+  <div class="structure-topbar">
+    <div class="structure-load-fields">
+      <label>레이어 유형
+        <select id="floorLoadGroupSelect"></select>
+      </label>
+      <label>단계
+        <select id="floorLoadPresetSelect"></select>
+      </label>
+      <button id="floorLoadPresetBtn" type="button"><i class="ti ti-download" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 불러오기</button>
+    </div>
+    <button id="floorCaptureBtn" class="capture-save-btn" type="button"><i class="ti ti-stack-push" style="font-size:16px;" aria-hidden="true"></i> 바닥 물량 산출에 추가</button>
+    <div id="floorCaptureStatus" class="capture-status structure-capture-status" aria-live="polite"></div>
+  </div>
+  <div class="input-panel structure-input-panel">
+    <label>가로(mm) <input type="number" id="floorWidth" value="4000"></label>
+    <label>세로(mm) <input type="number" id="floorDepth" value="3000"></label>
+    <label>틀/격자 간격(mm) <input type="number" id="floorGap" value="450"></label>
+    <button id="floorResetBtn" class="structure-reset-field" type="button"><i class="ti ti-trash" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 바닥 레이어 비우기</button>
   </div>
   <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">레이어 참조에서 바닥 단계를 골라 "바닥 물량 산출로 보내기"를 누르면 이 탭에 반영됩니다. 자재명을 클릭하면 다른 자재로 바로 바꿀 수 있어요</div>
   <div class="responsive-grid room">
@@ -2353,9 +2499,7 @@ td{ border-bottom:0.5px solid var(--border); }
       </div>
       <div class="capture-head">
         <div class="capture-head-title">자재 물량 산출</div>
-        <button id="floorCaptureBtn" class="capture-save-btn" type="button"><i class="ti ti-stack-push" style="font-size:16px;" aria-hidden="true"></i> 바닥 물량 산출에 추가</button>
       </div>
-      <div id="floorCaptureStatus" class="capture-status" aria-live="polite"></div>
       <table id="floorBomTable" style="width:100%; font-size:12px; border-collapse:collapse; table-layout:fixed;">
         <colgroup><col style="width:30%"><col style="width:24%"><col style="width:7%"><col style="width:17%"><col style="width:22%"></colgroup>
       </table>
@@ -2572,6 +2716,10 @@ td{ border-bottom:0.5px solid var(--border); }
       <button id="factoryPasswordSaveBtn" type="button"><i class="ti ti-lock" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 비밀번호 저장</button>
       <button id="materialsFactoryBtn" type="button"><i class="ti ti-refresh-dot" style="font-size:16px; vertical-align:-3px;" aria-hidden="true"></i> 공장 초기화</button>
     </div>
+    <details class="settings-section">
+      <summary>레이어 관리</summary>
+      <div id="settingsLayersSlot"></div>
+    </details>
     <details class="settings-section">
       <summary>자재 리스트 관리</summary>
       <div id="settingsMaterialsSlot"></div>
@@ -4420,6 +4568,7 @@ let planLayerAdminMode = 'wall';
 let currentRefMode = 'wall';
 let currentPlanPresetGroup = {ceil:'', floor:''};
 let currentPlanPreset = {ceil:null, floor:null};
+const DEFAULT_STUD_GAP_MM = 450;
 
 function applyPresetConfig(groups, options={}){
   PRESET_GROUPS = normalizePresetGroups(groups);
@@ -5138,7 +5287,7 @@ function render(){
   const lenM = (parseFloat(document.getElementById('wallLen').value)||0)/1000;
   const htOuterM = (parseFloat(document.getElementById('htOuter').value)||0)/1000;
   const htInnerM = (parseFloat(document.getElementById('htInner').value)||0)/1000;
-  const studGapM = (parseFloat(document.getElementById('studGap').value)||450)/1000;
+  const studGapM = DEFAULT_STUD_GAP_MM/1000;
   const openingM2 = Math.max(parseFloat(document.getElementById('wallOpeningArea').value)||0, 0);
 
   document.getElementById('layerList').innerHTML = groupedRowsHTML(stack, (it,i,isGap)=>{
@@ -6363,7 +6512,7 @@ function currentAggForMode(mode){
     const lenM = (parseFloat(document.getElementById('wallLen').value)||0)/1000;
     const htOuterM = (parseFloat(document.getElementById('htOuter').value)||0)/1000;
     const htInnerM = (parseFloat(document.getElementById('htInner').value)||0)/1000;
-    const studGapM = (parseFloat(document.getElementById('studGap').value)||450)/1000;
+    const studGapM = DEFAULT_STUD_GAP_MM/1000;
     const openingM2 = Math.max(parseFloat(document.getElementById('wallOpeningArea').value)||0, 0);
     return computeAggGeneric(stack, lenM, (item)=>heightForItem(item, htOuterM, htInnerM), studGapM, ()=>openingM2);
   }
@@ -6406,7 +6555,7 @@ function currentInputsForMode(mode){
       wallLen: document.getElementById('wallLen').value,
       htOuter: document.getElementById('htOuter').value,
       htInner: document.getElementById('htInner').value,
-      studGap: document.getElementById('studGap').value,
+      studGap: String(DEFAULT_STUD_GAP_MM),
       wallOpeningArea: document.getElementById('wallOpeningArea').value
     };
   }
@@ -7544,6 +7693,7 @@ function commitPresetDrafts(options={}){
   saveUserPresetBase(presetDraftGroups);
   savePresetConfig(presetDraftGroups);
   applyPresetConfig(presetDraftGroups);
+  ['wall','ceil','floor'].forEach(populateStructureLoadControls);
   if(options.renderAdmin !== false) renderPresetAdmin();
   if(options.status !== false) presetAdminStatus(options.message || '벽체 레이어 구성을 저장하고 반영했습니다.');
 }
@@ -7868,6 +8018,8 @@ function commitPlanLayerDrafts(options={}){
   });
   saveUserPlanLayerBase(planLayerDrafts);
   savePlanLayerConfig(planLayerDrafts);
+  renderRef();
+  ['wall','ceil','floor'].forEach(populateStructureLoadControls);
   if(options.renderAdmin !== false) renderPlanLayerAdmin();
   if(options.status !== false) planLayerAdminStatus(options.message || '레이어 세트를 저장했습니다.');
 }
@@ -8260,7 +8412,6 @@ function resetAll(){
   document.getElementById('wallLen').value = 4000;
   document.getElementById('htOuter').value = 2400;
   document.getElementById('htInner').value = 3000;
-  document.getElementById('studGap').value = 450;
   document.getElementById('wallOpeningArea').value = 0;
   resetWall();
   document.getElementById('ceilWidth').value = 4000;
@@ -8308,9 +8459,13 @@ function copyFinalTable(){
 
 const STORE_KEY = 'soundIsolationEstimatorStateV2';
 function serializeState(){
-  const ids = ['wallLen','htOuter','htInner','studGap','wallOpeningArea','ceilWidth','ceilDepth','ceilGap','floorWidth','floorDepth','floorGap','lossRate'];
+  const ids = ['wallLen','htOuter','htInner','wallOpeningArea','ceilWidth','ceilDepth','ceilGap','floorWidth','floorDepth','floorGap','lossRate'];
   const inputs = {};
-  ids.forEach(id=>{ inputs[id] = document.getElementById(id).value; });
+  ids.forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) inputs[id] = el.value;
+  });
+  inputs.studGap = String(DEFAULT_STUD_GAP_MM);
   const ceilIncludeHangerHeight = document.getElementById('ceilIncludeHangerHeight');
   if(ceilIncludeHangerHeight) inputs.ceilIncludeHangerHeight = ceilIncludeHangerHeight.checked;
   return {
@@ -8643,7 +8798,7 @@ document.getElementById('layerList').addEventListener('change', (e)=>{
   stack[i].val = materialThicknessMm(MAT[newKey]);
   render();
 });
-['wallLen','htOuter','htInner','studGap','wallOpeningArea'].forEach(id=>{
+['wallLen','htOuter','htInner','wallOpeningArea'].forEach(id=>{
   document.getElementById(id).addEventListener('input', ()=>render());
 });
 document.getElementById('wallResetBtn').addEventListener('click', resetWall);
@@ -9162,7 +9317,6 @@ document.getElementById('presetAdminList').addEventListener('click', (e)=>{
 const tabRefBtn = document.getElementById('tabRefBtn');
 const tabStructureBtn = document.getElementById('tabStructureBtn');
 const tabFinalBtn = document.getElementById('tabFinalBtn');
-const tabLayersAdminBtn = document.getElementById('tabLayersAdminBtn');
 const tabSettingsBtn = document.getElementById('tabSettingsBtn');
 const tabRef = document.getElementById('tabRef');
 const tabStructure = document.getElementById('tabStructure');
@@ -9174,15 +9328,117 @@ const tabMaterials = document.getElementById('tabMaterials');
 const tabLayersAdmin = document.getElementById('tabLayersAdmin');
 const tabSettings = document.getElementById('tabSettings');
 const settingsMaterialsSlot = document.getElementById('settingsMaterialsSlot');
+const settingsLayersSlot = document.getElementById('settingsLayersSlot');
 if(settingsMaterialsSlot && tabMaterials){
   settingsMaterialsSlot.appendChild(tabMaterials);
   tabMaterials.style.display = 'block';
+}
+if(settingsLayersSlot && tabLayersAdmin){
+  settingsLayersSlot.appendChild(tabLayersAdmin);
+  tabLayersAdmin.style.display = 'block';
+}
+const structureLoadState = {wall:{group:'', presetId:''}, ceil:{group:'', presetId:''}, floor:{group:'', presetId:''}};
+function structureLoaderIds(mode){
+  return {
+    group:`${mode}LoadGroupSelect`,
+    preset:`${mode}LoadPresetSelect`,
+    btn:`${mode}LoadPresetBtn`
+  };
+}
+function structurePresetId(preset){
+  return preset ? `${preset.groupKey || ''}::${preset.n || ''}::${preset.name || ''}` : '';
+}
+function populateStructureLoadControls(mode){
+  const ids = structureLoaderIds(mode);
+  const groupSelect = document.getElementById(ids.group);
+  const presetSelect = document.getElementById(ids.preset);
+  if(!groupSelect || !presetSelect) return;
+  const groups = refGroupsForMode(mode);
+  if(!groups.length){
+    groupSelect.innerHTML = '<option value="">레이어 없음</option>';
+    presetSelect.innerHTML = '<option value="">단계 없음</option>';
+    return;
+  }
+  const previousGroup = structureLoadState[mode]?.group || currentRefGroupKey(mode);
+  const previousPresetId = structureLoadState[mode]?.presetId || '';
+  const selectedGroup = groups.some(group=>group.key === previousGroup) ? previousGroup : groups[0].key;
+  groupSelect.innerHTML = groups.map(group=>`<option value="${group.key}">${group.label}</option>`).join('');
+  groupSelect.value = selectedGroup;
+  const presets = allRefPresets(mode).filter(preset=>preset.groupKey === selectedGroup);
+  presetSelect.innerHTML = presets.map((preset, index)=>`
+    <option value="${structurePresetId(preset)}">${presetStageLabel(preset)} · ${preset.name || ''}</option>
+  `).join('') || '<option value="">단계 없음</option>';
+  const selectedPresetId = presets.some(preset=>structurePresetId(preset) === previousPresetId)
+    ? previousPresetId
+    : structurePresetId(presets[0]);
+  structureLoadState[mode] = {group:selectedGroup, presetId:selectedPresetId};
+  if(selectedPresetId) presetSelect.value = selectedPresetId;
+}
+function selectedStructureLoadPreset(mode){
+  const ids = structureLoaderIds(mode);
+  const groupSelect = document.getElementById(ids.group);
+  const presetSelect = document.getElementById(ids.preset);
+  const groupKey = groupSelect?.value || '';
+  const presets = allRefPresets(mode).filter(preset=>preset.groupKey === groupKey);
+  const presetId = presetSelect?.value || '';
+  return presets.find(preset=>structurePresetId(preset) === presetId) || presets[0] || null;
+}
+function sourceFromPreset(preset){
+  if(!preset) return null;
+  return {
+    name:presetStructureName(preset),
+    groupKey:preset.groupKey || '',
+    groupLabel:preset.groupLabel || '',
+    stageNo:preset.n,
+    stageLabel:presetStageLabel(preset),
+    stageName:preset.name || ''
+  };
+}
+function applyPresetToStructure(mode, preset, options={}){
+  if(!preset) return;
+  structureLoadState[mode] = {group:preset.groupKey || '', presetId:structurePresetId(preset)};
+  currentCaptureSource[mode] = sourceFromPreset(preset);
+  if(mode === 'wall'){
+    stack = itemsFromPresetForMode(preset, 'wall');
+    render();
+  } else if(mode === 'ceil'){
+    ceilStack = safePlanStackFromSeq(preset.seq);
+    renderCeil();
+  } else {
+    floorStack = safePlanStackFromSeq(preset.seq);
+    renderFloor();
+  }
+  window.currentStructureMode = mode;
+  populateStructureLoadControls(mode);
+  captureStatus(mode, `${presetStructureName(preset)} 불러왔습니다.`);
+  if(options.activate) activateTab('structure');
+}
+function bindStructureLoader(mode){
+  const ids = structureLoaderIds(mode);
+  const groupSelect = document.getElementById(ids.group);
+  const presetSelect = document.getElementById(ids.preset);
+  const loadBtn = document.getElementById(ids.btn);
+  if(groupSelect){
+    groupSelect.addEventListener('change', ()=>{
+      structureLoadState[mode] = {group:groupSelect.value, presetId:''};
+      populateStructureLoadControls(mode);
+    });
+  }
+  if(presetSelect){
+    presetSelect.addEventListener('change', ()=>{
+      structureLoadState[mode] = {group:groupSelect?.value || '', presetId:presetSelect.value};
+    });
+  }
+  if(loadBtn){
+    loadBtn.addEventListener('click', ()=>applyPresetToStructure(mode, selectedStructureLoadPreset(mode)));
+  }
 }
 function activateStructureMode(mode){
   const current = ['wall','ceil','floor'].includes(mode) ? mode : 'wall';
   tabWall.style.display = current==='wall' ? 'block':'none';
   tabCeil.style.display = current==='ceil' ? 'block':'none';
   tabFloor.style.display = current==='floor' ? 'block':'none';
+  populateStructureLoadControls(current);
   document.querySelectorAll('[data-structure-mode]').forEach((btn)=>{
     const active = btn.dataset.structureMode === current;
     btn.style.border = active ? '2px solid var(--border-accent)' : '0.5px solid var(--border-strong)';
@@ -9193,24 +9449,25 @@ function activateTab(which){
   tabRef.style.display = which==='ref' ? 'block':'none';
   tabStructure.style.display = which==='structure' ? 'block':'none';
   tabFinal.style.display = which==='final' ? 'block':'none';
-  tabLayersAdmin.style.display = which==='layersadmin' ? 'block':'none';
   tabSettings.style.display = which==='settings' ? 'block':'none';
-  [tabLayersAdminBtn,tabRefBtn,tabStructureBtn,tabFinalBtn,tabSettingsBtn].forEach(b=>{ b.style.border='0.5px solid var(--border-strong)'; b.style.fontWeight='400'; });
-  const map = {ref:tabRefBtn, structure:tabStructureBtn, final:tabFinalBtn, layersadmin:tabLayersAdminBtn, settings:tabSettingsBtn};
+  [tabRefBtn,tabStructureBtn,tabFinalBtn,tabSettingsBtn].forEach(b=>{ b.style.border='0.5px solid var(--border-strong)'; b.style.fontWeight='400'; });
+  const map = {ref:tabRefBtn, structure:tabStructureBtn, final:tabFinalBtn, settings:tabSettingsBtn};
   map[which].style.border='2px solid var(--border-accent)'; map[which].style.fontWeight='500';
   if(which==='structure') activateStructureMode(window.currentStructureMode || 'wall');
   if(which==='final'){
     renderRoomPlanner();
     renderFinal();
   }
-  if(which==='layersadmin') renderLayerAdmin();
-  if(which==='settings') renderMaterialManager();
+  if(which==='settings'){
+    renderLayerAdmin();
+    renderMaterialManager();
+  }
 }
 tabRefBtn.addEventListener('click', ()=>activateTab('ref'));
 tabStructureBtn.addEventListener('click', ()=>activateTab('structure'));
 tabFinalBtn.addEventListener('click', ()=>activateTab('final'));
-tabLayersAdminBtn.addEventListener('click', ()=>activateTab('layersadmin'));
 tabSettingsBtn.addEventListener('click', ()=>activateTab('settings'));
+['wall','ceil','floor'].forEach(bindStructureLoader);
 document.querySelectorAll('[data-structure-mode]').forEach((btn)=>{
   btn.addEventListener('click', ()=>{
     window.currentStructureMode = btn.dataset.structureMode;
@@ -9231,30 +9488,7 @@ document.querySelectorAll('[data-ref-mode]').forEach((btn)=>{
 document.getElementById('sendToModeBtn').addEventListener('click', ()=>{
   const preset = currentRefPreset(currentRefMode);
   if(!preset) return;
-  currentCaptureSource[currentRefMode] = {
-    name:presetStructureName(preset),
-    groupKey:preset.groupKey || '',
-    groupLabel:preset.groupLabel || '',
-    stageNo:preset.n,
-    stageLabel:presetStageLabel(preset),
-    stageName:preset.name || ''
-  };
-  if(currentRefMode === 'wall'){
-    stack = itemsFromPresetForMode(preset, 'wall');
-    render();
-    window.currentStructureMode = 'wall';
-    activateTab('structure');
-  } else if(currentRefMode === 'ceil'){
-    ceilStack = safePlanStackFromSeq(preset.seq);
-    renderCeil();
-    window.currentStructureMode = 'ceil';
-    activateTab('structure');
-  } else {
-    floorStack = safePlanStackFromSeq(preset.seq);
-    renderFloor();
-    window.currentStructureMode = 'floor';
-    activateTab('structure');
-  }
+  applyPresetToStructure(currentRefMode, preset, {activate:true});
 });
 document.getElementById('refStcBtn').addEventListener('click', showRefStcResult);
 
@@ -9264,7 +9498,9 @@ render();
 renderCeil();
 renderFloor();
 renderMaterialManager();
-activateTab('layersadmin');
+renderLayerAdmin();
+['wall','ceil','floor'].forEach(populateStructureLoadControls);
+activateTab('ref');
 </script>
 </body>
 </html>
